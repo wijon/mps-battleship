@@ -1,0 +1,6 @@
+case class Board()
+case class Game()
+case class OutputHelper()
+case class Player()
+case class Settings()
+case class Ship()
