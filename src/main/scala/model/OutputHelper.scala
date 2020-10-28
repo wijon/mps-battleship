@@ -67,6 +67,8 @@ object OutputHelper {
    * @return Remaining ships infotext
    */
   def generateRemainingShips(board: Board): Vector[String] = {
+    // TODO
+
     val viewLine1 = "U-Boot         \\__/    0 hits"
     val viewLine2 = "Zerstörer 1    \\__X/   1 hit"
     val viewLine3 = "Zerstörer 2    \\XXX/   3 hits, versenkt"
@@ -83,6 +85,20 @@ object OutputHelper {
   def generateRoundInfoText(): Vector[String] = {
     // TODO
     // Idee: Rundennummer?, Überschrift (Spielername, ...)?
-    throw new NotImplementedError()
+
+    val viewLine1 = "Sie sind am Zug."
+    return Vector(viewLine1)
+  }
+
+  /** Render info text about AI-actions for output
+   *
+   * @return AI info text
+   */
+  def generateAiInfoText(): Vector[String] = {
+    // TODO
+    // Idee: Wurde Schiff versenkt?, Wurde Schiff getroffen?
+
+    val viewLine1 = "Der Computerspieler greift das Feld 32 an."
+    return Vector(viewLine1)
   }
 }
