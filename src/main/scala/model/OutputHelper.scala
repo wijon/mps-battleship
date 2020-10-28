@@ -38,7 +38,7 @@ object OutputHelper {
   def generateLoss(): Vector[String] = {
     val viewLine1 = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     val viewLine2 = "XXXX                           XXXX"
-    val viewLine3 = "XXXX   SIE HABEN VERLOREN :)   XXXX"
+    val viewLine3 = "XXXX   SIE HABEN VERLOREN :(   XXXX"
     val viewLine4 = "XXXX                           XXXX"
     val viewLine5 = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 
