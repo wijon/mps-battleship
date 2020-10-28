@@ -14,7 +14,23 @@ object OutputHelper {
   def generateBoard(headline: String, board: Board, showShips: Boolean): Vector[String] = {
     // TODO
     // Idee: Hit = X, Ship = O, HitShip = ∅
-    throw new NotImplementedError()
+
+    val line1 = "~~~~~~~~~~~~~"
+    val line2 = "~ 0123456789~"
+    val line3 = "~0          ~"
+    val line4 = "~1          ~"
+    val line5 = "~2          ~"
+    val line6 = "~3          ~"
+    val line7 = "~4          ~"
+    val line8 = "~5          ~"
+    val line9 = "~6          ~"
+    val line10 = "~7          ~"
+    val line11 = "~8          ~"
+    val line12 = "~9          ~"
+    val line13 = "~~~~~~~~~~~~~"
+
+    return Vector(line1, line2, line3, line4, line5, line6,
+      line7, line8, line9, line10, line11, line12, line13)
   }
 
   /** Render victory-screen for output
