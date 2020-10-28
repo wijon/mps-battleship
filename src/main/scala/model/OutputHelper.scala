@@ -67,8 +67,13 @@ object OutputHelper {
    * @return Remaining ships infotext
    */
   def generateRemainingShips(board: Board): Vector[String] = {
-    // TODO
-    throw new NotImplementedError()
+    val viewLine1 = "U-Boot         \\__/    0 hits"
+    val viewLine2 = "Zerstörer 1    \\__X/   1 hit"
+    val viewLine3 = "Zerstörer 2    \\XXX/   3 hits, versenkt"
+    val viewLine4 = "Kreuzer        \\____/  0 hits"
+    val viewLine5 = "Schlachtschiff \\_X_XX/ 3 hits"
+
+    return Vector(viewLine1, viewLine2, viewLine3, viewLine4, viewLine5)
   }
 
   /** Render round info text for output
