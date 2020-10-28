@@ -22,8 +22,13 @@ object OutputHelper {
    * @return Victory-screen
    */
   def generateVictory(): Vector[String] = {
-    // TODO
-    throw new NotImplementedError()
+    val viewLine1 = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    val viewLine2 = "XXXX                           XXXX"
+    val viewLine3 = "XXXX   SIE HABEN GEWONNEN :)   XXXX"
+    val viewLine4 = "XXXX                           XXXX"
+    val viewLine5 = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+    return Vector(viewLine1, viewLine2, viewLine3, viewLine4, viewLine5)
   }
 
   /** Render loss-screen for output
@@ -31,8 +36,13 @@ object OutputHelper {
    * @return loss-screen
    */
   def generateLoss(): Vector[String] = {
-    // TODO
-    throw new NotImplementedError()
+    val viewLine1 = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    val viewLine2 = "XXXX                           XXXX"
+    val viewLine3 = "XXXX   SIE HABEN VERLOREN :)   XXXX"
+    val viewLine4 = "XXXX                           XXXX"
+    val viewLine5 = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+    return Vector(viewLine1, viewLine2, viewLine3, viewLine4, viewLine5)
   }
 
   /** Render remaining ships-Infotext for output
