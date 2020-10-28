@@ -1,5 +1,21 @@
-/.idea
-/out
-/project/target
-/target
-/.bsp
+.bsp
+
+# Intellij
+.idea/
+target/
+
+# sbt
+.cache
+.history
+.lib/
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+project/target/
+project/project/
+logs/
+project/.sbtserver
+.sbtserver/
