@@ -2,8 +2,8 @@ package model
 
 import scala.collection.immutable.HashMap
 
-case class Board(ships: Vector[Ship]) {
-  val matrix: HashMap[Coordinates, BoardCell] = placeShips()
+case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPositions: Vector[(Ship, Coordinates)]) {
+  def this(ships: Vector[Ship]) = this(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, ships, Vector())
 
   /** Places all ships in matrix
    *
@@ -21,10 +21,23 @@ case class Board(ships: Vector[Ship]) {
    * @param y Y coordinate
    * @return hit BoardCell
    */
-  def shoot(x: Int, y: Int): BoardCell = {
+  def shoot(x: Int, y: Int): (Board, Boolean) = {
     // TODO
     // Wichtig: Was passiert, wenn Board Cell bereits beschossen wurde?!
-    throw new NotImplementedError()
+
+    // Update board cell in matrix
+    val newMatrix = matrix.updated(y, matrix(y).updated(x, BoardCell(true)))
+
+    // Check if ship was hit
+    val shipPos = shipPositions.find(v => v._2 == Coordinates(x,y))
+
+    var isHit = false
+    if(!shipPos.isEmpty){
+      // Ship was hit
+      isHit = true
+    }
+
+    return (copy(newMatrix, ships, shipPositions), isHit)
   }
 
   /** Checks if ship is destroyed
