@@ -5,7 +5,7 @@ object Battleship {
     // --> 1 Spieler, 1 KI
     // --> Boards instanziieren, Schiffe random verteilen
 
-    while (Game.isRunning()) {
+    //while (Game.isRunning()) {
       // Clear Console
       // RoundInfoText ausgeben
       // RemainingShips ausgeben
@@ -14,7 +14,7 @@ object Battleship {
       // Alle Texte neu ausgeben
       // --> Treffer: Spiel vorbei? game.running=false : Eingabe erwarten
       // --> Kein Treffer: KI spielt, Spiel vorbei? game.running=false : Alle Texte neu ausgeben
-    }
+    //}
 
     // Spiel vorbei: Victory / Loss ausgeben
   }
