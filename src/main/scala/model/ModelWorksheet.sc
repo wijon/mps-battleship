@@ -1,12 +1,6 @@
-import model.Board
+import model.{Board, Coordinates, Ship}
 
 case class Settings()
-
-case class Ship(id: Int, length: Int, destroyed: Boolean, counterHit: Int)
-
-case class BoardField(shipId: Int, hit: Boolean)
-
-case class Board(matrix: Vector[Vector[BoardField]], ships: Vector[Ship])
 
 abstract class Player(ownBoard: Board, enemyBoard: Board)
 
@@ -20,7 +14,6 @@ case class MediumAiPlayer(ownBoard: Board, enemyBoard: Board) extends AiPlayer(o
 
 case class DifficultAiPlayer(ownBoard: Board, enemyBoard: Board) extends AiPlayer(ownBoard, enemyBoard)
 
-case class Game(player1: Player, player2: Player)
 
 
 
@@ -185,4 +178,64 @@ def generateRemainingShips(board: Board): Vector[String] = {
   val viewLine5 = "Schlachtschiff \\_X_XX/ 3 hits"
 
   return Vector(viewLine1, viewLine2, viewLine3, viewLine4, viewLine5)
+}
+
+
+
+
+
+
+
+
+
+
+object Game {
+  /** Board of human player */
+  //    var player1Board: Board = new Board(getShips())
+  //    /** Board of AI player */
+  //    var player2Board: Board = new Board(getShips())
+
+  /** Check if all Ships of one Player are destroyed
+   *
+   * @return game still running?
+   */
+  def isRunning(): Boolean = {
+    // TODO
+    throw new NotImplementedError()
+  }
+
+  /** Check if human player is winner
+   *
+   * @return Winner?
+   */
+  def isWinner(): Boolean = {
+    // TODO
+    // Was passiert, wenn Spiel noch läuft?!
+    throw new NotImplementedError()
+  }
+
+  /** Create ships
+   *
+   * @return List of all ships
+   */
+  def getShips(): Vector[Ship] = {
+    return Vector(
+      Ship(5, "Carrier"),
+      Ship(4, "Battleship"),
+      Ship(3, "Cruiser"),
+      Ship(3, "Submarine"),
+      Ship(2, "Destroyer")
+    )
+  }
+
+  /** Make a move for board
+   *
+   * @param player1     board of player1? (human player)
+   * @param coordinates coordinates to shoot
+   * @return Board after play
+   */
+  def shootAtBoard(player1: Boolean, coordinates: Coordinates): Board = {
+    // TODO
+    throw new NotImplementedError()
+  }
 }
