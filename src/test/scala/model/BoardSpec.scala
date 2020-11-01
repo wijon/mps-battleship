@@ -52,11 +52,28 @@ class BoardSpec extends AnyWordSpec {
       )
 
       val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
-      val matrix2 = matrix1.updated(3, matrix(3).updated(5, BoardCell(true)))
+      val matrix2 = matrix1.updated(3, matrix1(3).updated(5, BoardCell(true)))
       val board = Board(matrix2, ships, shipPositions)
 
       "ship is destroyed" in {
         assert(board.isDestroyed(ships(0)))
+      }
+    }
+
+    "ship not destroyed" should {
+      val ships = Vector(
+        Ship(2, "Test 1")
+      )
+      val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val shipPositions = Vector(
+        ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5)))
+      )
+
+      val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
+      val board = Board(matrix1, ships, shipPositions)
+
+      "ship is not destroyed" in {
+        assert(!board.isDestroyed(ships(0)))
       }
     }
   }
