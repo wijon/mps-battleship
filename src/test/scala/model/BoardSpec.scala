@@ -59,7 +59,6 @@ class BoardSpec extends AnyWordSpec {
         assert(board.isDestroyed(ships(0)))
       }
     }
-
     "ship not destroyed" should {
       val ships = Vector(
         Ship(2, "Test 1")
@@ -74,6 +73,9 @@ class BoardSpec extends AnyWordSpec {
 
       "ship is not destroyed" in {
         assert(!board.isDestroyed(ships(0)))
+      }
+      "ship not found" in {
+        assert(!board.isDestroyed(Ship(1, "404")))
       }
     }
   }
