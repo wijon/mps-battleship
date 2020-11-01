@@ -1,17 +1,16 @@
 package model
 
-import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class ShipSpec extends AnyWordSpec with Matchers {
+class ShipSpec extends AnyWordSpec {
   "A Ship" when {
     "new" should {
       val ship = Ship(2, "Name")
       "have a length" in {
-        ship.length should be(2)
+        assert(ship.length == 2)
       }
       "have a name" in {
-        ship.name should be("Name")
+        assert(ship.name == "Name")
       }
     }
   }
