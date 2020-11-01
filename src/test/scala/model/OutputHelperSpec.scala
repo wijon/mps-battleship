@@ -42,14 +42,15 @@ class OutputHelperSpec extends AnyWordSpec {
   "Round info text view" when {
     "called" should {
       val roundNumber = 53
-      val textAsString = OutputHelper.generateRoundInfoText(roundNumber).mkString(" ")
+      val game = Game(null, null, roundNumber)
+      val textAsString = OutputHelper.generateRoundInfoText(game).mkString(" ")
 
       "not be empty" in {
         assert(!textAsString.isEmpty)
       }
 
       "contain round number" in {
-        val regex = "^.*(Rundennummer: " + roundNumber + ").*$"
+        val regex = "^.*(Runde " + roundNumber + ").*$"
         assert(textAsString.matches(regex))
       }
     }
