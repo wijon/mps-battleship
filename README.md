@@ -1,5 +1,5 @@
 # A Battleship game in Scala
 
-## Build status
+## Build status (develop)
 
-[![Build Status](https://travis-ci.org/wijon/mps-battleship.svg?branch=main)](https://travis-ci.org/wijon/mps-battleship)
+[![Build Status](https://travis-ci.org/wijon/mps-battleship.svg?branch=develop)](https://travis-ci.org/wijon/mps-battleship)
