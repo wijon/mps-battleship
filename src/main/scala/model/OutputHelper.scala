@@ -34,13 +34,11 @@ object OutputHelper {
 
   /** Render round info text for output
    *
+   * @param game Current game
    * @return Round info text
    */
-  def generateRoundInfoText(roundNumber: Int): Vector[String] = {
-    // TODO
-    // Idee: Rundennummer?, Überschrift (Spielername, ...)?
-
-    val viewLine1 = "Sie sind am Zug. Rundennummer: " + roundNumber
+  def generateRoundInfoText(game: Game): Vector[String] = {
+    val viewLine1 = "Runde " + game.roundNum
     return Vector(viewLine1)
   }
 
