@@ -6,16 +6,6 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
   // Override constructor, this one is used for the initial instantiation
   def this(ships: Vector[Ship]) = this(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, ships, Vector())
 
-  /** Places all ships in matrix
-   *
-   * @return matrix with ships
-   */
-  def placeShips(): HashMap[Coordinates, BoardCell] = {
-    // TODO
-    // Wichtig: Random Generator als Übergabeparameter verwenden!
-    throw new NotImplementedError()
-  }
-
   /** Shoot at BoardCell
    *
    * @param row row coordinate
