@@ -9,11 +9,11 @@ class CoordinatesSpec extends AnyWordSpec with Matchers {
       val coordinate = Coordinates(3, 10)
 
       "have an X-coordinate" in {
-        assert(!coordinate.x.isNaN)
+        assert(!coordinate.row.isNaN)
       }
 
       "have a Y-coordinate" in {
-        assert(!coordinate.y.isNaN)
+        assert(!coordinate.col.isNaN)
       }
     }
   }

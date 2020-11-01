@@ -1,3 +1,3 @@
 package model
 
-case class Coordinates(x: Int, y: Int)
+case class Coordinates(row: Int, col: Int)

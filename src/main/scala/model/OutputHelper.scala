@@ -50,7 +50,7 @@ object OutputHelper {
    * @return AI info text
    */
   def generateAiInfoText(coordinates: Coordinates): Vector[String] = {
-    val viewLine1 = "Der Computerspieler greift das Feld " + coordinates.x + coordinates.y + " an."
+    val viewLine1 = "Der Computerspieler greift das Feld " + coordinates.row + coordinates.col + " an."
     return Vector(viewLine1)
   }
 

@@ -65,7 +65,7 @@ class OutputHelperSpec extends AnyWordSpec {
       }
 
       "contain the coordinates" in {
-        val regex = "^.*" + testCoordinates.x + testCoordinates.y + ".*$"
+        val regex = "^.*" + testCoordinates.row + testCoordinates.col + ".*$"
         assert(textAsString.matches(regex))
       }
     }
