@@ -18,22 +18,22 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
 
   /** Shoot at BoardCell
    *
-   * @param x X coordinate
-   * @param y Y coordinate
+   * @param row row coordinate
+   * @param col col coordinate
    * @return a tuple containing the updated board together with a boolean reflecting if the shot hit a ship
    */
-  def shoot(x: Int, y: Int): (Board, Boolean) = {
+  def shoot(row: Int, col: Int): (Board, Boolean) = {
     // TODO
     // Wichtig: Was passiert, wenn Board Cell bereits beschossen wurde?!
 
     // Update board cell in matrix
-    val newMatrix = matrix.updated(y, matrix(y).updated(x, BoardCell(true)))
+    val newMatrix = matrix.updated(row, matrix(row).updated(col, BoardCell(true)))
 
     // Check if a ship was hit
-    val shipPos = shipPositions.find(sp => sp.positions.contains(Coordinates(x, y)))
+    val shipPos = shipPositions.find(sp => sp.positions.contains(Coordinates(row, col)))
 
     var isHit = false
-    if (!shipPos.isEmpty) {
+    if (shipPos.isDefined) {
       // Ship was hit
       isHit = true
     }
@@ -59,7 +59,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
 
     // Check if every board cell within the ships position is hit
     return shipPosition.get.positions.forall(c => {
-      matrix(c.y)(c.x).isHit
+      matrix(c.row)(c.col).isHit
     })
   }
 }

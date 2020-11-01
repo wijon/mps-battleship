@@ -1,52 +1,13 @@
 package model
 
-object Game {
-    /** Board of human player */
-//    var player1Board: Board = new Board(getShips())
-//    /** Board of AI player */
-//    var player2Board: Board = new Board(getShips())
-
-  /** Check if all Ships of one Player are destroyed
-   *
-   * @return game still running?
-   */
-  def isRunning(): Boolean = {
-    // TODO
-    throw new NotImplementedError()
-  }
-
-    /** Check if human player is winner
-     *
-     * @return Winner?
-     */
-    def isWinner(): Boolean = {
-      // TODO
-      // Was passiert, wenn Spiel noch läuft?!
-      throw new NotImplementedError()
-    }
-
-  /** Create ships
-   *
-   * @return List of all ships
-   */
-  def getShips(): Vector[Ship] = {
-    return Vector(
-      Ship(5, "Carrier"),
-      Ship(4, "Battleship"),
-      Ship(3, "Cruiser"),
-      Ship(3, "Submarine"),
-      Ship(2, "Destroyer")
-    )
-  }
-
-    /** Make a move for board
-     *
-     * @param player1     board of player1? (human player)
-     * @param coordinates coordinates to shoot
-     * @return Board after play
-     */
-    def shootAtBoard(player1: Boolean, coordinates: Coordinates): Board = {
-      // TODO
-      throw new NotImplementedError()
-    }
+/** Game-class manages boards and game specific values
+ *
+ * @param player1Board Board of human player
+ * @param player2Board Board of AI player
+ * @param roundNum     Current round number
+ */
+case class Game(player1Board: Board, player2Board: Board, roundNum: Int) {
+  // Override constructor, this one is used for the initial instantiation
+  def this(player1Ships: Vector[Ship], player2Ships: Vector[Ship]) =
+    this(new Board(player1Ships), new Board(player2Ships), 0)
 }
