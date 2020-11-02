@@ -2,6 +2,10 @@ language: scala
 scala:
   - 2.13.3
 
+branches:
+  only:
+    - develop
+
 script:
   - sbt clean coverage test coverageReport
 
