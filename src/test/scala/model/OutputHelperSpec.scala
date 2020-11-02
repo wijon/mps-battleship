@@ -217,4 +217,84 @@ class OutputHelperSpec extends AnyWordSpec {
       }
     }
   }
+
+  "Board text" when {
+    "called with ships to show" should {
+      val ships = Vector(
+        Ship(2, "Test 1"),
+        Ship(3, "Test 2"),
+        Ship(5, "Test 2"),
+      )
+      val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val shipPositions = Vector(
+        ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        ShipPosition(ships(1), Vector(Coordinates(1,1), Coordinates(1,2), Coordinates(1,3))),
+        ShipPosition(ships(2), Vector(Coordinates(9,0), Coordinates(8,0), Coordinates(7,0), Coordinates(6,0), Coordinates(5,0))),
+      )
+
+      val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
+      val matrix2 = matrix1.updated(3, matrix1(3).updated(5, BoardCell(true)))
+      val matrix3 = matrix2.updated(1, matrix2(1).updated(2, BoardCell(true)))
+      val matrix4 = matrix3.updated(9, matrix3(9).updated(8, BoardCell(true)))
+      val matrix5 = matrix4.updated(7, matrix4(7).updated(6, BoardCell(true)))
+      val testBoard = Board(matrix5, ships, shipPositions)
+
+      val test = OutputHelper.generateBoard(testBoard, true)
+
+      "not be empty" in {
+        assert(!test.mkString(" ").isEmpty)
+      }
+
+      "show ships" in {
+        assert(test.mkString(" ").contains("O"))
+      }
+
+      "show hits in water" in {
+        assert(test.mkString(" ").contains("X"))
+      }
+
+      "show hits on boat" in {
+        assert(test.mkString(" ").contains("@"))
+      }
+    }
+
+    "called with ships to hide" should {
+      val ships = Vector(
+        Ship(2, "Test 1"),
+        Ship(3, "Test 2"),
+        Ship(5, "Test 2"),
+      )
+      val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val shipPositions = Vector(
+        ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        ShipPosition(ships(1), Vector(Coordinates(1,1), Coordinates(1,2), Coordinates(1,3))),
+        ShipPosition(ships(2), Vector(Coordinates(9,0), Coordinates(8,0), Coordinates(7,0), Coordinates(6,0), Coordinates(5,0))),
+      )
+
+      val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
+      val matrix2 = matrix1.updated(3, matrix1(3).updated(5, BoardCell(true)))
+      val matrix3 = matrix2.updated(1, matrix2(1).updated(2, BoardCell(true)))
+      val matrix4 = matrix3.updated(9, matrix3(9).updated(8, BoardCell(true)))
+      val matrix5 = matrix4.updated(7, matrix4(7).updated(6, BoardCell(true)))
+      val testBoard = Board(matrix5, ships, shipPositions)
+
+      val test = OutputHelper.generateBoard(testBoard, false)
+
+      "not be empty" in {
+        assert(!test.mkString(" ").isEmpty)
+      }
+
+      "not show ships" in {
+        assert(!test.mkString(" ").contains("O"))
+      }
+
+      "show hits in water" in {
+        assert(test.mkString(" ").contains("X"))
+      }
+
+      "show hits on boat" in {
+        assert(test.mkString(" ").contains("@"))
+      }
+    }
+  }
 }

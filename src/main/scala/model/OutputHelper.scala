@@ -11,26 +11,55 @@ object OutputHelper {
    * @return
    */
   def generateBoard(board: Board, showShips: Boolean): Vector[String] = {
-    // TODO
-    // Idee: Hit = X, Ship = O, HitShip = ∅
-    // Überschrift? Spielerbrett / Gegnerbrett?
-
     val line1 = "~~~~~~~~~~~~~"
     val line2 = "~ 0123456789~"
-    val line3 = "~0          ~"
-    val line4 = "~1          ~"
-    val line5 = "~2          ~"
-    val line6 = "~3          ~"
-    val line7 = "~4          ~"
-    val line8 = "~5          ~"
-    val line9 = "~6          ~"
-    val line10 = "~7          ~"
-    val line11 = "~8          ~"
-    val line12 = "~9          ~"
     val line13 = "~~~~~~~~~~~~~"
+    return generateBoardLineByLine(0, board, Vector(line1, line2), showShips) :+ line13
+  }
 
-    return Vector(line1, line2, line3, line4, line5, line6,
-      line7, line8, line9, line10, line11, line12, line13)
+  /** Render board line by line
+   *
+   * @param currentRow Index of current row
+   * @param board Board to render
+   * @param currentOutput Current output
+   * @param showShips Show ships in board?
+   * @return Board for output
+   */
+  private def generateBoardLineByLine(currentRow: Int, board: Board, currentOutput: Vector[String], showShips: Boolean): Vector[String] = {
+    if (currentRow >= 10)
+      return currentOutput
+
+    val prefix = "~" + currentRow
+    val postfix = "~"
+
+    val newLine = prefix + generateBoardLineFieldByField(currentRow, 0, board, "", showShips) + postfix;
+
+    return generateBoardLineByLine(currentRow + 1, board, currentOutput :+ newLine, showShips)
+  }
+
+  /** Render board line field by field
+   *
+   * @param currentRow Index of current row
+   * @param currentCol Index of current column
+   * @param board Board to render
+   * @param currentOutput Current output
+   * @param showShips Show ships in board?
+   * @return BoardRow for output
+   */
+  private def generateBoardLineFieldByField(currentRow: Int, currentCol: Int, board: Board, currentOutput: String, showShips: Boolean): String = {
+    if (currentCol >= 10)
+      return currentOutput
+
+    val cellIsHit = (board.matrix(currentRow)) (currentCol).isHit
+    val shipPos = board.shipPositions.find(sp => sp.positions.contains(Coordinates(currentRow, currentCol)))
+
+    val newOutput = if(cellIsHit) {
+      if(shipPos.isDefined) "@" else "X"
+    } else {
+      if(shipPos.isDefined && showShips) "O" else " "
+    }
+
+    return generateBoardLineFieldByField(currentRow, currentCol + 1, board, currentOutput + newOutput, showShips)
   }
 
   /** Render remaining ships-Infotext for output
@@ -45,13 +74,13 @@ object OutputHelper {
   /** Render remaining ships-infotext ship by ship
    *
    * @param remainingShips Remaining ships to process
-   * @param currentOutput Current return value of function
-   * @param board Board to process
+   * @param currentOutput  Current return value of function
+   * @param board          Board to process
    * @return Remaining ships infotext
    */
   private def generateRemainingShipsLineByLine(remainingShips: Vector[Ship], currentOutput: Vector[String], board: Board)
   : Vector[String] = {
-    if(remainingShips.isEmpty)
+    if (remainingShips.isEmpty)
       return currentOutput
 
     val shipToProcess = remainingShips(0)
@@ -62,7 +91,7 @@ object OutputHelper {
 
   /** Render info text for single ship
    *
-   * @param ship Ship to process
+   * @param ship  Ship to process
    * @param board Board to process
    * @return Info text for single ship
    */
@@ -71,25 +100,25 @@ object OutputHelper {
     val singleShipData = generateSingleShipElement(shipPos.get.positions, "\\", board, 0)
     val shipAsVisual = singleShipData._1 + "/" + (" " * (6 - ship.length))
     val hitInfoText = singleShipData._2 + " hit(s)"
-    val destroyedInfoText = if(singleShipData._2 == ship.length) ", destroyed" else ""
+    val destroyedInfoText = if (singleShipData._2 == ship.length) ", destroyed" else ""
     return shipAsVisual + hitInfoText + destroyedInfoText
   }
 
   /** Render info text for single ship field by field
    *
    * @param remainingShipPos Remaining ship positions to process
-   * @param currentOutput Current return value of function
-   * @param board Board to process
+   * @param currentOutput    Current return value of function
+   * @param board            Board to process
    * @return Single ship info text and number of hits
    */
   private def generateSingleShipElement(remainingShipPos: Vector[Coordinates], currentOutput: String, board: Board, currentNumberOfHits: Int): (String, Int) = {
-    if(remainingShipPos.isEmpty)
+    if (remainingShipPos.isEmpty)
       return (currentOutput, currentNumberOfHits)
 
     val shipPositionToProcess = remainingShipPos(0)
-    val boardCell = (board.matrix(shipPositionToProcess.row))(shipPositionToProcess.col)
-    val newChar = if(boardCell.isHit) 'X' else '_'
-    val newNumberOfHits = if(boardCell.isHit) currentNumberOfHits + 1 else currentNumberOfHits
+    val boardCell = (board.matrix(shipPositionToProcess.row)) (shipPositionToProcess.col)
+    val newChar = if (boardCell.isHit) 'X' else '_'
+    val newNumberOfHits = if (boardCell.isHit) currentNumberOfHits + 1 else currentNumberOfHits
     return (generateSingleShipElement(remainingShipPos.drop(1), currentOutput + newChar, board, newNumberOfHits))
   }
 
