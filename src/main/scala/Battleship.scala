@@ -24,7 +24,7 @@ object Battleship {
    * @return List of all ships
    */
   def getShips(): Vector[Ship] = {
-    return Vector(
+    Vector(
       Ship(5, "Carrier"),
       Ship(4, "Battleship"),
       Ship(3, "Cruiser"),

@@ -22,14 +22,8 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
     // Check if a ship was hit
     val shipPos = shipPositions.find(sp => sp.positions.contains(Coordinates(row, col)))
 
-    var isHit = false
-    if (shipPos.isDefined) {
-      // Ship was hit
-      isHit = true
-    }
-
     // Return a copy of the current object with the updated matrix
-    return (copy(newMatrix, ships, shipPositions), isHit)
+    (copy(newMatrix, ships, shipPositions), shipPos.isDefined)
   }
 
   /** Checks if ship is destroyed
@@ -41,14 +35,8 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
     // Get position for given ship
     val shipPosition = shipPositions.find(sp => sp.ship == ship)
 
-    // Check if there is a position given for the ship
-    if (shipPosition.isEmpty) {
-      // No position given, return false (ToDo: Handle differently?)
-      return false
-    }
-
     // Check if every board cell within the ships position is hit
-    return shipPosition.get.positions.forall(c => {
+    !shipPosition.isEmpty && shipPosition.get.positions.forall(c => {
       matrix(c.row)(c.col).isHit
     })
   }

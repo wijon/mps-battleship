@@ -3,6 +3,90 @@ import model.{Board, BoardCell, Coordinates, OutputHelper, Ship, ShipPosition}
 
 import scala.collection.immutable.HashMap
 
+
+
+
+
+val ships = Vector(
+  Ship(2, "Test 1"),
+  Ship(3, "Test 2"),
+  Ship(5, "Test 2"),
+)
+val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+val shipPositions = Vector(
+  ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+  ShipPosition(ships(1), Vector(Coordinates(1,1), Coordinates(1,2), Coordinates(1,3))),
+  ShipPosition(ships(2), Vector(Coordinates(9,0), Coordinates(8,0), Coordinates(7,0), Coordinates(6,0), Coordinates(5,0))),
+)
+
+val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
+val matrix2 = matrix1.updated(3, matrix1(3).updated(5, BoardCell(true)))
+val matrix3 = matrix2.updated(1, matrix2(1).updated(2, BoardCell(true)))
+val matrix4 = matrix3.updated(9, matrix3(9).updated(8, BoardCell(true)))
+val matrix5 = matrix4.updated(7, matrix4(7).updated(6, BoardCell(true)))
+val testBoard = Board(matrix5, ships, shipPositions)
+
+val test = OutputHelper.generateBoard(testBoard, true)
+test.foreach(l => println(l))
+
+
+
+
+
+
+val shipsB = Vector(
+  Ship(2, "Test 1"),
+  Ship(3, "Test 2")
+)
+val matrixB = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+val shipPositionsB = Vector(
+  ShipPosition(shipsB(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+  ShipPosition(shipsB(1), Vector(Coordinates(1,1), Coordinates(1,2), Coordinates(1,3)))
+)
+
+val matrixB1 = matrixB.updated(3, matrixB(3).updated(4, BoardCell(true)))
+val matrixB2 = matrixB1.updated(3, matrixB1(3).updated(5, BoardCell(true)))
+val matrixB3 = matrixB2.updated(1, matrixB2(1).updated(2, BoardCell(true)))
+val testBoardB = Board(matrixB3, shipsB, shipPositionsB)
+
+val test2 = OutputHelper.generateRemainingShips(testBoardB)
+test2.foreach(l => println(l))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //case class Settings()
 //abstract class Player(ownBoard: Board, enemyBoard: Board)
 //case class HumanPlayer(ownBoard: Board, enemyBoard: Board) extends Player(ownBoard, enemyBoard)

@@ -14,7 +14,7 @@ object OutputHelper {
     val line1 = "~~~~~~~~~~~~~"
     val line2 = "~ 0123456789~"
     val line13 = "~~~~~~~~~~~~~"
-    return generateBoardLineByLine(0, board, Vector(line1, line2), showShips) :+ line13
+    generateBoardLineByLine(0, board, Vector(line1, line2), showShips) :+ line13
   }
 
   /** Render board line by line
@@ -33,8 +33,7 @@ object OutputHelper {
     val postfix = "~"
 
     val newLine = prefix + generateBoardLineFieldByField(currentRow, 0, board, "", showShips) + postfix;
-
-    return generateBoardLineByLine(currentRow + 1, board, currentOutput :+ newLine, showShips)
+    generateBoardLineByLine(currentRow + 1, board, currentOutput :+ newLine, showShips)
   }
 
   /** Render board line field by field
@@ -59,7 +58,7 @@ object OutputHelper {
       if(shipPos.isDefined && showShips) "O" else " "
     }
 
-    return generateBoardLineFieldByField(currentRow, currentCol + 1, board, currentOutput + newOutput, showShips)
+    generateBoardLineFieldByField(currentRow, currentCol + 1, board, currentOutput + newOutput, showShips)
   }
 
   /** Render remaining ships-Infotext for output
@@ -68,7 +67,7 @@ object OutputHelper {
    * @return Remaining ships infotext
    */
   def generateRemainingShips(board: Board): Vector[String] = {
-    return generateRemainingShipsLineByLine(board.ships, Vector(), board)
+    generateRemainingShipsLineByLine(board.ships, Vector(), board)
   }
 
   /** Render remaining ships-infotext ship by ship
@@ -86,7 +85,7 @@ object OutputHelper {
     val shipToProcess = remainingShips(0)
     val spacesToAdd = 11 - shipToProcess.name.length
     val newLine = shipToProcess.name + (" " * spacesToAdd) + generateShipHits(shipToProcess, board)
-    return generateRemainingShipsLineByLine(remainingShips.drop(1), currentOutput :+ newLine, board)
+    generateRemainingShipsLineByLine(remainingShips.drop(1), currentOutput :+ newLine, board)
   }
 
   /** Render info text for single ship
@@ -101,7 +100,7 @@ object OutputHelper {
     val shipAsVisual = singleShipData._1 + "/" + (" " * (6 - ship.length))
     val hitInfoText = singleShipData._2 + " hit(s)"
     val destroyedInfoText = if (singleShipData._2 == ship.length) ", destroyed" else ""
-    return shipAsVisual + hitInfoText + destroyedInfoText
+    shipAsVisual + hitInfoText + destroyedInfoText
   }
 
   /** Render info text for single ship field by field
@@ -119,7 +118,7 @@ object OutputHelper {
     val boardCell = (board.matrix(shipPositionToProcess.row)) (shipPositionToProcess.col)
     val newChar = if (boardCell.isHit) 'X' else '_'
     val newNumberOfHits = if (boardCell.isHit) currentNumberOfHits + 1 else currentNumberOfHits
-    return (generateSingleShipElement(remainingShipPos.drop(1), currentOutput + newChar, board, newNumberOfHits))
+    generateSingleShipElement(remainingShipPos.drop(1), currentOutput + newChar, board, newNumberOfHits)
   }
 
   /** Render victory-screen for output
@@ -132,8 +131,7 @@ object OutputHelper {
     val viewLine3 = "XXXX   SIE HABEN GEWONNEN :)   XXXX"
     val viewLine4 = "XXXX                           XXXX"
     val viewLine5 = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-
-    return Vector(viewLine1, viewLine2, viewLine3, viewLine4, viewLine5)
+    Vector(viewLine1, viewLine2, viewLine3, viewLine4, viewLine5)
   }
 
   /** Render loss-screen for output
@@ -146,8 +144,7 @@ object OutputHelper {
     val viewLine3 = "XXXX   SIE HABEN VERLOREN :(   XXXX"
     val viewLine4 = "XXXX                           XXXX"
     val viewLine5 = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-
-    return Vector(viewLine1, viewLine2, viewLine3, viewLine4, viewLine5)
+    Vector(viewLine1, viewLine2, viewLine3, viewLine4, viewLine5)
   }
 
   /** Render round info text for output
@@ -157,7 +154,7 @@ object OutputHelper {
    */
   def generateRoundInfoText(game: Game): Vector[String] = {
     val viewLine1 = "Runde " + game.roundNum
-    return Vector(viewLine1)
+    Vector(viewLine1)
   }
 
   /** Render info text about AI-actions for output
@@ -167,7 +164,7 @@ object OutputHelper {
    */
   def generateAiInfoText(coordinates: Coordinates): Vector[String] = {
     val viewLine1 = "Der Computerspieler greift das Feld " + coordinates.row + coordinates.col + " an."
-    return Vector(viewLine1)
+    Vector(viewLine1)
   }
 
   /** Render info text about ship hit for output
@@ -177,7 +174,7 @@ object OutputHelper {
    */
   def generateShipHitInfotext(ship: Ship): Vector[String] = {
     val viewLine1 = "Das Schiff " + ship.name + " wurde getroffen."
-    return Vector(viewLine1)
+    Vector(viewLine1)
   }
 
   /** Render info text about destroyed ship for output
@@ -187,6 +184,6 @@ object OutputHelper {
    */
   def generateShipDestroyedInfoText(ship: Ship): Vector[String] = {
     val viewLine1 = "Das Schiff " + ship.name + " wurde versenkt."
-    return Vector(viewLine1)
+    Vector(viewLine1)
   }
 }

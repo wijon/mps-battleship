@@ -111,7 +111,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
       val shipPositions = Vector(
         ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
-        ShipPosition(ships(1), Vector(Coordinates(1,1), Coordinates(1,2), Coordinates(1,3)))
+        ShipPosition(ships(1), Vector(Coordinates(1, 1), Coordinates(1, 2), Coordinates(1, 3)))
       )
 
       val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
@@ -119,7 +119,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix3 = matrix2.updated(1, matrix2(1).updated(2, BoardCell(true)))
       val testBoard = Board(matrix3, ships, shipPositions)
 
-      val test = OutputHelper.generateRemainingShips(testBoard);
+      val test = OutputHelper.generateRemainingShips(testBoard)
 
       "contain one line for every ship on the board" in {
         assert(test.length == ships.length)
@@ -139,7 +139,7 @@ class OutputHelperSpec extends AnyWordSpec {
 
       val testBoard = Board(matrix, ships, shipPositions)
 
-      val test = OutputHelper.generateRemainingShips(testBoard);
+      val test = OutputHelper.generateRemainingShips(testBoard)
 
       "show this ship correctly" in {
         assert(test.mkString(" ").contains("\\__/"))
@@ -168,7 +168,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix1 = matrix.updated(3, matrix(3).updated(5, BoardCell(true)))
       val testBoard = Board(matrix1, ships, shipPositions)
 
-      val test = OutputHelper.generateRemainingShips(testBoard);
+      val test = OutputHelper.generateRemainingShips(testBoard)
 
       "show this ship correctly" in {
         assert(test.mkString(" ").contains("\\_X/"))
@@ -198,7 +198,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix2 = matrix1.updated(3, matrix1(3).updated(5, BoardCell(true)))
       val testBoard = Board(matrix2, ships, shipPositions)
 
-      val test = OutputHelper.generateRemainingShips(testBoard);
+      val test = OutputHelper.generateRemainingShips(testBoard)
 
       "show this ship correctly" in {
         assert(test.mkString(" ").contains("\\XX/"))
@@ -228,8 +228,8 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
       val shipPositions = Vector(
         ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
-        ShipPosition(ships(1), Vector(Coordinates(1,1), Coordinates(1,2), Coordinates(1,3))),
-        ShipPosition(ships(2), Vector(Coordinates(9,0), Coordinates(8,0), Coordinates(7,0), Coordinates(6,0), Coordinates(5,0))),
+        ShipPosition(ships(1), Vector(Coordinates(1, 1), Coordinates(1, 2), Coordinates(1, 3))),
+        ShipPosition(ships(2), Vector(Coordinates(9, 0), Coordinates(8, 0), Coordinates(7, 0), Coordinates(6, 0), Coordinates(5, 0))),
       )
 
       val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
@@ -267,8 +267,8 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
       val shipPositions = Vector(
         ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
-        ShipPosition(ships(1), Vector(Coordinates(1,1), Coordinates(1,2), Coordinates(1,3))),
-        ShipPosition(ships(2), Vector(Coordinates(9,0), Coordinates(8,0), Coordinates(7,0), Coordinates(6,0), Coordinates(5,0))),
+        ShipPosition(ships(1), Vector(Coordinates(1, 1), Coordinates(1, 2), Coordinates(1, 3))),
+        ShipPosition(ships(2), Vector(Coordinates(9, 0), Coordinates(8, 0), Coordinates(7, 0), Coordinates(6, 0), Coordinates(5, 0))),
       )
 
       val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
