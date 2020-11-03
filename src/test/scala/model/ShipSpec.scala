@@ -5,12 +5,16 @@ import org.scalatest.wordspec.AnyWordSpec
 class ShipSpec extends AnyWordSpec {
   "A Ship" when {
     "new" should {
-      val ship = Ship(2, "Name")
+      val length = 2
+      val name = "Name"
+
+      val ship = Ship(length, name)
+
       "have a length" in {
-        assert(ship.length == 2)
+        assert(ship.length == length)
       }
       "have a name" in {
-        assert(ship.name == "Name")
+        assert(ship.name == name)
       }
     }
   }
