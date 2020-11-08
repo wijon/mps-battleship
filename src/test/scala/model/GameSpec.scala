@@ -80,7 +80,7 @@ class GameSpec extends AnyWordSpec {
         val shipPositionsHuman = Vector()
 
         val shipPositionsAi = Vector(
-          ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+          ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
         )
 
         val testBoardHuman = Board(matrixHuman3, shipsHuman, shipPositionsHuman)
@@ -99,7 +99,7 @@ class GameSpec extends AnyWordSpec {
 
       "ai ship positions are inconsistent" should {
         val shipPositionsHuman = Vector(
-          ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+          ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
         )
 
         val shipPositionsAi = Vector()
