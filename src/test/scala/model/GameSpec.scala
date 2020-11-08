@@ -80,7 +80,7 @@ class GameSpec extends AnyWordSpec {
         val shipPositionsHuman = Vector()
 
         val shipPositionsAi = Vector(
-          ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+          ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
         )
 
         val testBoardHuman = Board(matrixHuman3, shipsHuman, shipPositionsHuman)
