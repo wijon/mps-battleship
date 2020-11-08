@@ -24,4 +24,14 @@ class BattleshipSpec extends AnyWordSpec {
       }
     }
   }
+
+  "All ships" when {
+    "generated" should {
+      val ships = Battleship.getShips()
+
+      "have different names" in {
+        assert(ships.map(_.name).distinct.length == ships.length)
+      }
+    }
+  }
 }
