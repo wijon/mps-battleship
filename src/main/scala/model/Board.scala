@@ -17,7 +17,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
   def generateCoordinates(currentCoordinates: Coordinates,
                           remainingMoves: Int,
                           movingDirection: BoardDirection): Vector[Coordinates] = {
-    if (remainingMoves == 0) {
+    if (remainingMoves <= 0) {
       Vector.empty
     } else {
       val newCoordinates = movingDirection match {
@@ -30,11 +30,6 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
         // Fehlermonade
         currentCoordinates
       }
-
-      // TODO
-      // Fehlermonade bei Zahlen außerhalb des Gültigkeitsbereichs?
-      // 0 < row < 9
-      // 0 < col < 9
 
       generateCoordinates(newCoordinates, remainingMoves - 1, movingDirection) :+ currentCoordinates
     }
@@ -52,12 +47,6 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
                       startingRow: () => Int,
                       startingCol: () => Int,
                       direction: () => BoardDirection): Board = {
-    // TODO
-    // Fehlermonade bei zu hohen Werten
-    // row max 9
-    // col max 9
-    // direction?
-
     placeSingleShip(ship, Coordinates(startingRow(), startingCol()), direction())
   }
 
@@ -104,6 +93,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
     // Fehlermonade, wenn Schiff hier nicht plaziert werden kann
     // Fehlermonade, wenn Schiff bereits platziert wurde
     // Fehlermonade, wenn Schiff nicht Teil des Bretts ist
+    // Fehlermonade, wenn row / col Wert nicht möglich (< 0, > 9)
 
     val newShipPosition = ShipPosition(ship, shipCoordinates)
     copy(matrix, ships, shipPositions :+ newShipPosition)
