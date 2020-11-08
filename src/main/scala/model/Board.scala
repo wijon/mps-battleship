@@ -1,7 +1,5 @@
 package model
 
-import scala.collection.immutable.HashMap
-
 case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPositions: Vector[ShipPosition]) {
   // Override constructor, this one is used for the initial instantiation
   def this(ships: Vector[Ship]) = this(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, ships, Vector())
@@ -14,15 +12,10 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    */
   def shoot(row: Int, col: Int): (Board, Boolean) = {
     // TODO
-    // Wichtig: Was passiert, wenn Board Cell bereits beschossen wurde?!
+    // Wichtig: Was passiert, wenn Board Cell bereits beschossen wurde?! --> MONADE!
 
-    // Update board cell in matrix
     val newMatrix = matrix.updated(row, matrix(row).updated(col, BoardCell(true)))
-
-    // Check if a ship was hit
-    val shipPos = shipPositions.find(sp => sp.positions.contains(Coordinates(row, col)))
-
-    // Return a copy of the current object with the updated matrix
+    val shipPos = shipPositions.find(_.positions.contains(Coordinates(row, col)))
     (copy(newMatrix, ships, shipPositions), shipPos.isDefined)
   }
 
@@ -32,10 +25,11 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    * @return destroyed?
    */
   def isDestroyed(ship: Ship): Boolean = {
-    // Get position for given ship
-    val shipPosition = shipPositions.find(sp => sp.ship == ship)
+    // TODO
+    // Wenn Schiff keine Position hat --> Fehler (MONADE)
 
-    // Check if every board cell within the ships position is hit
+    val shipPosition = shipPositions.find(_.ship == ship)
+
     !shipPosition.isEmpty && shipPosition.get.positions.forall(c => {
       matrix(c.row)(c.col).isHit
     })

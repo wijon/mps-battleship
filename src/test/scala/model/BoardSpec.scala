@@ -10,6 +10,7 @@ class BoardSpec extends AnyWordSpec {
         Ship(2, "Test 2")
       )
       val board = new Board(ships)
+
       "have ships" in {
         assert(board.ships == ships)
       }
@@ -31,6 +32,7 @@ class BoardSpec extends AnyWordSpec {
       val board = Board(matrix, ships, shipPositions)
       val result1Shot = board.shoot(3, 4)
       val result2Shot = result1Shot._1.shoot(8, 1)
+
       "register BoardCell hit" in {
         assert(result1Shot._1.matrix(3)(4).isHit)
         assert(result2Shot._1.matrix(8)(1).isHit)
