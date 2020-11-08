@@ -101,8 +101,8 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
   def placeSingleShip(ship: Ship, shipCoordinates: Vector[Coordinates]): Board = {
     // TODO
     // Fehlermonade, wenn Schiff hier nicht plaziert werden kann
-    // Fehlermonade, wenn Schiff bereits platziert ist
-    // Fehlermonade, wenn Schiff nicht teil des Bretts ist
+    // Fehlermonade, wenn Schiff bereits platziert wurde
+    // Fehlermonade, wenn Schiff nicht Teil des Bretts ist
 
     val newShipPosition = ShipPosition(ship, shipCoordinates)
     copy(matrix, ships, shipPositions :+ newShipPosition)
