@@ -52,7 +52,7 @@ class GameSpec extends AnyWordSpec {
       "not be running" in {
         val result = testGame.isRunning()
         assert(result.isSuccess)
-        assert(result.get)
+        assert(!result.get)
       }
 
       "declare ai as winner" in {

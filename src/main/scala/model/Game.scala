@@ -36,7 +36,7 @@ case class Game(player1Board: Board, player2Board: Board, roundNum: Int) {
    */
   def humanPlayerIsWinner(): Try[Boolean] = {
     isRunning() match {
-      case Success(value) => if (value) player2Board.areAllShipsDestroyed() else Success(false)
+      case Success(value) => if (!value) player2Board.areAllShipsDestroyed() else Success(false)
       case Failure(ex) => Failure(ex)
     }
   }
