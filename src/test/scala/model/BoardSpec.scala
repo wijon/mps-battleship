@@ -21,6 +21,7 @@ class BoardSpec extends AnyWordSpec {
         assert(board.matrix.flatten.forall(bc => !bc.isHit))
       }
     }
+
     "shot at" should {
       val ships = Vector(
         Ship(2, "Test 1")
@@ -44,6 +45,7 @@ class BoardSpec extends AnyWordSpec {
         assert(result1Shot._2)
       }
     }
+
     "ship destroyed" should {
       val ships = Vector(
         Ship(2, "Test 1")
@@ -58,9 +60,12 @@ class BoardSpec extends AnyWordSpec {
       val board = Board(matrix2, ships, shipPositions)
 
       "ship is destroyed" in {
-        assert(board.isDestroyed(ships(0)))
+        val result = board.isDestroyed(ships(0))
+        assert(result.isSuccess)
+        assert(result.get)
       }
     }
+
     "ship not destroyed" should {
       val ships = Vector(
         Ship(2, "Test 1")
@@ -74,10 +79,14 @@ class BoardSpec extends AnyWordSpec {
       val board = Board(matrix1, ships, shipPositions)
 
       "ship is not destroyed" in {
-        assert(!board.isDestroyed(ships(0)))
+        val result = board.isDestroyed(ships(0))
+        assert(result.isSuccess)
+        assert(!result.get)
       }
+
       "ship not found" in {
-        assert(!board.isDestroyed(Ship(1, "404")))
+        val result = board.isDestroyed(Ship(1, "404"))
+        assert(result.isFailure)
       }
     }
   }

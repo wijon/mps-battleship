@@ -1,5 +1,7 @@
 package model
 
+import scala.util.{Failure, Success, Try}
+
 case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPositions: Vector[ShipPosition]) {
   // Override constructor, this one is used for the initial instantiation
   def this(ships: Vector[Ship]) = this(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, ships, Vector())
@@ -24,14 +26,20 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    * @param ship Ship to check
    * @return destroyed?
    */
-  def isDestroyed(ship: Ship): Boolean = {
-    // TODO
-    // Wenn Schiff keine Position hat --> Fehler (MONADE)
-
+  def isDestroyed(ship: Ship): Try[Boolean] = {
     val shipPosition = shipPositions.find(_.ship == ship)
 
-    !shipPosition.isEmpty && shipPosition.get.positions.forall(c => {
-      matrix(c.row)(c.col).isHit
-    })
+    shipPosition
+      .map(sp => Success(sp.positions.forall(c => {
+        matrix(c.row)(c.col).isHit
+      })))
+      .getOrElse(Failure(new NoSuchElementException))
+  }
+
+  def areAllShipsDestroyed(): Try[Boolean] = {
+    Try(ships.map(isDestroyed(_)).map {
+      case Success(y) => y
+      case Failure(ex) => throw ex
+    }.reduce((res, cur) => res && cur))
   }
 }
