@@ -132,6 +132,10 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
       .getOrElse(Failure(new NoSuchElementException))
   }
 
+  /** Checks if all ships of this board are destroyed
+   *
+   * @return true if all are destroyed, otherwise false
+   */
   def areAllShipsDestroyed(): Try[Boolean] = {
     Try(ships.map(isDestroyed(_)).map {
       case Success(y) => y
