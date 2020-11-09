@@ -26,9 +26,9 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
         case BoardDirection.South => Coordinates(currentCoordinates.row + 1, currentCoordinates.col)
         case BoardDirection.West => Coordinates(currentCoordinates.row, currentCoordinates.col - 1)
         case _ =>
-        // TODO
-        // Fehlermonade
-        currentCoordinates
+          // TODO
+          // Fehlermonade
+          currentCoordinates
       }
 
       generateCoordinates(newCoordinates, remainingMoves - 1, movingDirection) :+ currentCoordinates
@@ -105,13 +105,16 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    * @param col col coordinate
    * @return a tuple containing the updated board together with a boolean reflecting if the shot hit a ship
    */
-  def shoot(row: Int, col: Int): (Board, Boolean) = {
-    // TODO
-    // Wichtig: Was passiert, wenn Board Cell bereits beschossen wurde?! --> MONADE!
+  def shoot(row: Int, col: Int): Try[ShotAtResult] = {
+    if (matrix(row)(col).isHit) {
+      // Was already previously shot at
+      Failure(new UnsupportedOperationException)
+    } else {
+      val newMatrix = matrix.updated(row, matrix(row).updated(col, BoardCell(true)))
+      val shipPos = shipPositions.find(_.positions.contains(Coordinates(row, col)))
 
-    val newMatrix = matrix.updated(row, matrix(row).updated(col, BoardCell(true)))
-    val shipPos = shipPositions.find(_.positions.contains(Coordinates(row, col)))
-    (copy(newMatrix, ships, shipPositions), shipPos.isDefined)
+      Success(ShotAtResult(copy(newMatrix, ships, shipPositions), shipPos.isDefined))
+    }
   }
 
   /** Checks if ship is destroyed

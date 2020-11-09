@@ -32,17 +32,38 @@ class BoardSpec extends AnyWordSpec {
       )
       val board = Board(matrix, ships, shipPositions)
       val result1Shot = board.shoot(3, 4)
-      val result2Shot = result1Shot._1.shoot(8, 1)
 
       "register BoardCell hit" in {
-        assert(result1Shot._1.matrix(3)(4).isHit)
-        assert(result2Shot._1.matrix(8)(1).isHit)
+        assert(result1Shot.isSuccess)
+        assert(result1Shot.get.board.matrix(3)(4).isHit)
       }
-      "register no ship hit" in {
-        assert(!result2Shot._2)
+
+      "shot at different BoardCell" should {
+        val result2Shot = result1Shot.get.board.shoot(8, 1)
+
+        "register both BoardCell hit" in {
+          assert(result2Shot.isSuccess)
+          assert(result2Shot.get.board.matrix(8)(1).isHit)
+          assert(result2Shot.get.board.matrix(3)(4).isHit) // First shot
+        }
+
+        "register no ship hit" in {
+          assert(result2Shot.isSuccess)
+          assert(!result2Shot.get.isShipHit)
+        }
+
+        "register ship hit" in {
+          assert(result1Shot.isSuccess)
+          assert(result1Shot.get.isShipHit)
+        }
       }
-      "register ship hit" in {
-        assert(result1Shot._2)
+
+      "shot at same BoardCell again" should {
+        val result3Shot = result1Shot.get.board.shoot(3, 4)
+
+        "fail" in {
+          assert(result3Shot.isFailure)
+        }
       }
     }
 
