@@ -19,11 +19,10 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
   def generateCoordinates(currentCoordinates: Coordinates,
                           remainingMoves: Int,
                           movingDirection: BoardDirection): Vector[Coordinates] = {
-    if (remainingMoves <= 0) {
-      Vector.empty
-    } else {
-      generateCoordinates(moveOneField(currentCoordinates, movingDirection), remainingMoves - 1, movingDirection) :+
-        currentCoordinates
+    remainingMoves match {
+      case x if x <= 0 => Vector.empty
+      case _ => generateCoordinates(moveOneField(currentCoordinates, movingDirection),
+        remainingMoves - 1, movingDirection) :+ currentCoordinates
     }
   }
 
