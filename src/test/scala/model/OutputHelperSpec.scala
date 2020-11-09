@@ -58,7 +58,7 @@ class OutputHelperSpec extends AnyWordSpec {
 
   "Ai info text" when {
     "called" should {
-      val testCoordinates = new Coordinates(3, 7)
+      val testCoordinates = Coordinates(3, 7)
       val textAsString = OutputHelper.generateAiInfoText(testCoordinates).mkString(" ")
 
       "not be empty" in {
@@ -74,7 +74,7 @@ class OutputHelperSpec extends AnyWordSpec {
 
   "Ship hit info text" when {
     "called" should {
-      val testShip = new Ship(3, "TestShip")
+      val testShip = Ship(3, "TestShip")
       val textAsString = OutputHelper.generateShipHitInfotext(testShip).mkString(" ")
 
       "not be empty" in {
@@ -89,7 +89,7 @@ class OutputHelperSpec extends AnyWordSpec {
 
   "Ship destroyed info text" when {
     "called" should {
-      val testShip = new Ship(3, "TestShip")
+      val testShip = Ship(3, "TestShip")
       val textAsString = OutputHelper.generateShipDestroyedInfoText(testShip).mkString(" ")
 
       "not be empty" in {
@@ -239,7 +239,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix5 = matrix4.updated(7, matrix4(7).updated(6, BoardCell(true)))
       val testBoard = Board(matrix5, ships, shipPositions)
 
-      val test = OutputHelper.generateBoard(testBoard, true)
+      val test = OutputHelper.generateBoard(testBoard, showShips = true)
 
       "not be empty" in {
         assert(!test.mkString(" ").isEmpty)
@@ -278,7 +278,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix5 = matrix4.updated(7, matrix4(7).updated(6, BoardCell(true)))
       val testBoard = Board(matrix5, ships, shipPositions)
 
-      val test = OutputHelper.generateBoard(testBoard, false)
+      val test = OutputHelper.generateBoard(testBoard, showShips = false)
 
       "not be empty" in {
         assert(!test.mkString(" ").isEmpty)
