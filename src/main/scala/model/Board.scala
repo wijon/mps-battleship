@@ -1,5 +1,7 @@
 package model
 
+import java.security.InvalidParameterException
+
 import scala.util.{Failure, Success, Try}
 import model.BoardDirection.BoardDirection
 
@@ -104,14 +106,50 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    * @return updated board
    */
   def placeSingleShip(ship: Ship, shipCoordinates: Vector[Coordinates]): Try[Board] = {
-    // TODO
-    // Fehlermonade, wenn Schiff hier nicht plaziert werden kann
-    // Fehlermonade, wenn Schiff bereits platziert wurde
-    // Fehlermonade, wenn Schiff nicht Teil des Bretts ist
-    // Fehlermonade, wenn row / col Wert nicht möglich (< 0, > 9)
+    if (!shipBelongsToBoard(ship) ||
+      shipIsPlacedOnBoard(ship) ||
+      !noShipIsPlacedAtCoordinates(shipCoordinates) ||
+      !coordinatesAreCorrect(shipCoordinates)) {
+      Failure(new InvalidParameterException)
+    } else {
+      Success(copy(matrix, ships, shipPositions :+ ShipPosition(ship, shipCoordinates)))
+    }
+  }
 
-    val newShipPosition = ShipPosition(ship, shipCoordinates)
-    Success(copy(matrix, ships, shipPositions :+ newShipPosition))
+  /** Check if ship belongs to board
+   *
+   * @param ship Ship to check
+   * @return Ship belongs to board?
+   */
+  private def shipBelongsToBoard(ship: Ship): Boolean = {
+    ships.contains(ship)
+  }
+
+  /** Check if ship is already placed on board
+   *
+   * @param ship Ship to check
+   * @return Ship is already placed on board?
+   */
+  private def shipIsPlacedOnBoard(ship: Ship): Boolean = {
+    shipPositions.exists(_.ship == ship)
+  }
+
+  /** Check if coordinates aren't occupied yet
+   *
+   * @param coordinates Coordinates to check
+   * @return Coordinates aren't occupied?
+   */
+  private def noShipIsPlacedAtCoordinates(coordinates: Vector[Coordinates]): Boolean = {
+    coordinates.forall(c => !shipPositions.exists(_.positions.contains(c)))
+  }
+
+  /** Check if coordinates are correct (0 <= row / col <= 9)
+   *
+   * @param coordinates Coordinates to check
+   * @return Coordinates are correct?
+   */
+  private def coordinatesAreCorrect(coordinates: Vector[Coordinates]): Boolean = {
+    coordinates.forall(c => (0 to 9 contains c.row) && (0 to 9 contains c.col))
   }
 
   /** Shoot at BoardCell

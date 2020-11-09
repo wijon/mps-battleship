@@ -929,4 +929,112 @@ class BoardSpec extends AnyWordSpec {
       }
     }
   }
+
+  "Placing a ship" when {
+    val ship = Ship(2, "TestShip1")
+    val shipCoordinates = Vector(Coordinates(3, 4), Coordinates(3, 5))
+    val ship2 = Ship(2, "TestShip2")
+    val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
+    val ship2Position = ShipPosition(ship2, ship2Coordinates)
+
+
+    "ship does not belong to board" should {
+      val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2), Vector(ship2Position))
+      val newBoardByFunction = board.placeSingleShip(ship, () => 0, () => 0, () => BoardDirection.North)
+      val newBoardByDirection = board.placeSingleShip(ship, Coordinates(0, 0), BoardDirection.North)
+      val newBoardByCoordinates = board.placeSingleShip(ship, shipCoordinates)
+
+      "be failure" in {
+        assert(newBoardByFunction.isFailure)
+        assert(newBoardByDirection.isFailure)
+        assert(newBoardByCoordinates.isFailure)
+      }
+    }
+
+    "ship is already placed on board" should {
+      val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2), Vector(ship2Position))
+      val newBoardByFunction = board.placeSingleShip(ship2, () => 0, () => 0, () => BoardDirection.North)
+      val newBoardByDirection = board.placeSingleShip(ship2, Coordinates(0, 0), BoardDirection.North)
+      val newBoardByCoordinates = board.placeSingleShip(ship2, shipCoordinates)
+
+      "be failure" in {
+        assert(newBoardByFunction.isFailure)
+        assert(newBoardByDirection.isFailure)
+        assert(newBoardByCoordinates.isFailure)
+      }
+    }
+
+    "another ship is already placed at coordinates" should {
+      val shipCoordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
+      val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) },
+        Vector(ship, ship2), Vector(ship2Position))
+      val newBoardByFunction = board.placeSingleShip(ship, () => 0, () => 0, () => BoardDirection.East)
+      val newBoardByDirection = board.placeSingleShip(ship, Coordinates(0, 0), BoardDirection.East)
+      val newBoardByCoordinates = board.placeSingleShip(ship, shipCoordinates)
+
+      "be failure" in {
+        assert(newBoardByFunction.isFailure)
+        assert(newBoardByDirection.isFailure)
+        assert(newBoardByCoordinates.isFailure)
+      }
+    }
+
+    "coordinates are incorrect" should {
+      "row over 9" should {
+        val ship2Coordinates = Vector(Coordinates(10, 5), Coordinates(11, 5))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2), Vector.empty)
+        val newBoardByFunction = board.placeSingleShip(ship, () => 10, () => 5, () => BoardDirection.South)
+        val newBoardByDirection = board.placeSingleShip(ship, Coordinates(10, 5), BoardDirection.South)
+        val newBoardByCoordinates = board.placeSingleShip(ship2, ship2Coordinates)
+
+        "be failure" in {
+          assert(newBoardByFunction.isFailure)
+          assert(newBoardByDirection.isFailure)
+          assert(newBoardByCoordinates.isFailure)
+        }
+      }
+
+      "row lower 0" should {
+        val ship2Coordinates = Vector(Coordinates(-1, 5), Coordinates(-2, 5))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2), Vector.empty)
+        val newBoardByFunction = board.placeSingleShip(ship, () => -1, () => 5, () => BoardDirection.North)
+        val newBoardByDirection = board.placeSingleShip(ship, Coordinates(-1, 5), BoardDirection.North)
+        val newBoardByCoordinates = board.placeSingleShip(ship2, ship2Coordinates)
+
+        "be failure" in {
+          assert(newBoardByFunction.isFailure)
+          assert(newBoardByDirection.isFailure)
+          assert(newBoardByCoordinates.isFailure)
+        }
+      }
+
+      "col over 9" should {
+        val ship2Coordinates = Vector(Coordinates(5, 10), Coordinates(5, 11))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2), Vector.empty)
+        val newBoardByFunction = board.placeSingleShip(ship, () => 5, () => 10, () => BoardDirection.East)
+        val newBoardByDirection = board.placeSingleShip(ship, Coordinates(5,10), BoardDirection.East)
+        val newBoardByCoordinates = board.placeSingleShip(ship2, ship2Coordinates)
+
+        "be failure" in {
+          assert(newBoardByFunction.isFailure)
+          assert(newBoardByDirection.isFailure)
+          assert(newBoardByCoordinates.isFailure)
+        }
+      }
+
+      "col lower 0" should {
+        val ship2Coordinates = Vector(Coordinates(5, -1), Coordinates(5, -2))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2), Vector.empty)
+        val newBoardByFunction = board.placeSingleShip(ship, () => 5, () => -1, () => BoardDirection.West)
+        val newBoardByDirection = board.placeSingleShip(ship, Coordinates(5,-1), BoardDirection.West)
+        val newBoardByCoordinates = board.placeSingleShip(ship2, ship2Coordinates)
+
+        "be failure" in {
+          assert(newBoardByFunction.isFailure)
+          assert(newBoardByDirection.isFailure)
+          assert(newBoardByCoordinates.isFailure)
+        }
+      }
+    }
+  }
 }
