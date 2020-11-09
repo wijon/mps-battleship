@@ -4,13 +4,6 @@
 
 
 
-
-
-
-
-
-
-
 //case class Settings()
 //abstract class Player(ownBoard: Board, enemyBoard: Board)
 //case class HumanPlayer(ownBoard: Board, enemyBoard: Board) extends Player(ownBoard, enemyBoard)

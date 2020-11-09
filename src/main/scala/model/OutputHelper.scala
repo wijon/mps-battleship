@@ -14,31 +14,24 @@ object OutputHelper {
     val line1 = "~~~~~~~~~~~~~"
     val line2 = "~ 0123456789~"
     val line13 = "~~~~~~~~~~~~~"
-    generateBoardLineByLine(0, board, Vector(line1, line2), showShips) :+ line13
+    Vector(line1, line2) ++ generateBoardLineByLine(0, board, showShips) :+ line13
   }
 
   /** Render board line by line
    *
    * @param currentRow    Index of current row
    * @param board         Board to render
-   * @param currentOutput Current output
    * @param showShips     Show ships in board?
    * @return Board for output
    */
   private def generateBoardLineByLine(currentRow: Int,
                                       board: Board,
-                                      currentOutput: Vector[String],
                                       showShips: Boolean): Vector[String] = {
-    if (currentRow >= 10) {
-      currentOutput
-    } else {
-      val prefix = "~" + currentRow
-      val postfix = "~"
-
-      val newLine = prefix +
-        generateBoardLineFieldByField(currentRow, 0, board, "", showShips) +
-        postfix
-      generateBoardLineByLine(currentRow + 1, board, currentOutput :+ newLine, showShips)
+    currentRow match {
+      case x if x >= 10 => Vector.empty
+      case _ =>
+        val newLine = "~" + currentRow + generateBoardLineFieldByField(currentRow, 0, board, showShips) + "~"
+        Vector(newLine) ++ generateBoardLineByLine(currentRow + 1, board, showShips)
     }
   }
 
@@ -47,28 +40,26 @@ object OutputHelper {
    * @param currentRow    Index of current row
    * @param currentCol    Index of current column
    * @param board         Board to render
-   * @param currentOutput Current output
    * @param showShips     Show ships in board?
    * @return BoardRow for output
    */
   private def generateBoardLineFieldByField(currentRow: Int,
                                             currentCol: Int,
                                             board: Board,
-                                            currentOutput: String,
                                             showShips: Boolean): String = {
-    if (currentCol >= 10) {
-      currentOutput
-    } else {
-      val cellIsHit = board.matrix(currentRow)(currentCol).isHit
-      val shipPos = board.shipPositions.find(_.positions.contains(Coordinates(currentRow, currentCol)))
+    currentCol match {
+      case x if x >= 10 => ""
+      case _ =>
+        val cellIsHit = board.matrix(currentRow)(currentCol).isHit
+        val shipPos = board.shipPositions.find(_.positions.contains(Coordinates(currentRow, currentCol)))
 
-      val newOutput = if (cellIsHit) {
-        if (shipPos.isDefined) "@" else "X"
-      } else {
-        if (shipPos.isDefined && showShips) "O" else " "
-      }
+        val newOutput = if (cellIsHit) {
+          if (shipPos.isDefined) "@" else "X"
+        } else {
+          if (shipPos.isDefined && showShips) "O" else " "
+        }
 
-      generateBoardLineFieldByField(currentRow, currentCol + 1, board, currentOutput + newOutput, showShips)
+        newOutput + generateBoardLineFieldByField(currentRow, currentCol + 1, board, showShips)
     }
   }
 
@@ -78,27 +69,23 @@ object OutputHelper {
    * @return Remaining ships infotext
    */
   def generateRemainingShips(board: Board): Vector[String] = {
-    generateRemainingShipsLineByLine(board.ships, Vector(), board)
+    generateRemainingShipsLineByLine(board.ships, board)
   }
 
   /** Render remaining ships-infotext ship by ship
    *
    * @param remainingShips Remaining ships to process
-   * @param currentOutput  Current return value of function
    * @param board          Board to process
    * @return Remaining ships infotext
    */
-  private def generateRemainingShipsLineByLine(remainingShips: Vector[Ship],
-                                               currentOutput: Vector[String],
-                                               board: Board)
-  : Vector[String] = {
-    if (remainingShips.isEmpty) {
-      currentOutput
-    } else {
-      val shipToProcess = remainingShips(0)
-      val spacesToAdd = 11 - shipToProcess.name.length
-      val newLine = shipToProcess.name + (" " * spacesToAdd) + generateShipHits(shipToProcess, board)
-      generateRemainingShipsLineByLine(remainingShips.drop(1), currentOutput :+ newLine, board)
+  private def generateRemainingShipsLineByLine(remainingShips: Vector[Ship], board: Board): Vector[String] = {
+    remainingShips match {
+      case x if x.isEmpty => Vector.empty
+      case _ =>
+        val shipToProcess = remainingShips(0)
+        val spacesToAdd = 11 - shipToProcess.name.length
+        val newLine = shipToProcess.name + (" " * spacesToAdd) + generateShipHits(shipToProcess, board)
+        Vector(newLine) ++ generateRemainingShipsLineByLine(remainingShips.drop(1), board)
     }
   }
 
@@ -110,8 +97,8 @@ object OutputHelper {
    */
   private def generateShipHits(ship: Ship, board: Board): String = {
     val shipPos = board.shipPositions.find(_.ship == ship)
-    val singleShipData = generateSingleShipElement(shipPos.get.positions, "\\", board, 0)
-    val shipAsVisual = singleShipData._1 + "/" + (" " * (6 - ship.length))
+    val singleShipData = generateSingleShipElement(shipPos.get.positions, board, 0)
+    val shipAsVisual = "\\" + singleShipData._1 + "/" + (" " * (6 - ship.length))
     val hitInfoText = singleShipData._2 + " hit(s)"
     val destroyedInfoText = if (singleShipData._2 == ship.length) ", destroyed" else ""
     shipAsVisual + hitInfoText + destroyedInfoText
@@ -120,22 +107,22 @@ object OutputHelper {
   /** Render info text for single ship field by field
    *
    * @param remainingShipPos Remaining ship positions to process
-   * @param currentOutput    Current return value of function
    * @param board            Board to process
    * @return Single ship info text and number of hits
    */
   private def generateSingleShipElement(remainingShipPos: Vector[Coordinates],
-                                        currentOutput: String,
                                         board: Board,
                                         currentNumberOfHits: Int): (String, Int) = {
     if (remainingShipPos.isEmpty) {
-      (currentOutput, currentNumberOfHits)
+      ("", currentNumberOfHits)
     } else {
       val shipPositionToProcess = remainingShipPos(0)
       val boardCellHit = board.matrix(shipPositionToProcess.row)(shipPositionToProcess.col).isHit
       val newChar = if (boardCellHit) 'X' else '_'
       val newNumberOfHits = if (boardCellHit) currentNumberOfHits + 1 else currentNumberOfHits
-      generateSingleShipElement(remainingShipPos.drop(1), currentOutput + newChar, board, newNumberOfHits)
+
+      val recurseValue = generateSingleShipElement(remainingShipPos.drop(1), board, newNumberOfHits)
+      (newChar + recurseValue._1, recurseValue._2)
     }
   }
 
