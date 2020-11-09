@@ -187,6 +187,12 @@ class GameSpec extends AnyWordSpec {
         assert(result.isSuccess)
         assert(result.get)
       }
+
+      "human player is not winner" in {
+        val resultWinner = testGame.humanPlayerIsWinner()
+        assert(resultWinner.isSuccess)
+        assert(!resultWinner.get)
+      }
     }
   }
 }
