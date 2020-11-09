@@ -118,7 +118,8 @@ class BoardSpec extends AnyWordSpec {
       val newBoard = board.placeSingleShip(ship, shipCoordinates)
 
       "know ship position" in {
-        assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship) && sp.positions.equals(shipCoordinates)))
+        assert(newBoard.isSuccess)
+        assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship) && sp.positions.equals(shipCoordinates)))
       }
     }
 
@@ -133,11 +134,13 @@ class BoardSpec extends AnyWordSpec {
       val newBoard = board.placeSingleShip(ship, shipCoordinates)
 
       "know new ship position" in {
-        assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship) && sp.positions.equals(shipCoordinates)))
+        assert(newBoard.isSuccess)
+        assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship) && sp.positions.equals(shipCoordinates)))
       }
 
       "still know position of old ship" in {
-        assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+        assert(newBoard.isSuccess)
+        assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
       }
     }
 
@@ -155,7 +158,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(4, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -169,7 +173,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(1, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -189,7 +194,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 6)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -203,7 +209,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 8)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -223,7 +230,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(6, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -237,7 +245,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(8, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -257,7 +266,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 4)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -271,7 +281,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 1)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -297,13 +308,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(4, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
 
@@ -315,13 +328,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(1, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
       }
@@ -343,13 +358,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 6)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
 
@@ -361,13 +378,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 8)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
       }
@@ -389,13 +408,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(6, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
 
@@ -407,13 +428,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(8, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
       }
@@ -435,13 +458,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 4)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
 
@@ -453,13 +478,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 1)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
       }
@@ -482,7 +509,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(4, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -498,7 +526,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(1, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -521,7 +550,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 6)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -537,7 +567,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 8)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -560,7 +591,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(6, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -576,7 +608,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(8, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -599,7 +632,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 4)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -615,7 +649,8 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 1)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
@@ -644,13 +679,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(4, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
 
@@ -664,13 +701,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(1, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
       }
@@ -695,13 +734,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 6)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
 
@@ -715,13 +756,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 8)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
       }
@@ -746,13 +789,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(6, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
 
@@ -766,13 +811,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(8, 5)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
       }
@@ -797,13 +844,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 4)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
 
@@ -817,13 +866,15 @@ class BoardSpec extends AnyWordSpec {
           val position2 = Coordinates(5, 1)
 
           "know ship position" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship)
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
               && sp.positions.exists(p => p.equals(position1))
               && sp.positions.exists(p => p.equals(position2))))
           }
 
           "still know position of old ship" in {
-            assert(newBoard.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
           }
         }
       }
@@ -839,13 +890,15 @@ class BoardSpec extends AnyWordSpec {
       val coordinates = board.generateCoordinates(startCoordinate, moves, BoardDirection.North)
 
       "contain correct number of elements" in {
-        assert(coordinates.length == moves)
+        assert(coordinates.isSuccess)
+        assert(coordinates.get.length == moves)
       }
 
       "contain correct coordinates" in {
-        assert(coordinates.exists(c => c.row == 5 && c.col == 5))
-        assert(coordinates.exists(c => c.row == 4 && c.col == 5))
-        assert(coordinates.exists(c => c.row == 3 && c.col == 5))
+        assert(coordinates.isSuccess)
+        assert(coordinates.get.exists(c => c.row == 5 && c.col == 5))
+        assert(coordinates.get.exists(c => c.row == 4 && c.col == 5))
+        assert(coordinates.get.exists(c => c.row == 3 && c.col == 5))
       }
     }
 
@@ -853,13 +906,15 @@ class BoardSpec extends AnyWordSpec {
       val coordinates = board.generateCoordinates(startCoordinate, moves, BoardDirection.East)
 
       "contain correct number of elements" in {
-        assert(coordinates.length == moves)
+        assert(coordinates.isSuccess)
+        assert(coordinates.get.length == moves)
       }
 
       "contain correct coordinates" in {
-        assert(coordinates.exists(c => c.row == 5 && c.col == 5))
-        assert(coordinates.exists(c => c.row == 5 && c.col == 6))
-        assert(coordinates.exists(c => c.row == 5 && c.col == 7))
+        assert(coordinates.isSuccess)
+        assert(coordinates.get.exists(c => c.row == 5 && c.col == 5))
+        assert(coordinates.get.exists(c => c.row == 5 && c.col == 6))
+        assert(coordinates.get.exists(c => c.row == 5 && c.col == 7))
       }
     }
 
@@ -867,13 +922,15 @@ class BoardSpec extends AnyWordSpec {
       val coordinates = board.generateCoordinates(startCoordinate, moves, BoardDirection.South)
 
       "contain correct number of elements" in {
-        assert(coordinates.length == moves)
+        assert(coordinates.isSuccess)
+        assert(coordinates.get.length == moves)
       }
 
       "contain correct coordinates" in {
-        assert(coordinates.exists(c => c.row == 5 && c.col == 5))
-        assert(coordinates.exists(c => c.row == 6 && c.col == 5))
-        assert(coordinates.exists(c => c.row == 7 && c.col == 5))
+        assert(coordinates.isSuccess)
+        assert(coordinates.get.exists(c => c.row == 5 && c.col == 5))
+        assert(coordinates.get.exists(c => c.row == 6 && c.col == 5))
+        assert(coordinates.get.exists(c => c.row == 7 && c.col == 5))
       }
     }
 
@@ -881,13 +938,123 @@ class BoardSpec extends AnyWordSpec {
       val coordinates = board.generateCoordinates(startCoordinate, moves, BoardDirection.West)
 
       "contain correct number of elements" in {
-        assert(coordinates.length == moves)
+        assert(coordinates.isSuccess)
+        assert(coordinates.get.length == moves)
       }
 
       "contain correct coordinates" in {
-        assert(coordinates.exists(c => c.row == 5 && c.col == 5))
-        assert(coordinates.exists(c => c.row == 5 && c.col == 4))
-        assert(coordinates.exists(c => c.row == 5 && c.col == 3))
+        assert(coordinates.isSuccess)
+        assert(coordinates.get.exists(c => c.row == 5 && c.col == 5))
+        assert(coordinates.get.exists(c => c.row == 5 && c.col == 4))
+        assert(coordinates.get.exists(c => c.row == 5 && c.col == 3))
+      }
+    }
+  }
+
+  "Placing a ship" when {
+    val ship = Ship(2, "TestShip1")
+    val shipCoordinates = Vector(Coordinates(3, 4), Coordinates(3, 5))
+    val ship2 = Ship(2, "TestShip2")
+    val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
+    val ship2Position = ShipPosition(ship2, ship2Coordinates)
+
+
+    "ship does not belong to board" should {
+      val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2), Vector(ship2Position))
+      val newBoardByFunction = board.placeSingleShip(ship, () => 0, () => 0, () => BoardDirection.North)
+      val newBoardByDirection = board.placeSingleShip(ship, Coordinates(0, 0), BoardDirection.North)
+      val newBoardByCoordinates = board.placeSingleShip(ship, shipCoordinates)
+
+      "be failure" in {
+        assert(newBoardByFunction.isFailure)
+        assert(newBoardByDirection.isFailure)
+        assert(newBoardByCoordinates.isFailure)
+      }
+    }
+
+    "ship is already placed on board" should {
+      val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2), Vector(ship2Position))
+      val newBoardByFunction = board.placeSingleShip(ship2, () => 0, () => 0, () => BoardDirection.North)
+      val newBoardByDirection = board.placeSingleShip(ship2, Coordinates(0, 0), BoardDirection.North)
+      val newBoardByCoordinates = board.placeSingleShip(ship2, shipCoordinates)
+
+      "be failure" in {
+        assert(newBoardByFunction.isFailure)
+        assert(newBoardByDirection.isFailure)
+        assert(newBoardByCoordinates.isFailure)
+      }
+    }
+
+    "another ship is already placed at coordinates" should {
+      val shipCoordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
+      val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) },
+        Vector(ship, ship2), Vector(ship2Position))
+      val newBoardByFunction = board.placeSingleShip(ship, () => 0, () => 0, () => BoardDirection.East)
+      val newBoardByDirection = board.placeSingleShip(ship, Coordinates(0, 0), BoardDirection.East)
+      val newBoardByCoordinates = board.placeSingleShip(ship, shipCoordinates)
+
+      "be failure" in {
+        assert(newBoardByFunction.isFailure)
+        assert(newBoardByDirection.isFailure)
+        assert(newBoardByCoordinates.isFailure)
+      }
+    }
+
+    "coordinates are incorrect" should {
+      "row over 9" should {
+        val ship2Coordinates = Vector(Coordinates(10, 5), Coordinates(11, 5))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2), Vector.empty)
+        val newBoardByFunction = board.placeSingleShip(ship, () => 10, () => 5, () => BoardDirection.South)
+        val newBoardByDirection = board.placeSingleShip(ship, Coordinates(10, 5), BoardDirection.South)
+        val newBoardByCoordinates = board.placeSingleShip(ship2, ship2Coordinates)
+
+        "be failure" in {
+          assert(newBoardByFunction.isFailure)
+          assert(newBoardByDirection.isFailure)
+          assert(newBoardByCoordinates.isFailure)
+        }
+      }
+
+      "row lower 0" should {
+        val ship2Coordinates = Vector(Coordinates(-1, 5), Coordinates(-2, 5))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2), Vector.empty)
+        val newBoardByFunction = board.placeSingleShip(ship, () => -1, () => 5, () => BoardDirection.North)
+        val newBoardByDirection = board.placeSingleShip(ship, Coordinates(-1, 5), BoardDirection.North)
+        val newBoardByCoordinates = board.placeSingleShip(ship2, ship2Coordinates)
+
+        "be failure" in {
+          assert(newBoardByFunction.isFailure)
+          assert(newBoardByDirection.isFailure)
+          assert(newBoardByCoordinates.isFailure)
+        }
+      }
+
+      "col over 9" should {
+        val ship2Coordinates = Vector(Coordinates(5, 10), Coordinates(5, 11))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2), Vector.empty)
+        val newBoardByFunction = board.placeSingleShip(ship, () => 5, () => 10, () => BoardDirection.East)
+        val newBoardByDirection = board.placeSingleShip(ship, Coordinates(5,10), BoardDirection.East)
+        val newBoardByCoordinates = board.placeSingleShip(ship2, ship2Coordinates)
+
+        "be failure" in {
+          assert(newBoardByFunction.isFailure)
+          assert(newBoardByDirection.isFailure)
+          assert(newBoardByCoordinates.isFailure)
+        }
+      }
+
+      "col lower 0" should {
+        val ship2Coordinates = Vector(Coordinates(5, -1), Coordinates(5, -2))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2), Vector.empty)
+        val newBoardByFunction = board.placeSingleShip(ship, () => 5, () => -1, () => BoardDirection.West)
+        val newBoardByDirection = board.placeSingleShip(ship, Coordinates(5,-1), BoardDirection.West)
+        val newBoardByCoordinates = board.placeSingleShip(ship2, ship2Coordinates)
+
+        "be failure" in {
+          assert(newBoardByFunction.isFailure)
+          assert(newBoardByDirection.isFailure)
+          assert(newBoardByCoordinates.isFailure)
+        }
       }
     }
   }

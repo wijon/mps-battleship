@@ -1,5 +1,7 @@
 package model
 
+import java.security.InvalidParameterException
+
 import scala.util.{Failure, Success, Try}
 import model.BoardDirection.BoardDirection
 
@@ -16,22 +18,35 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    */
   def generateCoordinates(currentCoordinates: Coordinates,
                           remainingMoves: Int,
-                          movingDirection: BoardDirection): Vector[Coordinates] = {
+                          movingDirection: BoardDirection): Try[Vector[Coordinates]] = {
     if (remainingMoves <= 0) {
-      Vector.empty
+      Success(Vector.empty)
     } else {
-      val newCoordinates = movingDirection match {
-        case BoardDirection.North => Coordinates(currentCoordinates.row - 1, currentCoordinates.col)
-        case BoardDirection.East => Coordinates(currentCoordinates.row, currentCoordinates.col + 1)
-        case BoardDirection.South => Coordinates(currentCoordinates.row + 1, currentCoordinates.col)
-        case BoardDirection.West => Coordinates(currentCoordinates.row, currentCoordinates.col - 1)
-        case _ =>
-          // TODO
-          // Fehlermonade
-          currentCoordinates
+      moveOneField(currentCoordinates, movingDirection) match {
+        case Success(value) => {
+          generateCoordinates(value, remainingMoves - 1, movingDirection) match {
+            case Success(value) => Success(value :+ currentCoordinates)
+            case Failure(ex) => Failure(ex)
+          }
+        }
+        case Failure(ex) => Failure(ex)
       }
+    }
+  }
 
-      generateCoordinates(newCoordinates, remainingMoves - 1, movingDirection) :+ currentCoordinates
+  /** moves one field from coordinates into movingDirection and gives new coordinates
+   *
+   * @param coordinates     coordinates from where to move
+   * @param movingDirection moving direction
+   * @return new coordinates
+   */
+  private def moveOneField(coordinates: Coordinates, movingDirection: BoardDirection): Try[Coordinates] = {
+    movingDirection match {
+      case BoardDirection.North => Success(Coordinates(coordinates.row - 1, coordinates.col))
+      case BoardDirection.East => Success(Coordinates(coordinates.row, coordinates.col + 1))
+      case BoardDirection.South => Success(Coordinates(coordinates.row + 1, coordinates.col))
+      case BoardDirection.West => Success(Coordinates(coordinates.row, coordinates.col - 1))
+      case _ => Failure(new NotImplementedError)
     }
   }
 
@@ -46,7 +61,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
   def placeSingleShip(ship: Ship,
                       startingRow: () => Int,
                       startingCol: () => Int,
-                      direction: () => BoardDirection): Board = {
+                      direction: () => BoardDirection): Try[Board] = {
     placeSingleShip(ship, Coordinates(startingRow(), startingCol()), direction())
   }
 
@@ -57,7 +72,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    * @param direction   direction to place
    * @return updated board
    */
-  def placeSingleShip(ship: Ship, coordinates: Coordinates, direction: BoardDirection): Board = {
+  def placeSingleShip(ship: Ship, coordinates: Coordinates, direction: BoardDirection): Try[Board] = {
     val startRow = {
       if (direction == BoardDirection.North && ship.length > coordinates.row) {
         ship.length - 1
@@ -78,8 +93,10 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
       }
     }
 
-    val shipCoordinates = generateCoordinates(Coordinates(startRow, startCol), ship.length, direction)
-    placeSingleShip(ship, shipCoordinates)
+    generateCoordinates(Coordinates(startRow, startCol), ship.length, direction) match {
+      case Success(value) => placeSingleShip(ship, value)
+      case Failure(ex) => Failure(ex)
+    }
   }
 
   /** Places a single ship on board
@@ -88,15 +105,51 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    * @param shipCoordinates coordinates of the ship
    * @return updated board
    */
-  def placeSingleShip(ship: Ship, shipCoordinates: Vector[Coordinates]): Board = {
-    // TODO
-    // Fehlermonade, wenn Schiff hier nicht plaziert werden kann
-    // Fehlermonade, wenn Schiff bereits platziert wurde
-    // Fehlermonade, wenn Schiff nicht Teil des Bretts ist
-    // Fehlermonade, wenn row / col Wert nicht möglich (< 0, > 9)
+  def placeSingleShip(ship: Ship, shipCoordinates: Vector[Coordinates]): Try[Board] = {
+    if (!shipBelongsToBoard(ship) ||
+      shipIsPlacedOnBoard(ship) ||
+      !noShipIsPlacedAtCoordinates(shipCoordinates) ||
+      !coordinatesAreCorrect(shipCoordinates)) {
+      Failure(new InvalidParameterException)
+    } else {
+      Success(copy(matrix, ships, shipPositions :+ ShipPosition(ship, shipCoordinates)))
+    }
+  }
 
-    val newShipPosition = ShipPosition(ship, shipCoordinates)
-    copy(matrix, ships, shipPositions :+ newShipPosition)
+  /** Check if ship belongs to board
+   *
+   * @param ship Ship to check
+   * @return Ship belongs to board?
+   */
+  private def shipBelongsToBoard(ship: Ship): Boolean = {
+    ships.contains(ship)
+  }
+
+  /** Check if ship is already placed on board
+   *
+   * @param ship Ship to check
+   * @return Ship is already placed on board?
+   */
+  private def shipIsPlacedOnBoard(ship: Ship): Boolean = {
+    shipPositions.exists(_.ship == ship)
+  }
+
+  /** Check if coordinates aren't occupied yet
+   *
+   * @param coordinates Coordinates to check
+   * @return Coordinates aren't occupied?
+   */
+  private def noShipIsPlacedAtCoordinates(coordinates: Vector[Coordinates]): Boolean = {
+    coordinates.forall(c => !shipPositions.exists(_.positions.contains(c)))
+  }
+
+  /** Check if coordinates are correct (0 <= row / col <= 9)
+   *
+   * @param coordinates Coordinates to check
+   * @return Coordinates are correct?
+   */
+  private def coordinatesAreCorrect(coordinates: Vector[Coordinates]): Boolean = {
+    coordinates.forall(c => (0 to 9 contains c.row) && (0 to 9 contains c.col))
   }
 
   /** Shoot at BoardCell
@@ -107,7 +160,6 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    */
   def shoot(row: Int, col: Int): Try[ShotAtResult] = {
     if (matrix(row)(col).isHit) {
-      // Was already previously shot at
       Failure(new UnsupportedOperationException)
     } else {
       val newMatrix = matrix.updated(row, matrix(row).updated(col, BoardCell(true)))
