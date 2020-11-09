@@ -18,19 +18,12 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    */
   def generateCoordinates(currentCoordinates: Coordinates,
                           remainingMoves: Int,
-                          movingDirection: BoardDirection): Try[Vector[Coordinates]] = {
+                          movingDirection: BoardDirection): Vector[Coordinates] = {
     if (remainingMoves <= 0) {
-      Success(Vector.empty)
+      Vector.empty
     } else {
-      moveOneField(currentCoordinates, movingDirection) match {
-        case Success(value) => {
-          generateCoordinates(value, remainingMoves - 1, movingDirection) match {
-            case Success(value) => Success(value :+ currentCoordinates)
-            case Failure(ex) => Failure(ex)
-          }
-        }
-        case Failure(ex) => Failure(ex)
-      }
+      generateCoordinates(moveOneField(currentCoordinates, movingDirection), remainingMoves - 1, movingDirection) :+
+        currentCoordinates
     }
   }
 
@@ -40,13 +33,12 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    * @param movingDirection moving direction
    * @return new coordinates
    */
-  private def moveOneField(coordinates: Coordinates, movingDirection: BoardDirection): Try[Coordinates] = {
+  private def moveOneField(coordinates: Coordinates, movingDirection: BoardDirection): Coordinates = {
     movingDirection match {
-      case BoardDirection.North => Success(Coordinates(coordinates.row - 1, coordinates.col))
-      case BoardDirection.East => Success(Coordinates(coordinates.row, coordinates.col + 1))
-      case BoardDirection.South => Success(Coordinates(coordinates.row + 1, coordinates.col))
-      case BoardDirection.West => Success(Coordinates(coordinates.row, coordinates.col - 1))
-      case _ => Failure(new NotImplementedError)
+      case BoardDirection.North => Coordinates(coordinates.row - 1, coordinates.col)
+      case BoardDirection.East => Coordinates(coordinates.row, coordinates.col + 1)
+      case BoardDirection.South => Coordinates(coordinates.row + 1, coordinates.col)
+      case BoardDirection.West => Coordinates(coordinates.row, coordinates.col - 1)
     }
   }
 
@@ -93,10 +85,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
       }
     }
 
-    generateCoordinates(Coordinates(startRow, startCol), ship.length, direction) match {
-      case Success(value) => placeSingleShip(ship, value)
-      case Failure(ex) => Failure(ex)
-    }
+    placeSingleShip(ship, generateCoordinates(Coordinates(startRow, startCol), ship.length, direction))
   }
 
   /** Places a single ship on board
@@ -189,7 +178,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    * @return true if all are destroyed, otherwise false
    */
   def areAllShipsDestroyed(): Try[Boolean] = {
-    Try(ships.map(isDestroyed(_)).map {
+    Try(ships.map(isDestroyed).map {
       case Success(y) => y
       case Failure(ex) => throw ex
     }.reduce((res, cur) => res && cur))

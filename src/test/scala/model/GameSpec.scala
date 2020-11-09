@@ -2,8 +2,6 @@ package model
 
 import org.scalatest.wordspec.AnyWordSpec
 
-import scala.util.{Failure, Success}
-
 class GameSpec extends AnyWordSpec {
   "A Game" when {
     "new" should {
@@ -50,7 +48,7 @@ class GameSpec extends AnyWordSpec {
       val testGame = Game(testBoardHuman, testBoardAi, 10)
 
       "not be running" in {
-        val result = testGame.isRunning()
+        val result = testGame.isRunning
         assert(result.isSuccess)
         assert(!result.get)
       }
@@ -89,7 +87,7 @@ class GameSpec extends AnyWordSpec {
         val testGame = Game(testBoardHuman, testBoardAi, 10)
 
         "fail on isRunning check" in {
-          assert(testGame.isRunning().isFailure)
+          assert(testGame.isRunning.isFailure)
         }
 
         "fail on humanPlayerIsWinner check" in {
@@ -110,7 +108,7 @@ class GameSpec extends AnyWordSpec {
         val testGame = Game(testBoardHuman, testBoardAi, 10)
 
         "fail on isRunning check" in {
-          assert(testGame.isRunning().isFailure)
+          assert(testGame.isRunning.isFailure)
         }
 
         "fail on humanPlayerIsWinner check" in {
@@ -146,7 +144,7 @@ class GameSpec extends AnyWordSpec {
       val testGame = Game(testBoardHuman, testBoardAi, 10)
 
       "not be running" in {
-        val result = testGame.isRunning()
+        val result = testGame.isRunning
         assert(result.isSuccess)
         assert(!result.get)
       }
@@ -183,7 +181,7 @@ class GameSpec extends AnyWordSpec {
       val testGame = Game(testBoardHuman, testBoardAi, 10)
 
       "be running" in {
-        val result = testGame.isRunning()
+        val result = testGame.isRunning
         assert(result.isSuccess)
         assert(result.get)
       }

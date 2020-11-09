@@ -890,15 +890,13 @@ class BoardSpec extends AnyWordSpec {
       val coordinates = board.generateCoordinates(startCoordinate, moves, BoardDirection.North)
 
       "contain correct number of elements" in {
-        assert(coordinates.isSuccess)
-        assert(coordinates.get.length == moves)
+        assert(coordinates.length == moves)
       }
 
       "contain correct coordinates" in {
-        assert(coordinates.isSuccess)
-        assert(coordinates.get.exists(c => c.row == 5 && c.col == 5))
-        assert(coordinates.get.exists(c => c.row == 4 && c.col == 5))
-        assert(coordinates.get.exists(c => c.row == 3 && c.col == 5))
+        assert(coordinates.exists(c => c.row == 5 && c.col == 5))
+        assert(coordinates.exists(c => c.row == 4 && c.col == 5))
+        assert(coordinates.exists(c => c.row == 3 && c.col == 5))
       }
     }
 
@@ -906,15 +904,13 @@ class BoardSpec extends AnyWordSpec {
       val coordinates = board.generateCoordinates(startCoordinate, moves, BoardDirection.East)
 
       "contain correct number of elements" in {
-        assert(coordinates.isSuccess)
-        assert(coordinates.get.length == moves)
+        assert(coordinates.length == moves)
       }
 
       "contain correct coordinates" in {
-        assert(coordinates.isSuccess)
-        assert(coordinates.get.exists(c => c.row == 5 && c.col == 5))
-        assert(coordinates.get.exists(c => c.row == 5 && c.col == 6))
-        assert(coordinates.get.exists(c => c.row == 5 && c.col == 7))
+        assert(coordinates.exists(c => c.row == 5 && c.col == 5))
+        assert(coordinates.exists(c => c.row == 5 && c.col == 6))
+        assert(coordinates.exists(c => c.row == 5 && c.col == 7))
       }
     }
 
@@ -922,15 +918,13 @@ class BoardSpec extends AnyWordSpec {
       val coordinates = board.generateCoordinates(startCoordinate, moves, BoardDirection.South)
 
       "contain correct number of elements" in {
-        assert(coordinates.isSuccess)
-        assert(coordinates.get.length == moves)
+        assert(coordinates.length == moves)
       }
 
       "contain correct coordinates" in {
-        assert(coordinates.isSuccess)
-        assert(coordinates.get.exists(c => c.row == 5 && c.col == 5))
-        assert(coordinates.get.exists(c => c.row == 6 && c.col == 5))
-        assert(coordinates.get.exists(c => c.row == 7 && c.col == 5))
+        assert(coordinates.exists(c => c.row == 5 && c.col == 5))
+        assert(coordinates.exists(c => c.row == 6 && c.col == 5))
+        assert(coordinates.exists(c => c.row == 7 && c.col == 5))
       }
     }
 
@@ -938,15 +932,13 @@ class BoardSpec extends AnyWordSpec {
       val coordinates = board.generateCoordinates(startCoordinate, moves, BoardDirection.West)
 
       "contain correct number of elements" in {
-        assert(coordinates.isSuccess)
-        assert(coordinates.get.length == moves)
+        assert(coordinates.length == moves)
       }
 
       "contain correct coordinates" in {
-        assert(coordinates.isSuccess)
-        assert(coordinates.get.exists(c => c.row == 5 && c.col == 5))
-        assert(coordinates.get.exists(c => c.row == 5 && c.col == 4))
-        assert(coordinates.get.exists(c => c.row == 5 && c.col == 3))
+        assert(coordinates.exists(c => c.row == 5 && c.col == 5))
+        assert(coordinates.exists(c => c.row == 5 && c.col == 4))
+        assert(coordinates.exists(c => c.row == 5 && c.col == 3))
       }
     }
   }

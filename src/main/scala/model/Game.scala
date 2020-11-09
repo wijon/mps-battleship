@@ -17,7 +17,7 @@ case class Game(player1Board: Board, player2Board: Board, roundNum: Int) {
    *
    * @return Game still running?
    */
-  def isRunning(): Try[Boolean] = {
+  def isRunning: Try[Boolean] = {
     val p1Result = player1Board.areAllShipsDestroyed()
     val p2Result = player2Board.areAllShipsDestroyed()
 
@@ -35,7 +35,7 @@ case class Game(player1Board: Board, player2Board: Board, roundNum: Int) {
    * @return Winner?
    */
   def humanPlayerIsWinner(): Try[Boolean] = {
-    isRunning() match {
+    isRunning match {
       case Success(value) => if (!value) player2Board.areAllShipsDestroyed() else Success(false)
       case Failure(ex) => Failure(ex)
     }
