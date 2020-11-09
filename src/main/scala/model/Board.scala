@@ -1,7 +1,6 @@
 package model
 
 import java.security.InvalidParameterException
-
 import scala.util.{Failure, Success, Try}
 import model.BoardDirection.BoardDirection
 
@@ -9,36 +8,27 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
   // Override constructor, this one is used for the initial instantiation
   def this(ships: Vector[Ship]) = this(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, ships, Vector())
 
-  /** Generates a vector of coordinates, starting at currentCoordinates moving remainingMoves times into movingDirection
+  /** Generate ship coordinates
    *
-   * @param currentCoordinates current coordinates
-   * @param remainingMoves     remaining iterations
-   * @param movingDirection    direction to move
-   * @return list of generated coordinates
+   * @param coordinates coordinate of first ship element
+   * @param shipLength  ship length
+   * @param direction   ship direction
+   * @return all ship coordinates
    */
-  def generateCoordinates(currentCoordinates: Coordinates,
-                          remainingMoves: Int,
-                          movingDirection: BoardDirection): Vector[Coordinates] = {
-    remainingMoves match {
-      case x if x <= 0 => Vector.empty
-      case _ => generateCoordinates(moveOneField(currentCoordinates, movingDirection),
-        remainingMoves - 1, movingDirection) :+ currentCoordinates
+  def generateShipCoordinates(coordinates: Coordinates, shipLength: Int, direction: BoardDirection):
+  Vector[Coordinates] = {
+    val shipCoordinates = direction match {
+      case BoardDirection.North =>
+        for (row <- coordinates.row until coordinates.row - shipLength by -1) yield Coordinates(row, coordinates.col)
+      case BoardDirection.East =>
+        for (col <- coordinates.col until coordinates.col + shipLength) yield Coordinates(coordinates.row, col)
+      case BoardDirection.South =>
+        for (row <- coordinates.row until coordinates.row + shipLength) yield Coordinates(row, coordinates.col)
+      case BoardDirection.West =>
+        for (col <- coordinates.col until coordinates.col - shipLength by -1) yield Coordinates(coordinates.row, col)
     }
-  }
 
-  /** moves one field from coordinates into movingDirection and gives new coordinates
-   *
-   * @param coordinates     coordinates from where to move
-   * @param movingDirection moving direction
-   * @return new coordinates
-   */
-  private def moveOneField(coordinates: Coordinates, movingDirection: BoardDirection): Coordinates = {
-    movingDirection match {
-      case BoardDirection.North => Coordinates(coordinates.row - 1, coordinates.col)
-      case BoardDirection.East => Coordinates(coordinates.row, coordinates.col + 1)
-      case BoardDirection.South => Coordinates(coordinates.row + 1, coordinates.col)
-      case BoardDirection.West => Coordinates(coordinates.row, coordinates.col - 1)
-    }
+    shipCoordinates.toVector
   }
 
   /** Places a single ship on board
@@ -84,7 +74,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
       }
     }
 
-    placeSingleShip(ship, generateCoordinates(Coordinates(startRow, startCol), ship.length, direction))
+    placeSingleShip(ship, generateShipCoordinates(Coordinates(startRow, startCol), ship.length, direction))
   }
 
   /** Places a single ship on board

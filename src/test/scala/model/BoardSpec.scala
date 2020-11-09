@@ -884,13 +884,13 @@ class BoardSpec extends AnyWordSpec {
   "Generating ship coordinates" when {
     val board = Board(Vector.empty, Vector.empty, Vector.empty)
     val startCoordinate = Coordinates(5, 5)
-    val moves = 3
+    val shipLength = 3
 
     "direction is north" should {
-      val coordinates = board.generateCoordinates(startCoordinate, moves, BoardDirection.North)
+      val coordinates = board.generateShipCoordinates(startCoordinate, shipLength, BoardDirection.North)
 
       "contain correct number of elements" in {
-        assert(coordinates.length == moves)
+        assert(coordinates.length == shipLength)
       }
 
       "contain correct coordinates" in {
@@ -901,10 +901,10 @@ class BoardSpec extends AnyWordSpec {
     }
 
     "direction is east" should {
-      val coordinates = board.generateCoordinates(startCoordinate, moves, BoardDirection.East)
+      val coordinates = board.generateShipCoordinates(startCoordinate, shipLength, BoardDirection.East)
 
       "contain correct number of elements" in {
-        assert(coordinates.length == moves)
+        assert(coordinates.length == shipLength)
       }
 
       "contain correct coordinates" in {
@@ -915,10 +915,10 @@ class BoardSpec extends AnyWordSpec {
     }
 
     "direction is south" should {
-      val coordinates = board.generateCoordinates(startCoordinate, moves, BoardDirection.South)
+      val coordinates = board.generateShipCoordinates(startCoordinate, shipLength, BoardDirection.South)
 
       "contain correct number of elements" in {
-        assert(coordinates.length == moves)
+        assert(coordinates.length == shipLength)
       }
 
       "contain correct coordinates" in {
@@ -929,10 +929,10 @@ class BoardSpec extends AnyWordSpec {
     }
 
     "direction is west" should {
-      val coordinates = board.generateCoordinates(startCoordinate, moves, BoardDirection.West)
+      val coordinates = board.generateShipCoordinates(startCoordinate, shipLength, BoardDirection.West)
 
       "contain correct number of elements" in {
-        assert(coordinates.length == moves)
+        assert(coordinates.length == shipLength)
       }
 
       "contain correct coordinates" in {
