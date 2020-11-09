@@ -111,6 +111,53 @@ class BoardSpec extends AnyWordSpec {
       }
     }
 
+    "all ships are completely hit" should {
+      val ships = Vector(
+        Ship(2, "Test 1"),
+        Ship(2, "Test 2")
+      )
+      val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val shipPositions = Vector(
+        ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        ShipPosition(ships(1), Vector(Coordinates(4, 4), Coordinates(4, 5)))
+      )
+
+      val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
+      val matrix2 = matrix1.updated(3, matrix1(3).updated(5, BoardCell(true)))
+
+      val matrix3 = matrix2.updated(4, matrix2(4).updated(4, BoardCell(true)))
+      val matrix4 = matrix3.updated(4, matrix3(4).updated(5, BoardCell(true)))
+      val board = Board(matrix4, ships, shipPositions)
+
+      "all ships are destroyed" in {
+        val result = board.areAllShipsDestroyed()
+        assert(result.isSuccess)
+        assert(result.get)
+      }
+    }
+
+    "all ships are completely hit with inconsistent ship positions" should {
+      val ships = Vector(
+        Ship(2, "Test 1"),
+        Ship(2, "Test 2")
+      )
+      val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val shipPositions = Vector(
+        ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5)))
+      )
+
+      val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
+      val matrix2 = matrix1.updated(3, matrix1(3).updated(5, BoardCell(true)))
+
+      val matrix3 = matrix2.updated(4, matrix2(4).updated(4, BoardCell(true)))
+      val matrix4 = matrix3.updated(4, matrix3(4).updated(5, BoardCell(true)))
+      val board = Board(matrix4, ships, shipPositions)
+
+      "fail all ships are destroyed" in {
+        assert(board.areAllShipsDestroyed().isFailure)
+      }
+    }
+
     "ship is placed on empty board by coordinates" should {
       val ship = Ship(2, "TestShip1")
       val shipCoordinates = Vector(Coordinates(3, 4), Coordinates(3, 5))
@@ -1025,7 +1072,7 @@ class BoardSpec extends AnyWordSpec {
         val ship2Coordinates = Vector(Coordinates(5, 10), Coordinates(5, 11))
         val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2), Vector.empty)
         val newBoardByFunction = board.placeSingleShip(ship, () => 5, () => 10, () => BoardDirection.East)
-        val newBoardByDirection = board.placeSingleShip(ship, Coordinates(5,10), BoardDirection.East)
+        val newBoardByDirection = board.placeSingleShip(ship, Coordinates(5, 10), BoardDirection.East)
         val newBoardByCoordinates = board.placeSingleShip(ship2, ship2Coordinates)
 
         "be failure" in {
@@ -1039,7 +1086,7 @@ class BoardSpec extends AnyWordSpec {
         val ship2Coordinates = Vector(Coordinates(5, -1), Coordinates(5, -2))
         val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2), Vector.empty)
         val newBoardByFunction = board.placeSingleShip(ship, () => 5, () => -1, () => BoardDirection.West)
-        val newBoardByDirection = board.placeSingleShip(ship, Coordinates(5,-1), BoardDirection.West)
+        val newBoardByDirection = board.placeSingleShip(ship, Coordinates(5, -1), BoardDirection.West)
         val newBoardByCoordinates = board.placeSingleShip(ship2, ship2Coordinates)
 
         "be failure" in {
