@@ -1,7 +1,21 @@
 import model.{Game, Ship}
 
+import scala.util.{Failure, Success}
+
 object Battleship {
   def main(args: Array[String]): Unit = {
+    val game = new Game(getShips(), getShips())
+
+    while (game.isRunning.isSuccess && game.isRunning.get) {
+
+    }
+
+    model.OutputHelper.generateFinalText(game) match {
+      case Failure(ex) => throw ex
+      case Success(value) => value.foreach(println(_))
+    }
+
+
     // --> 1 Spieler, 1 KI
     // --> Boards instanziieren, Schiffe random verteilen
 
