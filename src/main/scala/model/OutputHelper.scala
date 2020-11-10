@@ -14,7 +14,7 @@ object OutputHelper {
    * @return
    */
   def generateBoard(board: Board, showShips: Boolean, player: String): Vector[String] = {
-    val headline = "Spielbrett von " + player
+    val headline = "Spielbrett " + player
     val line1 = "~~~~~~~~~~~~~"
     val line2 = "~ 0123456789~"
     val line13 = "~~~~~~~~~~~~~"
@@ -74,7 +74,7 @@ object OutputHelper {
    * @return Remaining ships infotext
    */
   def generateRemainingShips(board: Board, player: String): Vector[String] = {
-    val headline = "Schiffstatus von " + player
+    val headline = "Schiffstatus " + player
     Vector(headline) ++ generateRemainingShipsLineByLine(board.ships, board)
   }
 

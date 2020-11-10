@@ -5,12 +5,19 @@ import scala.util.{Failure, Success}
 object Battleship {
   def main(args: Array[String]): Unit = {
     var game = new Game(getShips(), getShips())
+    var humanTurn = true
 
     while (game.isRunning.isSuccess && game.isRunning.get) {
       game = startNewRound(game)
       generateRoundText(game).foreach(print(_))
 
+      while(humanTurn && game.isRunning.isSuccess && game.isRunning.get) {
+        humanTurn = !humanTurn
+      }
 
+      while(!humanTurn && game.isRunning.isSuccess && game.isRunning.get) {
+        humanTurn = !humanTurn
+      }
     }
 
     model.OutputHelper.generateFinalText(game) match {

@@ -1,3 +1,4 @@
+import model.{Board, BoardCell, Coordinates, Game, Ship, ShipPosition}
 import org.scalatest.wordspec.AnyWordSpec
 
 class BattleshipSpec extends AnyWordSpec {
@@ -25,12 +26,44 @@ class BattleshipSpec extends AnyWordSpec {
     }
   }
 
-  "All ships" when {
+  "Ships" when {
     "generated" should {
       val ships = Battleship.getShips()
 
       "have different names" in {
         assert(ships.map(_.name).distinct.length == ships.length)
+      }
+    }
+  }
+
+  "Round text" when {
+    "generated" should {
+      val shipsHuman = Vector(
+        Ship(2, "humanShip1")
+      )
+      val shipsAi = Vector(
+        Ship(2, "aiShip1")
+      )
+
+      val shipPositionsHuman = Vector(
+        ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+      )
+
+      val shipPositionsAi = Vector(
+        ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+      )
+
+      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+
+      val testBoardHuman = Board(matrixHuman, shipsHuman, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi, shipsAi, shipPositionsAi)
+
+      val testGame = Game(testBoardHuman, testBoardAi, 10)
+      val roundText = Battleship.generateRoundText(testGame)
+
+      "not be empty" in {
+        assert(!roundText.isEmpty)
       }
     }
   }
