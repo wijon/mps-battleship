@@ -1,5 +1,6 @@
 import model.{Game, Ship}
 
+import scala.io.StdIn
 import scala.util.{Failure, Success}
 
 object Battleship {
@@ -11,24 +12,70 @@ object Battleship {
     }
 
     var humanTurn = true
+    var shipHit = true
+    var input = ""
 
-//    while (game.isRunning.isSuccess && game.isRunning.get) {
+    while (game.isRunning.isSuccess && game.isRunning.get) {
       game = startNewRound(game)
       generateRoundText(game).foreach(println(_))
 
       while(humanTurn && game.isRunning.isSuccess && game.isRunning.get) {
+        println("")
+        println("Welches Feld möchten Sie beschießen?")
+        shipHit = true
+
+        while(shipHit) {
+          input = StdIn.readLine()
+          game.shootAtAiBoard(input.slice(0,1).toInt, input.slice(1,2).toInt) match {
+            case Success(value) =>
+              game = value._1
+              shipHit = value._2
+            case Failure(ex) => throw ex
+          }
+
+          println("Beschuss auf Feld " + input)
+
+          if(shipHit) {
+            println("Schiff getroffen. Sie sind erneut am Zug.")
+          }
+        }
+
         humanTurn = !humanTurn
       }
 
       while(!humanTurn && game.isRunning.isSuccess && game.isRunning.get) {
+        shipHit = true
+
+        while(shipHit) {
+          Thread.sleep(1000)
+
+          input = scala.util.Random.nextInt(100).toString
+          if(input.length == 1) input = "0" + input
+
+          game.shootAtHumanBoard(input.slice(0,1).toInt, input.slice(1,2).toInt) match {
+            case Success(value) =>
+              game = value._1
+              shipHit = value._2
+            case Failure(ex) => throw ex
+          }
+
+          println("KI beschießt Feld " + input)
+
+          if(shipHit) {
+            println("Schiff getroffen. KI ist erneut am Zug.")
+          }
+        }
+
         humanTurn = !humanTurn
       }
-//    }
 
-//    model.OutputHelper.generateFinalText(game) match {
-//      case Failure(ex) => throw ex
-//      case Success(value) => value.foreach(println(_))
-//    }
+      Thread.sleep(1000)
+    }
+
+    model.OutputHelper.generateFinalText(game) match {
+      case Failure(ex) => throw ex
+      case Success(value) => value.foreach(println(_))
+    }
 
 
     // --> 1 Spieler, 1 KI
@@ -66,7 +113,7 @@ object Battleship {
     val roundInfoText = model.OutputHelper.generateRoundInfoText(game)
     val shipsInfoText = model.OutputHelper.generateRemainingShips(game.humanPlayerBoard, "Mensch")
     val humanBoard = model.OutputHelper.generateBoard(game.humanPlayerBoard, true, "Mensch")
-    val aiBoard = model.OutputHelper.generateBoard(game.aiPlayerBoard, false, "KI")
+    val aiBoard = model.OutputHelper.generateBoard(game.aiPlayerBoard, true, "KI")
 
     roundInfoText ++ Vector(" ") ++ shipsInfoText ++ Vector(" ") ++ humanBoard ++ Vector(" ") ++ aiBoard
   }

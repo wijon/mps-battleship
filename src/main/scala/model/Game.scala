@@ -54,6 +54,32 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
     }
   }
 
+  /** Shoot at human player board
+   *
+   * @param row Row to shoot
+   * @param col Column to shoot
+   * @return Game and Is ship hit?
+   */
+  def shootAtHumanBoard(row: Int, col: Int): Try[(Game, Boolean)] = {
+    Try(humanPlayerBoard.shoot(row, col) match {
+      case Success(value) => (copy(value.board, aiPlayerBoard, roundNum), value.isShipHit)
+      case Failure(ex) => throw ex
+    })
+  }
+
+  /** Shoot at ai player board
+   *
+   * @param row Row to shoot
+   * @param col Column to shoot
+   * @return Game and Is ship hit?
+   */
+  def shootAtAiBoard(row: Int, col: Int): Try[(Game, Boolean)] = {
+    Try(aiPlayerBoard.shoot(row, col) match {
+      case Success(value) => (copy(humanPlayerBoard, value.board, roundNum), value.isShipHit)
+      case Failure(ex) => throw ex
+    })
+  }
+
   /** Check if all Ships of one Player are destroyed
    *
    * @return Game still running?
