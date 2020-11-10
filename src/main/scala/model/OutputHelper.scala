@@ -1,5 +1,7 @@
 package model
 
+import scala.util.{Failure, Success, Try}
+
 /** Helper functions for output rendering
  *
  */
@@ -19,9 +21,9 @@ object OutputHelper {
 
   /** Render board line by line
    *
-   * @param currentRow    Index of current row
-   * @param board         Board to render
-   * @param showShips     Show ships in board?
+   * @param currentRow Index of current row
+   * @param board      Board to render
+   * @param showShips  Show ships in board?
    * @return Board for output
    */
   private def generateBoardLineByLine(currentRow: Int,
@@ -37,10 +39,10 @@ object OutputHelper {
 
   /** Render board line field by field
    *
-   * @param currentRow    Index of current row
-   * @param currentCol    Index of current column
-   * @param board         Board to render
-   * @param showShips     Show ships in board?
+   * @param currentRow Index of current row
+   * @param currentCol Index of current column
+   * @param board      Board to render
+   * @param showShips  Show ships in board?
    * @return BoardRow for output
    */
   private def generateBoardLineFieldByField(currentRow: Int,
@@ -124,6 +126,24 @@ object OutputHelper {
       val recurseValue = generateSingleShipElement(remainingShipPos.drop(1), board, newNumberOfHits)
       (newChar + recurseValue._1, recurseValue._2)
     }
+  }
+
+  /** Render final game info for output
+   *
+   * @param game Game to check
+   * @return Victory / Loss-Screen
+   */
+  def generateFinalText(game: Game): Try[Vector[String]] = {
+    Try(game.isRunning match {
+      case Failure(ex) => throw ex
+      case Success(true) => throw new IllegalStateException
+      case Success(false) =>
+        game.humanPlayerIsWinner() match {
+          case Failure(ex) => throw ex
+          case Success(true) => generateVictory()
+          case Success(false) => generateLoss()
+        }
+    })
   }
 
   /** Render victory-screen for output
