@@ -5,11 +5,16 @@ import scala.util.{Failure, Success}
 object Battleship {
   def main(args: Array[String]): Unit = {
     var game = new Game(getShips(), getShips())
+    game.placeAllShipsRandomly((maxValue: Int) => scala.util.Random.nextInt(maxValue)) match {
+      case Success(value) => game = value
+      case Failure(ex) => throw ex
+    }
+
     var humanTurn = true
 
-    while (game.isRunning.isSuccess && game.isRunning.get) {
+//    while (game.isRunning.isSuccess && game.isRunning.get) {
       game = startNewRound(game)
-      generateRoundText(game).foreach(print(_))
+      generateRoundText(game).foreach(println(_))
 
       while(humanTurn && game.isRunning.isSuccess && game.isRunning.get) {
         humanTurn = !humanTurn
@@ -18,12 +23,12 @@ object Battleship {
       while(!humanTurn && game.isRunning.isSuccess && game.isRunning.get) {
         humanTurn = !humanTurn
       }
-    }
+//    }
 
-    model.OutputHelper.generateFinalText(game) match {
-      case Failure(ex) => throw ex
-      case Success(value) => value.foreach(println(_))
-    }
+//    model.OutputHelper.generateFinalText(game) match {
+//      case Failure(ex) => throw ex
+//      case Success(value) => value.foreach(println(_))
+//    }
 
 
     // --> 1 Spieler, 1 KI
