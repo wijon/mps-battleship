@@ -4,11 +4,11 @@ import scala.util.{Failure, Success, Try}
 
 /** Game-class manages boards and game specific values
  *
- * @param player1Board Board of human player
- * @param player2Board Board of AI player
+ * @param humanPlayerBoard Board of human player
+ * @param aiPlayerBoard Board of AI player
  * @param roundNum     Current round number
  */
-case class Game(player1Board: Board, player2Board: Board, roundNum: Int) {
+case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
   // Override constructor, this one is used for the initial instantiation
   def this(player1Ships: Vector[Ship], player2Ships: Vector[Ship]) =
     this(new Board(player1Ships), new Board(player2Ships), 0)
@@ -18,8 +18,8 @@ case class Game(player1Board: Board, player2Board: Board, roundNum: Int) {
    * @return Game still running?
    */
   def isRunning: Try[Boolean] = {
-    val p1Result = player1Board.areAllShipsDestroyed()
-    val p2Result = player2Board.areAllShipsDestroyed()
+    val p1Result = humanPlayerBoard.areAllShipsDestroyed()
+    val p2Result = aiPlayerBoard.areAllShipsDestroyed()
 
     if (p1Result.isFailure) {
       p1Result
@@ -36,7 +36,7 @@ case class Game(player1Board: Board, player2Board: Board, roundNum: Int) {
    */
   def humanPlayerIsWinner(): Try[Boolean] = {
     isRunning match {
-      case Success(value) => if (!value) player2Board.areAllShipsDestroyed() else Success(false)
+      case Success(value) => if (!value) aiPlayerBoard.areAllShipsDestroyed() else Success(false)
       case Failure(ex) => Failure(ex)
     }
   }

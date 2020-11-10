@@ -10,13 +10,15 @@ object OutputHelper {
    *
    * @param board     Board to render
    * @param showShips Show ships on board?
+   * @param player Player name
    * @return
    */
-  def generateBoard(board: Board, showShips: Boolean): Vector[String] = {
+  def generateBoard(board: Board, showShips: Boolean, player: String): Vector[String] = {
+    val headline = "Spielbrett von " + player
     val line1 = "~~~~~~~~~~~~~"
     val line2 = "~ 0123456789~"
     val line13 = "~~~~~~~~~~~~~"
-    Vector(line1, line2) ++ generateBoardLineByLine(0, board, showShips) :+ line13
+    Vector(headline, line1, line2) ++ generateBoardLineByLine(0, board, showShips) :+ line13
   }
 
   /** Render board line by line
@@ -68,10 +70,12 @@ object OutputHelper {
   /** Render remaining ships-Infotext for output
    *
    * @param board Board with remaining ships
+   * @param player Player name
    * @return Remaining ships infotext
    */
-  def generateRemainingShips(board: Board): Vector[String] = {
-    generateRemainingShipsLineByLine(board.ships, board)
+  def generateRemainingShips(board: Board, player: String): Vector[String] = {
+    val headline = "Schiffstatus von " + player
+    Vector(headline) ++ generateRemainingShipsLineByLine(board.ships, board)
   }
 
   /** Render remaining ships-infotext ship by ship

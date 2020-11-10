@@ -4,9 +4,12 @@ import scala.util.{Failure, Success}
 
 object Battleship {
   def main(args: Array[String]): Unit = {
-    val game = new Game(getShips(), getShips())
+    var game = new Game(getShips(), getShips())
 
     while (game.isRunning.isSuccess && game.isRunning.get) {
+      game = startNewRound(game)
+      generateRoundText(game).foreach(print(_))
+
 
     }
 
@@ -31,6 +34,29 @@ object Battleship {
     //}
 
     // Spiel vorbei: Victory / Loss ausgeben
+  }
+
+  /** Start new round of battleship. Increment round number
+   *
+   * @param game Game
+   * @return Changed game
+   */
+  def startNewRound(game: Game): Game = {
+    game.copy(game.humanPlayerBoard, game.aiPlayerBoard, game.roundNum + 1)
+  }
+
+  /** Generate round text for output
+   *
+   * @param game Game
+   * @return Round text for output
+   */
+  def generateRoundText(game: Game): Vector[String] = {
+    val roundInfoText = model.OutputHelper.generateRoundInfoText(game)
+    val shipsInfoText = model.OutputHelper.generateRemainingShips(game.humanPlayerBoard, "Mensch")
+    val humanBoard = model.OutputHelper.generateBoard(game.humanPlayerBoard, true, "Mensch")
+    val aiBoard = model.OutputHelper.generateBoard(game.aiPlayerBoard, false, "KI")
+
+    roundInfoText ++ Vector(" ") ++ shipsInfoText ++ Vector(" ") ++ humanBoard ++ Vector(" ") ++ aiBoard
   }
 
   /** Create ships

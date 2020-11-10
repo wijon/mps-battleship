@@ -13,10 +13,10 @@ class GameSpec extends AnyWordSpec {
       )
       val game = new Game(p1Ships, p2Ships)
       "have player 1 board with player 1 ships" in {
-        assert(game.player1Board.ships == p1Ships)
+        assert(game.humanPlayerBoard.ships == p1Ships)
       }
       "have player 2 board with player 2 ships" in {
-        assert(game.player2Board.ships == p2Ships)
+        assert(game.aiPlayerBoard.ships == p2Ships)
       }
     }
 

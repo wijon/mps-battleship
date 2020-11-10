@@ -216,10 +216,10 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix3 = matrix2.updated(1, matrix2(1).updated(2, BoardCell(true)))
       val testBoard = Board(matrix3, ships, shipPositions)
 
-      val test = OutputHelper.generateRemainingShips(testBoard)
+      val test = OutputHelper.generateRemainingShips(testBoard, "human")
 
-      "contain one line for every ship on the board" in {
-        assert(test.length == ships.length)
+      "contain one line for every ship on the board and one headline" in {
+        assert(test.length == (ships.length + 1))
       }
     }
 
@@ -236,7 +236,7 @@ class OutputHelperSpec extends AnyWordSpec {
 
       val testBoard = Board(matrix, ships, shipPositions)
 
-      val test = OutputHelper.generateRemainingShips(testBoard)
+      val test = OutputHelper.generateRemainingShips(testBoard,"human")
 
       "show this ship correctly" in {
         assert(test.mkString(" ").contains("\\__/"))
@@ -265,7 +265,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix1 = matrix.updated(3, matrix(3).updated(5, BoardCell(true)))
       val testBoard = Board(matrix1, ships, shipPositions)
 
-      val test = OutputHelper.generateRemainingShips(testBoard)
+      val test = OutputHelper.generateRemainingShips(testBoard, "human")
 
       "show this ship correctly" in {
         assert(test.mkString(" ").contains("\\_X/"))
@@ -295,7 +295,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix2 = matrix1.updated(3, matrix1(3).updated(5, BoardCell(true)))
       val testBoard = Board(matrix2, ships, shipPositions)
 
-      val test = OutputHelper.generateRemainingShips(testBoard)
+      val test = OutputHelper.generateRemainingShips(testBoard, "human")
 
       "show this ship correctly" in {
         assert(test.mkString(" ").contains("\\XX/"))
@@ -336,7 +336,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix5 = matrix4.updated(7, matrix4(7).updated(6, BoardCell(true)))
       val testBoard = Board(matrix5, ships, shipPositions)
 
-      val test = OutputHelper.generateBoard(testBoard, showShips = true)
+      val test = OutputHelper.generateBoard(testBoard, showShips = true, "human")
 
       "not be empty" in {
         assert(!test.mkString(" ").isEmpty)
@@ -375,7 +375,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix5 = matrix4.updated(7, matrix4(7).updated(6, BoardCell(true)))
       val testBoard = Board(matrix5, ships, shipPositions)
 
-      val test = OutputHelper.generateBoard(testBoard, showShips = false)
+      val test = OutputHelper.generateBoard(testBoard, showShips = false, "ai")
 
       "not be empty" in {
         assert(!test.mkString(" ").isEmpty)
