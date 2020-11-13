@@ -1,11 +1,8 @@
 package model
 
 import java.security.InvalidParameterException
-
-import com.sun.jdi.request.InvalidRequestStateException
-
-import scala.util.{Failure, Success, Try}
 import model.BoardDirection.BoardDirection
+import scala.util.{Failure, Success, Try}
 
 case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPositions: Vector[ShipPosition]) {
   // Override constructor, this one is used for the initial instantiation

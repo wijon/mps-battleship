@@ -63,7 +63,7 @@ class BattleshipSpec extends AnyWordSpec {
       val roundText = Battleship.generateRoundText(testGame)
 
       "not be empty" in {
-        assert(!roundText.isEmpty)
+        assert(roundText.nonEmpty)
       }
     }
   }

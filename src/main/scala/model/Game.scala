@@ -41,7 +41,7 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
   def placeAllShipsOfBoardRandomlyOneByOne(board: Board,
                                            remainingShips: Vector[Ship],
                                            randomIntGenerator: Int => Int): Try[Board] = {
-    if (remainingShips.length == 0) {
+    if (remainingShips.isEmpty) {
       Success(board)
     } else {
       placeAllShipsOfBoardRandomlyOneByOne(board, remainingShips.drop(1), randomIntGenerator) match {

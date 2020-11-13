@@ -7,8 +7,8 @@ import scala.util.{Failure, Success, Try}
 object Battleship {
   def main(args: Array[String]): Unit = {
     // New game. Randomly place ships
-    new Game(getShips(), getShips()).placeAllShipsRandomly((maxValue: Int) => scala.util.Random.nextInt(maxValue)) match {
-      case Success(game) => {
+    new Game(getShips, getShips).placeAllShipsRandomly((maxValue: Int) => scala.util.Random.nextInt(maxValue)) match {
+      case Success(game) =>
         // Play game. Round by Round
         play(printValue => println(printValue),
           startNewRound(game),
@@ -18,15 +18,13 @@ object Battleship {
             if (input.length == 1) "0" + input else input
           }) match {
           case Failure(ex) => throw ex
-          case Success(value) => {
+          case Success(value) =>
             // End of game. Show victory / loss
             model.OutputHelper.generateFinalText(value) match {
               case Success(value) => value.foreach(println(_))
               case Failure(ex) => throw ex
             }
-          }
         }
-      }
       case Failure(ex) => throw ex
     }
   }
@@ -55,7 +53,7 @@ object Battleship {
       fktHumanGetCoordinatesToShootAt,
       fktForInfoTextOutput) match {
       case Failure(ex) => throw ex
-      case Success(gameAfterHumanRound) => {
+      case Success(gameAfterHumanRound) =>
 
         // AI or finished?
         if (!gameAfterHumanRound.isRunning.isSuccess || !gameAfterHumanRound.isRunning.get) {
@@ -69,7 +67,7 @@ object Battleship {
             fktAiGetCoordinatesToShootAt,
             fktForInfoTextOutput) match {
             case Failure(ex) => throw ex
-            case Success(gameAfterAiRound) => {
+            case Success(gameAfterAiRound) =>
               Thread.sleep(1000)
 
               // Next round or finished?
@@ -85,10 +83,8 @@ object Battleship {
               } else {
                 gameAfterAiRound
               }
-            }
           }
         }
-      }
     })
   }
 
@@ -157,8 +153,8 @@ object Battleship {
   def generateRoundText(game: Game): Vector[String] = {
     val roundInfoText = model.OutputHelper.generateRoundInfoText(game)
     val shipsInfoText = model.OutputHelper.generateRemainingShips(game.humanPlayerBoard, "Mensch")
-    val humanBoard = model.OutputHelper.generateBoard(game.humanPlayerBoard, true, "Mensch")
-    val aiBoard = model.OutputHelper.generateBoard(game.aiPlayerBoard, true, "KI")
+    val humanBoard = model.OutputHelper.generateBoard(game.humanPlayerBoard, showShips = true, "Mensch")
+    val aiBoard = model.OutputHelper.generateBoard(game.aiPlayerBoard, showShips = true, "KI")
 
     Vector(" ") ++ roundInfoText ++ Vector(" ") ++ shipsInfoText ++ Vector(" ") ++ humanBoard ++ Vector(" ") ++ aiBoard
   }
@@ -167,7 +163,7 @@ object Battleship {
    *
    * @return List of all ships
    */
-  def getShips(): Vector[Ship] = {
+  def getShips: Vector[Ship] = {
     Vector(
       Ship(5, "Carrier"),
       Ship(4, "Battleship"),
