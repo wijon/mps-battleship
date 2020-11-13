@@ -4,7 +4,7 @@ import org.scalatest.wordspec.AnyWordSpec
 class BattleshipSpec extends AnyWordSpec {
   "Battleship" when {
     "getShips() is called" should {
-      val ships = Battleship.getShips()
+      val ships = Battleship.getShips
       "return a total of 5 ships" in {
         assert(ships.length == 5)
       }
@@ -28,7 +28,7 @@ class BattleshipSpec extends AnyWordSpec {
 
   "Ships" when {
     "generated" should {
-      val ships = Battleship.getShips()
+      val ships = Battleship.getShips
 
       "have different names" in {
         assert(ships.map(_.name).distinct.length == ships.length)
