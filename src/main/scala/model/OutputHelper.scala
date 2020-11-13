@@ -186,13 +186,33 @@ object OutputHelper {
     Vector(viewLine1)
   }
 
-  /** Render info text about AI-actions for output
+  /** Render info text for output
    *
-   * @param coordinates Coordinates that were shot at
-   * @return AI info text
+   * @return Info text human players turn
    */
-  def generateAiInfoText(coordinates: Coordinates): Vector[String] = {
-    val viewLine1 = "Der Computerspieler greift das Feld " + coordinates.row + coordinates.col + " an."
+  def generateHumanPlayerRoundInfoText(): Vector[String] = {
+    val viewLine1 = "Sie sind am Zug."
+    val viewLine2 = "Welches Feld möchten Sie beschießen?"
+    Vector(viewLine1, viewLine2)
+  }
+
+  /** Render info text for output
+   *
+   * @return Info text ai players turn
+   */
+  def generateAiPlayerRoundInfoText(): Vector[String] = {
+    val viewLine1 = "Der Computerspieler ist am Zug."
+    Vector(viewLine1)
+  }
+
+  /** Render info text about shoot for output
+   *
+   * @param row Shot row
+   * @param col Shot column
+   * @return Shoot info text
+   */
+  def generateShootInfoText(row: Int, col: Int): Vector[String] = {
+    val viewLine1 = "Beschuss auf Feld " + row.toString + col.toString
     Vector(viewLine1)
   }
 

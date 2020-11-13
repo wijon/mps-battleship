@@ -22,9 +22,9 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
     val humanBoard = placeAllShipsOfBoardRandomlyOneByOne(humanPlayerBoard, humanPlayerBoard.ships, randomIntGenerator)
     val aiBoard = placeAllShipsOfBoardRandomlyOneByOne(aiPlayerBoard, aiPlayerBoard.ships, randomIntGenerator)
 
-    if(humanBoard.isFailure) {
+    if (humanBoard.isFailure) {
       Failure(humanBoard.failed.get)
-    } else if(aiBoard.isFailure) {
+    } else if (aiBoard.isFailure) {
       Failure(aiBoard.failed.get)
     } else {
       Success(copy(humanBoard.get, aiBoard.get, roundNum))
@@ -33,8 +33,8 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
 
   /** Place ships of board recursively
    *
-   * @param board Board
-   * @param remainingShips Ships to place
+   * @param board              Board
+   * @param remainingShips     Ships to place
    * @param randomIntGenerator Function for coordinate and BoardDirection generation
    * @return Board with ships placed
    */
@@ -52,6 +52,17 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
         case Failure(ex) => Failure(ex)
       }
     }
+  }
+
+  /** Shoot at player board
+   *
+   * @param humanPlayerBoard Shoot at human player board? (false = shoot at ai player board)
+   * @param row Row to shoot at
+   * @param col Column to shoot at
+   * @return Game and is ship hit?
+   */
+  def shootAtBoard(humanPlayerBoard: Boolean, row: Int, col: Int): Try[(Game, Boolean)] = {
+    if (humanPlayerBoard) shootAtHumanBoard(row, col) else shootAtAiBoard(row, col)
   }
 
   /** Shoot at human player board

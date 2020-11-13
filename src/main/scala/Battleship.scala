@@ -1,98 +1,137 @@
+import model.OutputHelper.{generateAiPlayerRoundInfoText, generateHumanPlayerRoundInfoText, generateShootInfoText}
 import model.{Game, Ship}
 
 import scala.io.StdIn
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 object Battleship {
   def main(args: Array[String]): Unit = {
-    var game = new Game(getShips(), getShips())
-    game.placeAllShipsRandomly((maxValue: Int) => scala.util.Random.nextInt(maxValue)) match {
-      case Success(value) => game = value
-      case Failure(ex) => throw ex
-    }
-
-    var humanTurn = true
-    var shipHit = true
-    var input = ""
-
-    while (game.isRunning.isSuccess && game.isRunning.get) {
-      game = startNewRound(game)
-      generateRoundText(game).foreach(println(_))
-
-      while(humanTurn && game.isRunning.isSuccess && game.isRunning.get) {
-        println("")
-        println("Welches Feld möchten Sie beschießen?")
-        shipHit = true
-
-        while(shipHit) {
-          input = StdIn.readLine()
-          game.shootAtAiBoard(input.slice(0,1).toInt, input.slice(1,2).toInt) match {
-            case Success(value) =>
-              game = value._1
-              shipHit = value._2
-            case Failure(ex) => throw ex
-          }
-
-          println("Beschuss auf Feld " + input)
-
-          if(shipHit) {
-            println("Schiff getroffen. Sie sind erneut am Zug.")
+    // New game. Randomly place ships
+    new Game(getShips(), getShips()).placeAllShipsRandomly((maxValue: Int) => scala.util.Random.nextInt(maxValue)) match {
+      case Success(game) => {
+        // Play game. Round by Round
+        play(printValue => println(printValue),
+          startNewRound(game),
+          () => StdIn.readLine(),
+          () => {
+            val input = scala.util.Random.nextInt(100).toString
+            if (input.length == 1) "0" + input else input
+          }) match {
+          case Failure(ex) => throw ex
+          case Success(value) => {
+            // End of game. Show victory / loss
+            model.OutputHelper.generateFinalText(value) match {
+              case Success(value) => value.foreach(println(_))
+              case Failure(ex) => throw ex
+            }
           }
         }
-
-        humanTurn = !humanTurn
       }
+      case Failure(ex) => throw ex
+    }
+  }
 
-      while(!humanTurn && game.isRunning.isSuccess && game.isRunning.get) {
-        shipHit = true
+  /** Play round after round until finish
+   *
+   * @param fktForInfoTextOutput            Function to put output text
+   * @param game                            Game to play
+   * @param fktHumanGetCoordinatesToShootAt Function to get coordinates to shoot at for human player
+   * @param fktAiGetCoordinatesToShootAt    Function to get coordinates to shoot at for ai player
+   * @return Finished game
+   */
+  def play(fktForInfoTextOutput: String => Unit,
+           game: Game,
+           fktHumanGetCoordinatesToShootAt: () => String,
+           fktAiGetCoordinatesToShootAt: () => String
+          ): Try[Game] = {
+    generateRoundText(game).foreach(println(_))
 
-        while(shipHit) {
-          Thread.sleep(1000)
+    // Human
+    (Vector("") ++ generateHumanPlayerRoundInfoText()).foreach(println(_))
 
-          input = scala.util.Random.nextInt(100).toString
-          if(input.length == 1) input = "0" + input
+    Try(playOneRoundOfOnePlayer(
+      humanPlayerTurn = true,
+      game,
+      fktHumanGetCoordinatesToShootAt,
+      fktForInfoTextOutput) match {
+      case Failure(ex) => throw ex
+      case Success(gameAfterHumanRound) => {
 
-          game.shootAtHumanBoard(input.slice(0,1).toInt, input.slice(1,2).toInt) match {
-            case Success(value) =>
-              game = value._1
-              shipHit = value._2
+        // AI or finished?
+        if (!gameAfterHumanRound.isRunning.isSuccess || !gameAfterHumanRound.isRunning.get) {
+          gameAfterHumanRound
+        } else {
+          (Vector("") ++ generateAiPlayerRoundInfoText()).foreach(println(_))
+
+          playOneRoundOfOnePlayer(
+            humanPlayerTurn = false,
+            gameAfterHumanRound,
+            fktAiGetCoordinatesToShootAt,
+            fktForInfoTextOutput) match {
             case Failure(ex) => throw ex
-          }
+            case Success(gameAfterAiRound) => {
+              Thread.sleep(1000)
 
-          println("KI beschießt Feld " + input)
-
-          if(shipHit) {
-            println("Schiff getroffen. KI ist erneut am Zug.")
+              // Next round or finished?
+              if (gameAfterAiRound.isRunning.isSuccess && gameAfterAiRound.isRunning.get) {
+                play(fktForInfoTextOutput,
+                  startNewRound(gameAfterAiRound),
+                  fktHumanGetCoordinatesToShootAt,
+                  fktAiGetCoordinatesToShootAt)
+                match {
+                  case Failure(ex) => throw ex
+                  case Success(value) => value
+                }
+              } else {
+                gameAfterAiRound
+              }
+            }
           }
         }
-
-        humanTurn = !humanTurn
       }
+    })
+  }
 
-      Thread.sleep(1000)
-    }
+  /** Play until no ship was hit
+   *
+   * @param humanPlayerTurn            Is it human players turn?
+   * @param game                       Game to play
+   * @param fktGetCoordinatesToShootAt Function to get coordinates
+   * @param fktForInfoTextOutput       Function to put output text
+   * @return Game
+   */
+  def playOneRoundOfOnePlayer(humanPlayerTurn: Boolean,
+                              game: Game,
+                              fktGetCoordinatesToShootAt: () => String,
+                              fktForInfoTextOutput: String => Unit
+                             ): Try[Game] = {
+    if (!humanPlayerTurn) Thread.sleep(1000)
 
-    model.OutputHelper.generateFinalText(game) match {
+    val input = fktGetCoordinatesToShootAt()
+    val rowToShootAt = input.slice(0, 1).toInt
+    val colToShootAt = input.slice(1, 2).toInt
+
+    generateShootInfoText(rowToShootAt, colToShootAt)
+
+    Try(game.shootAtBoard(!humanPlayerTurn, rowToShootAt, colToShootAt) match {
+      case Success(value) =>
+        if (value._2 && value._1.isRunning.isSuccess && value._1.isRunning.get) {
+          fktForInfoTextOutput("Schiff getroffen. Erneut am Zug.")
+
+          playOneRoundOfOnePlayer(humanPlayerTurn, value._1, fktGetCoordinatesToShootAt, fktForInfoTextOutput) match {
+            case Success(value) => value
+            case Failure(ex) => throw ex
+          }
+        } else {
+          if (value._2)
+            fktForInfoTextOutput("Schiff getroffen.")
+          else
+            fktForInfoTextOutput("Nichts getroffen.")
+
+          value._1
+        }
       case Failure(ex) => throw ex
-      case Success(value) => value.foreach(println(_))
-    }
-
-
-    // --> 1 Spieler, 1 KI
-    // --> Boards instanziieren, Schiffe random verteilen
-
-    //while (Game.isRunning()) {
-    // Clear Console
-    // RoundInfoText ausgeben
-    // RemainingShips ausgeben
-    // Spielfelder ausgeben (eigenes und gegnerisches)
-    // Eingabe erwarten
-    // Alle Texte neu ausgeben
-    // --> Treffer: Spiel vorbei? game.running=false : Eingabe erwarten
-    // --> Kein Treffer: KI spielt, Spiel vorbei? game.running=false : Alle Texte neu ausgeben
-    //}
-
-    // Spiel vorbei: Victory / Loss ausgeben
+    })
   }
 
   /** Start new round of battleship. Increment round number

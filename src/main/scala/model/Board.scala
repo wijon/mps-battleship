@@ -70,7 +70,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
                       startingRow: Int => Int,
                       startingCol: Int => Int,
                       direction: Int => BoardDirection): Try[Board] = {
-    placeSingleShip(ship, Coordinates(startingRow(9), startingCol(9)), direction(4))
+    placeSingleShip(ship, Coordinates(startingRow(9), startingCol(9)), direction(3))
   }
 
   /** Places a single ship on board

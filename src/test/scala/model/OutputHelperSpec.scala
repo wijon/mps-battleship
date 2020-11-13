@@ -153,10 +153,10 @@ class OutputHelperSpec extends AnyWordSpec {
     }
   }
 
-  "Ai info text" when {
+  "Shoot info text" when {
     "called" should {
       val testCoordinates = Coordinates(3, 7)
-      val textAsString = OutputHelper.generateAiInfoText(testCoordinates).mkString(" ")
+      val textAsString = OutputHelper.generateShootInfoText(testCoordinates.row, testCoordinates.col).mkString(" ")
 
       "not be empty" in {
         assert(!textAsString.isEmpty)
