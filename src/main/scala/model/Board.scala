@@ -161,7 +161,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    *
    * @param row row coordinate
    * @param col col coordinate
-   * @return a tuple containing the updated board together with a boolean reflecting if the shot hit a ship
+   * @return a tuple containing the updated board together with an option reflecting if the shot hit a ship
    */
   def shoot(row: Int, col: Int): Try[ShotAtResult] = {
     if (matrix(row)(col).isHit) {
@@ -170,7 +170,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
       val newMatrix = matrix.updated(row, matrix(row).updated(col, BoardCell(true)))
       val shipPos = shipPositions.find(_.positions.contains(Coordinates(row, col)))
 
-      Success(ShotAtResult(copy(newMatrix, ships, shipPositions), shipPos.isDefined))
+      Success(ShotAtResult(copy(newMatrix, ships, shipPositions), shipPos))
     }
   }
 

@@ -169,21 +169,6 @@ class OutputHelperSpec extends AnyWordSpec {
     }
   }
 
-  "Ship hit info text" when {
-    "called" should {
-      val testShip = Ship(3, "TestShip")
-      val textAsString = OutputHelper.generateShipHitInfotext(testShip).mkString(" ")
-
-      "not be empty" in {
-        assert(!textAsString.isEmpty)
-      }
-
-      "contain ship name" in {
-        assert(textAsString.contains(testShip.name))
-      }
-    }
-  }
-
   "Ship destroyed info text" when {
     "called" should {
       val testShip = Ship(3, "TestShip")

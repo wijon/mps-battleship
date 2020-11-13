@@ -10,7 +10,7 @@ object OutputHelper {
    *
    * @param board     Board to render
    * @param showShips Show ships on board?
-   * @param player Player name
+   * @param player    Player name
    * @return
    */
   def generateBoard(board: Board, showShips: Boolean, player: String): Vector[String] = {
@@ -69,7 +69,7 @@ object OutputHelper {
 
   /** Render remaining ships-Infotext for output
    *
-   * @param board Board with remaining ships
+   * @param board  Board with remaining ships
    * @param player Player name
    * @return Remaining ships infotext
    */
@@ -218,21 +218,44 @@ object OutputHelper {
 
   /** Render info text about ship hit for output
    *
-   * @param ship Ship
-   * @return Text
+   * @param ship  Ship
+   * @param isDestroyed Is Ship destroyed?
+   * @return Infotext for output
    */
-  def generateShipHitInfotext(ship: Ship): Vector[String] = {
+  def generateShipHitInfoText(ship: Ship, isDestroyed: Boolean): Vector[String] = {
     val viewLine1 = "Das Schiff " + ship.name + " wurde getroffen."
-    Vector(viewLine1)
+
+    if (isDestroyed)
+      Vector(viewLine1) ++ generateShipDestroyedInfoText(ship)
+    else
+      Vector(viewLine1)
   }
 
   /** Render info text about destroyed ship for output
    *
    * @param ship Ship
-   * @return Text
+   * @return Infotext for output
    */
   def generateShipDestroyedInfoText(ship: Ship): Vector[String] = {
     val viewLine1 = "Das Schiff " + ship.name + " wurde versenkt."
+    Vector(viewLine1)
+  }
+
+  /** Render info text about nothing hit for output
+   *
+   * @return Infotext for output
+   */
+  def generateNothingHitInfoText(): Vector[String] = {
+    val viewLine1 = "Es wurde nichts getroffen."
+    Vector(viewLine1)
+  }
+
+  /** Render info text that player is allowed to shoot again
+   *
+   * @return Infotext for output
+   */
+  def generateShootAgainInfoText(): Vector[String] = {
+    val viewLine1 = "Spieler ist erneut am Zug."
     Vector(viewLine1)
   }
 }

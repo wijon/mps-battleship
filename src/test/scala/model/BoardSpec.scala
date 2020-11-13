@@ -49,12 +49,12 @@ class BoardSpec extends AnyWordSpec {
 
         "register no ship hit" in {
           assert(result2Shot.isSuccess)
-          assert(!result2Shot.get.isShipHit)
+          assert(!result2Shot.get.shipPosition.isDefined)
         }
 
         "register ship hit" in {
           assert(result1Shot.isSuccess)
-          assert(result1Shot.get.isShipHit)
+          assert(result1Shot.get.shipPosition.isDefined)
         }
       }
 

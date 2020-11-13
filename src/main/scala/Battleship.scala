@@ -1,4 +1,4 @@
-import model.OutputHelper.{generateAiPlayerRoundInfoText, generateHumanPlayerRoundInfoText, generateShootInfoText}
+import model.OutputHelper.{generateAiPlayerRoundInfoText, generateHumanPlayerRoundInfoText, generateNothingHitInfoText, generateShipHitInfoText, generateShootAgainInfoText, generateShootInfoText}
 import model.{Game, Ship}
 
 import scala.io.StdIn
@@ -111,23 +111,29 @@ object Battleship {
     val rowToShootAt = input.slice(0, 1).toInt
     val colToShootAt = input.slice(1, 2).toInt
 
-    generateShootInfoText(rowToShootAt, colToShootAt)
+    generateShootInfoText(rowToShootAt, colToShootAt).foreach(fktForInfoTextOutput(_))
 
     Try(game.shootAtBoard(!humanPlayerTurn, rowToShootAt, colToShootAt) match {
       case Success(value) =>
-        if (value._2 && value._1.isRunning.isSuccess && value._1.isRunning.get) {
-          fktForInfoTextOutput("Schiff getroffen. Erneut am Zug.")
+        if (value._2.isDefined) {
+          if (humanPlayerTurn)
+            generateShipHitInfoText(value._2.get.ship, value._1.aiPlayerBoard.isDestroyed(value._2.get.ship).get)
+              .foreach(fktForInfoTextOutput(_))
+          else
+            generateShipHitInfoText(value._2.get.ship, value._1.humanPlayerBoard.isDestroyed(value._2.get.ship).get)
+              .foreach(fktForInfoTextOutput(_))
+        } else {
+          generateNothingHitInfoText().foreach(fktForInfoTextOutput(_))
+        }
+
+        if (value._2.isDefined && value._1.isRunning.isSuccess && value._1.isRunning.get) {
+          generateShootAgainInfoText().foreach(fktForInfoTextOutput(_))
 
           playOneRoundOfOnePlayer(humanPlayerTurn, value._1, fktGetCoordinatesToShootAt, fktForInfoTextOutput) match {
             case Success(value) => value
             case Failure(ex) => throw ex
           }
         } else {
-          if (value._2)
-            fktForInfoTextOutput("Schiff getroffen.")
-          else
-            fktForInfoTextOutput("Nichts getroffen.")
-
           value._1
         }
       case Failure(ex) => throw ex
@@ -154,7 +160,7 @@ object Battleship {
     val humanBoard = model.OutputHelper.generateBoard(game.humanPlayerBoard, true, "Mensch")
     val aiBoard = model.OutputHelper.generateBoard(game.aiPlayerBoard, true, "KI")
 
-    roundInfoText ++ Vector(" ") ++ shipsInfoText ++ Vector(" ") ++ humanBoard ++ Vector(" ") ++ aiBoard
+    Vector(" ") ++ roundInfoText ++ Vector(" ") ++ shipsInfoText ++ Vector(" ") ++ humanBoard ++ Vector(" ") ++ aiBoard
   }
 
   /** Create ships
