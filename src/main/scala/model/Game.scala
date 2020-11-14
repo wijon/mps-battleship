@@ -38,7 +38,7 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
    * @param randomIntGenerator Function for coordinate and BoardDirection generation
    * @return Board with ships placed
    */
-  def placeAllShipsOfBoardRandomlyOneByOne(board: Board,
+  private def placeAllShipsOfBoardRandomlyOneByOne(board: Board,
                                            remainingShips: Vector[Ship],
                                            randomIntGenerator: Int => Int): Try[Board] = {
     if (remainingShips.isEmpty) {

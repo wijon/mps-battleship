@@ -67,4 +67,22 @@ class BattleshipSpec extends AnyWordSpec {
       }
     }
   }
+
+  "A game" when {
+    val p1Ships = Vector(
+      Ship(1, "A")
+    )
+    val p2Ships = Vector(
+      Ship(2, "B")
+    )
+    val game = new Game(p1Ships, p2Ships)
+
+    "starting a new round" should {
+      val gameNextRound = Battleship.startNewRound(game)
+
+      "have a round number which is 1 greater than last round" in {
+        assert((game.roundNum + 1) == gameNextRound.roundNum)
+      }
+    }
+  }
 }
