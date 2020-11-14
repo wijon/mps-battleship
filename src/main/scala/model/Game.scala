@@ -71,7 +71,7 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
    * @param col Column to shoot
    * @return Game and Is ship hit?
    */
-  def shootAtHumanBoard(row: Int, col: Int): Try[(Game, Option[ShipPosition])] = {
+  private def shootAtHumanBoard(row: Int, col: Int): Try[(Game, Option[ShipPosition])] = {
     Try(humanPlayerBoard.shoot(row, col) match {
       case Success(value) => (copy(value.board, aiPlayerBoard, roundNum), value.shipPosition)
       case Failure(ex) => throw ex
@@ -84,7 +84,7 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
    * @param col Column to shoot
    * @return Game and Is ship hit?
    */
-  def shootAtAiBoard(row: Int, col: Int): Try[(Game, Option[ShipPosition])] = {
+  private def shootAtAiBoard(row: Int, col: Int): Try[(Game, Option[ShipPosition])] = {
     Try(aiPlayerBoard.shoot(row, col) match {
       case Success(value) => (copy(humanPlayerBoard, value.board, roundNum), value.shipPosition)
       case Failure(ex) => throw ex
