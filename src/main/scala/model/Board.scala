@@ -161,7 +161,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    * @return a tuple containing the updated board together with an option reflecting if the shot hit a ship
    */
   def shoot(row: Int, col: Int): Try[ShotAtResult] = {
-    if (matrix(row)(col).isHit) {
+    if (isHit(row, col)) {
       Failure(new UnsupportedOperationException)
     } else {
       val newMatrix = matrix.updated(row, matrix(row).updated(col, BoardCell(true)))
@@ -169,6 +169,16 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
 
       Success(ShotAtResult(copy(newMatrix, ships, shipPositions), shipPos))
     }
+  }
+
+  /** Are coordinates already hit?
+   *
+   * @param row Row to look at
+   * @param col Column to look at
+   * @return Hit?
+   */
+  def isHit(row: Int, col: Int): Boolean = {
+    matrix(row)(col).isHit
   }
 
   /** Checks if ship is destroyed

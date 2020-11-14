@@ -258,4 +258,34 @@ object OutputHelper {
     val viewLine1 = "Spieler ist erneut am Zug."
     Vector(viewLine1)
   }
+
+  /** Render info text that row is not a number
+   *
+   * @return Infotext for output
+   */
+  def generateInvalidRowInputInfoText(): Vector[String] = {
+    val viewLine1 = "Zeilenwert unzulässig. Der Wert muss zwischen 0 und 9 liegen."
+    val viewLine2 = "Bitte geben Sie einen neuen Wert ein."
+    Vector(viewLine1, viewLine2)
+  }
+
+  /** Render info text that column is not a number
+   *
+   * @return Infotext for output
+   */
+  def generateInvalidColInputInfoText(): Vector[String] = {
+    val viewLine1 = "Spaltenwert unzulässig. Der Wert muss zwischen 0 und 9 liegen."
+    val viewLine2 = "Bitte geben Sie einen neuen Wert ein."
+    Vector(viewLine1, viewLine2)
+  }
+
+  /** Render info text that coordinates where already hit
+   *
+   * @return Infotext for output
+   */
+  def generateInvalidInputInfoText(): Vector[String] = {
+    val viewLine1 = "Eingabe unzulässig. Das Feld wurde bereits beschossen."
+    val viewLine2 = "Bitte geben Sie einen neuen Wert ein."
+    Vector(viewLine1, viewLine2)
+  }
 }

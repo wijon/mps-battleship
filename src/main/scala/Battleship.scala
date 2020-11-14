@@ -1,6 +1,7 @@
-import model.OutputHelper.{generateAiPlayerRoundInfoText, generateHumanPlayerRoundInfoText, generateNothingHitInfoText, generateShipHitInfoText, generateShootAgainInfoText, generateShootInfoText}
-import model.{Game, Ship}
+import model.OutputHelper.{generateAiPlayerRoundInfoText, generateHumanPlayerRoundInfoText, generateInvalidColInputInfoText, generateInvalidInputInfoText, generateInvalidRowInputInfoText, generateNothingHitInfoText, generateShipHitInfoText, generateShootAgainInfoText, generateShootInfoText}
+import model.{Board, Coordinates, Game, Ship}
 
+import scala.annotation.tailrec
 import scala.io.StdIn
 import scala.util.{Failure, Success, Try}
 
@@ -27,6 +28,69 @@ object Battleship {
         }
       case Failure(ex) => throw ex
     }
+  }
+
+  /** Trying to get correct input for [maxIterations] times
+   *
+   * @param currentIteration      Current number of try
+   * @param maxIterations         Maximum number of tries before failure
+   * @param fktGetInput           Function for getting board coordinates
+   * @param board                 Board to shoot at
+   * @param fktErrorMessageOutput Function to put error message
+   * @return Input-coordinates
+   */
+  @tailrec
+  def waitingForCorrectInput(currentIteration: Int,
+                             maxIterations: Int,
+                             fktGetInput: () => String,
+                             board: Board,
+                             fktErrorMessageOutput: String => Unit): Try[Coordinates] = {
+    val input = fktGetInput()
+
+    checkInputForCorrectCoordinates(input, board, fktErrorMessageOutput) match {
+      case Success(value) => Success(value)
+      case Failure(ex) =>
+        if (currentIteration == maxIterations)
+          Failure(ex)
+        else
+          waitingForCorrectInput(currentIteration + 1, maxIterations, fktGetInput, board, fktErrorMessageOutput)
+    }
+  }
+
+  /** Try to extract coordinates out of input-string
+   *
+   * @param input                 Input string
+   * @param board                 Board to shoot at
+   * @param fktErrorMessageOutput Function to put error message
+   * @return Coordinates
+   */
+  def checkInputForCorrectCoordinates(input: String,
+                                      board: Board,
+                                      fktErrorMessageOutput: String => Unit): Try[Coordinates] = {
+    Try({
+      val row = input.slice(0, 1)
+      val col = input.slice(1, 2)
+
+      if (!row.charAt(0).isDigit) {
+        generateInvalidRowInputInfoText().foreach(fktErrorMessageOutput(_))
+        throw new IndexOutOfBoundsException(row)
+      }
+
+      if (!col.charAt(0).isDigit) {
+        generateInvalidColInputInfoText().foreach(fktErrorMessageOutput(_))
+        throw new IndexOutOfBoundsException(col)
+      }
+
+      val rowAsInt = row.toInt
+      val colAsInt = col.toInt
+
+      if (board.isHit(rowAsInt, colAsInt)) {
+        generateInvalidInputInfoText().foreach(fktErrorMessageOutput(_))
+        throw new IndexOutOfBoundsException(input)
+      }
+
+      Coordinates(rowAsInt, colAsInt)
+    })
   }
 
   /** Play round after round until finish
@@ -103,36 +167,38 @@ object Battleship {
                              ): Try[Game] = {
     if (!humanPlayerTurn) Thread.sleep(1000)
 
-    val input = fktGetCoordinatesToShootAt()
-    val rowToShootAt = input.slice(0, 1).toInt
-    val colToShootAt = input.slice(1, 2).toInt
-
-    generateShootInfoText(rowToShootAt, colToShootAt).foreach(fktForInfoTextOutput(_))
-
-    Try(game.shootAtBoard(!humanPlayerTurn, rowToShootAt, colToShootAt) match {
-      case Success(value) =>
-        if (value._2.isDefined) {
-          if (humanPlayerTurn)
-            generateShipHitInfoText(value._2.get.ship, value._1.aiPlayerBoard.isDestroyed(value._2.get.ship).get)
-              .foreach(fktForInfoTextOutput(_))
-          else
-            generateShipHitInfoText(value._2.get.ship, value._1.humanPlayerBoard.isDestroyed(value._2.get.ship).get)
-              .foreach(fktForInfoTextOutput(_))
-        } else {
-          generateNothingHitInfoText().foreach(fktForInfoTextOutput(_))
-        }
-
-        if (value._2.isDefined && value._1.isRunning.isSuccess && value._1.isRunning.get) {
-          generateShootAgainInfoText().foreach(fktForInfoTextOutput(_))
-
-          playOneRoundOfOnePlayer(humanPlayerTurn, value._1, fktGetCoordinatesToShootAt, fktForInfoTextOutput) match {
-            case Success(value) => value
-            case Failure(ex) => throw ex
-          }
-        } else {
-          value._1
-        }
+    Try(waitingForCorrectInput(currentIteration = 0, maxIterations = 10, fktGetInput = fktGetCoordinatesToShootAt,
+      board = if (humanPlayerTurn) game.aiPlayerBoard else game.humanPlayerBoard,
+      fktErrorMessageOutput = fktForInfoTextOutput) match {
       case Failure(ex) => throw ex
+      case Success(value) =>
+        generateShootInfoText(value.row, value.col).foreach(fktForInfoTextOutput(_))
+
+        game.shootAtBoard(!humanPlayerTurn, value.row, value.col) match {
+          case Success(value) =>
+            if (value._2.isDefined) {
+              if (humanPlayerTurn)
+                generateShipHitInfoText(value._2.get.ship, value._1.aiPlayerBoard.isDestroyed(value._2.get.ship).get)
+                  .foreach(fktForInfoTextOutput(_))
+              else
+                generateShipHitInfoText(value._2.get.ship, value._1.humanPlayerBoard.isDestroyed(value._2.get.ship).get)
+                  .foreach(fktForInfoTextOutput(_))
+            } else {
+              generateNothingHitInfoText().foreach(fktForInfoTextOutput(_))
+            }
+
+            if (value._2.isDefined && value._1.isRunning.isSuccess && value._1.isRunning.get) {
+              generateShootAgainInfoText().foreach(fktForInfoTextOutput(_))
+
+              playOneRoundOfOnePlayer(humanPlayerTurn, value._1, fktGetCoordinatesToShootAt, fktForInfoTextOutput) match {
+                case Success(value) => value
+                case Failure(ex) => throw ex
+              }
+            } else {
+              value._1
+            }
+          case Failure(ex) => throw ex
+        }
     })
   }
 
