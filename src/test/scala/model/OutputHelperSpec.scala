@@ -153,6 +153,26 @@ class OutputHelperSpec extends AnyWordSpec {
     }
   }
 
+  "Human player Round info text view" when {
+    "called" should {
+      val textAsString = OutputHelper.generateHumanPlayerRoundInfoText().mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
+      }
+    }
+  }
+
+  "Ai player Round info text view" when {
+    "called" should {
+      val textAsString = OutputHelper.generateAiPlayerRoundInfoText().mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
+      }
+    }
+  }
+
   "Shoot info text" when {
     "called" should {
       val testCoordinates = Coordinates(3, 7)
@@ -169,6 +189,39 @@ class OutputHelperSpec extends AnyWordSpec {
     }
   }
 
+  "Ship hit info text" when {
+    "called with not-destroyed ship" should {
+      val testShip = Ship(3, "TestShip")
+      val textAsString = OutputHelper.generateShipHitInfoText(testShip, isDestroyed = false).mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
+      }
+
+      "contain ship name" in {
+        assert(textAsString.contains(testShip.name))
+      }
+    }
+
+    "called with destroyed ship" should {
+      val testShip = Ship(3, "TestShip")
+      val textAsString = OutputHelper.generateShipHitInfoText(testShip, isDestroyed = true).mkString(" ")
+      val destroyedInfo = OutputHelper.generateShipDestroyedInfoText(testShip).mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
+      }
+
+      "contain ship name" in {
+        assert(textAsString.contains(testShip.name))
+      }
+
+      "contain destroyed info" in {
+        assert(textAsString.contains(destroyedInfo))
+      }
+    }
+  }
+
   "Ship destroyed info text" when {
     "called" should {
       val testShip = Ship(3, "TestShip")
@@ -180,6 +233,56 @@ class OutputHelperSpec extends AnyWordSpec {
 
       "contain ship name" in {
         assert(textAsString.contains(testShip.name))
+      }
+    }
+  }
+
+  "Nothing hit info text" when {
+    "called" should {
+      val textAsString = OutputHelper.generateNothingHitInfoText().mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
+      }
+    }
+  }
+
+  "Shoot again info text" when {
+    "called" should {
+      val textAsString = OutputHelper.generateShootAgainInfoText().mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
+      }
+    }
+  }
+
+  "Invalid row info text" when {
+    "called" should {
+      val textAsString = OutputHelper.generateInvalidRowInputInfoText().mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
+      }
+    }
+  }
+
+  "Invalid col info text" when {
+    "called" should {
+      val textAsString = OutputHelper.generateInvalidColInputInfoText().mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
+      }
+    }
+  }
+
+  "Invalid input info text" when {
+    "called" should {
+      val textAsString = OutputHelper.generateInvalidInputInfoText().mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
       }
     }
   }
@@ -221,7 +324,7 @@ class OutputHelperSpec extends AnyWordSpec {
 
       val testBoard = Board(matrix, ships, shipPositions)
 
-      val test = OutputHelper.generateRemainingShips(testBoard,"human")
+      val test = OutputHelper.generateRemainingShips(testBoard, "human")
 
       "show this ship correctly" in {
         assert(test.mkString(" ").contains("\\__/"))
