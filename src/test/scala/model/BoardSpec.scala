@@ -49,7 +49,7 @@ class BoardSpec extends AnyWordSpec {
 
         "register no ship hit" in {
           assert(result2Shot.isSuccess)
-          assert(!result2Shot.get.shipPosition.isDefined)
+          assert(result2Shot.get.shipPosition.isEmpty)
         }
 
         "register ship hit" in {
@@ -908,6 +908,414 @@ class BoardSpec extends AnyWordSpec {
           val fktStartingCol = (_: Int) => 0
 
           val newBoard = board.placeSingleShip(ship, fktStartingRow, fktStartingCol, fktDirection)
+
+          val position1 = Coordinates(5, 0)
+          val position2 = Coordinates(5, 1)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+
+          "still know position of old ship" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+          }
+        }
+      }
+    }
+
+    "ship is placed on empty board by functions with max iterations" should {
+      "when direction is north" should {
+        val ship = Ship(2, "TestShip1")
+        val shipDirection = BoardDirection.North
+        val fktDirection = (_: Int) => shipDirection
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship), Vector.empty)
+
+        "when ship is placed" should {
+          val fktStartingRow = (_: Int) => 5
+          val fktStartingCol = (_: Int) => 5
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 1)
+
+          val position1 = Coordinates(5, 5)
+          val position2 = Coordinates(4, 5)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+        }
+
+        "when ship is placed too close to board boarder" should {
+          val fktStartingRow = (_: Int) => 0
+          val fktStartingCol = (_: Int) => 5
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 1)
+
+          val position1 = Coordinates(0, 5)
+          val position2 = Coordinates(1, 5)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+        }
+      }
+
+      "when direction is east" should {
+        val ship = Ship(2, "TestShip1")
+        val shipDirection = BoardDirection.East
+        val fktDirection = (_: Int) => shipDirection
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship), Vector.empty)
+
+        "when ship is placed" should {
+          val fktStartingRow = (_: Int) => 5
+          val fktStartingCol = (_: Int) => 5
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 1)
+
+          val position1 = Coordinates(5, 5)
+          val position2 = Coordinates(5, 6)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+        }
+
+        "when ship is placed too close to board boarder" should {
+          val fktStartingRow = (_: Int) => 5
+          val fktStartingCol = (_: Int) => 9
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 1)
+
+          val position1 = Coordinates(5, 9)
+          val position2 = Coordinates(5, 8)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+        }
+      }
+
+      "when direction is south" should {
+        val ship = Ship(2, "TestShip1")
+        val shipDirection = BoardDirection.South
+        val fktDirection = (_: Int) => shipDirection
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship), Vector.empty)
+
+        "when ship is placed" should {
+          val fktStartingRow = (_: Int) => 5
+          val fktStartingCol = (_: Int) => 5
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection,1)
+
+          val position1 = Coordinates(5, 5)
+          val position2 = Coordinates(6, 5)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+        }
+
+        "when ship is placed too close to board boarder" should {
+          val fktStartingRow = (_: Int) => 9
+          val fktStartingCol = (_: Int) => 5
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 1)
+
+          val position1 = Coordinates(9, 5)
+          val position2 = Coordinates(8, 5)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+        }
+      }
+
+      "when direction is west" should {
+        val ship = Ship(2, "TestShip1")
+        val shipDirection = BoardDirection.West
+        val fktDirection = (_: Int) => shipDirection
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship), Vector.empty)
+
+        "when ship is placed" should {
+          val fktStartingRow = (_: Int) => 5
+          val fktStartingCol = (_: Int) => 5
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 1)
+
+          val position1 = Coordinates(5, 5)
+          val position2 = Coordinates(5, 4)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+        }
+
+        "when ship is placed too close to board boarder" should {
+          val fktStartingRow = (_: Int) => 5
+          val fktStartingCol = (_: Int) => 0
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 1)
+
+          val position1 = Coordinates(5, 0)
+          val position2 = Coordinates(5, 1)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+        }
+      }
+    }
+
+    "ship is placed on not empty board by functions with max iterations" should {
+      "when max iterations exceed" should {
+        val ship = Ship(2, "TestShip1")
+        val shipDirection = BoardDirection.North
+        val fktDirection = (_: Int) => shipDirection
+        val ship2 = Ship(2, "TestShip2")
+        val ship2Coordinates = Vector(Coordinates(5, 5), Coordinates(5, 1))
+        val ship2Position = ShipPosition(ship2, ship2Coordinates)
+        val board =
+          Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship, ship), Vector(ship2Position))
+
+        val fktStartingRow = (_: Int) => 5
+        val fktStartingCol = (_: Int) => 5
+
+        val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 10)
+
+        "fail" in {
+          assert(newBoard.isFailure)
+        }
+      }
+
+      "when direction is north" should {
+        val ship = Ship(2, "TestShip1")
+        val shipDirection = BoardDirection.North
+        val fktDirection = (_: Int) => shipDirection
+        val ship2 = Ship(2, "TestShip2")
+        val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
+        val ship2Position = ShipPosition(ship2, ship2Coordinates)
+        val board =
+          Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship, ship), Vector(ship2Position))
+
+        "when ship is placed" should {
+          val fktStartingRow = (_: Int) => 5
+          val fktStartingCol = (_: Int) => 5
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 1)
+
+          val position1 = Coordinates(5, 5)
+          val position2 = Coordinates(4, 5)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+
+          "still know position of old ship" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+          }
+        }
+
+        "when ship is placed too close to board boarder" should {
+          val fktStartingRow = (_: Int) => 0
+          val fktStartingCol = (_: Int) => 5
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 1)
+
+          val position1 = Coordinates(0, 5)
+          val position2 = Coordinates(1, 5)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+
+          "still know position of old ship" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+          }
+        }
+      }
+
+      "when direction is east" should {
+        val ship = Ship(2, "TestShip1")
+        val shipDirection = BoardDirection.East
+        val fktDirection = (_: Int) => shipDirection
+        val ship2 = Ship(2, "TestShip2")
+        val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
+        val ship2Position = ShipPosition(ship2, ship2Coordinates)
+        val board =
+          Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship, ship), Vector(ship2Position))
+
+        "when ship is placed" should {
+          val fktStartingRow = (_: Int) => 5
+          val fktStartingCol = (_: Int) => 5
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 1)
+
+          val position1 = Coordinates(5, 5)
+          val position2 = Coordinates(5, 6)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+
+          "still know position of old ship" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+          }
+        }
+
+        "when ship is placed too close to board boarder" should {
+          val fktStartingRow = (_: Int) => 5
+          val fktStartingCol = (_: Int) => 9
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 1)
+
+          val position1 = Coordinates(5, 9)
+          val position2 = Coordinates(5, 8)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+
+          "still know position of old ship" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+          }
+        }
+      }
+
+      "when direction is south" should {
+        val ship = Ship(2, "TestShip1")
+        val shipDirection = BoardDirection.South
+        val fktDirection = (_: Int) => shipDirection
+        val ship2 = Ship(2, "TestShip2")
+        val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
+        val ship2Position = ShipPosition(ship2, ship2Coordinates)
+        val board =
+          Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship, ship), Vector(ship2Position))
+
+        "when ship is placed" should {
+          val fktStartingRow = (_: Int) => 5
+          val fktStartingCol = (_: Int) => 5
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 1)
+
+          val position1 = Coordinates(5, 5)
+          val position2 = Coordinates(6, 5)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+
+          "still know position of old ship" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+          }
+        }
+
+        "when ship is placed too close to board boarder" should {
+          val fktStartingRow = (_: Int) => 9
+          val fktStartingCol = (_: Int) => 5
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 1)
+
+          val position1 = Coordinates(9, 5)
+          val position2 = Coordinates(8, 5)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+
+          "still know position of old ship" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+          }
+        }
+      }
+
+      "when direction is west" should {
+        val ship = Ship(2, "TestShip1")
+        val shipDirection = BoardDirection.West
+        val fktDirection = (_: Int) => shipDirection
+        val ship2 = Ship(2, "TestShip2")
+        val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
+        val ship2Position = ShipPosition(ship2, ship2Coordinates)
+        val board =
+          Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship, ship), Vector(ship2Position))
+
+        "when ship is placed" should {
+          val fktStartingRow = (_: Int) => 5
+          val fktStartingCol = (_: Int) => 5
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 1)
+
+          val position1 = Coordinates(5, 5)
+          val position2 = Coordinates(5, 4)
+
+          "know ship position" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship)
+              && sp.positions.exists(p => p.equals(position1))
+              && sp.positions.exists(p => p.equals(position2))))
+          }
+
+          "still know position of old ship" in {
+            assert(newBoard.isSuccess)
+            assert(newBoard.get.shipPositions.exists(sp => sp.ship.equals(ship2) && sp.positions.equals(ship2Coordinates)))
+          }
+        }
+
+        "when ship is placed too close to board boarder" should {
+          val fktStartingRow = (_: Int) => 5
+          val fktStartingCol = (_: Int) => 0
+
+          val newBoard = board.placeSingleShipForce(ship, fktStartingRow, fktStartingCol, fktDirection, 1)
 
           val position1 = Coordinates(5, 0)
           val position2 = Coordinates(5, 1)
