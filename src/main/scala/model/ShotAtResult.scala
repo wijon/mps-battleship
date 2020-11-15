@@ -1,3 +1,3 @@
 package model
 
-case class ShotAtResult(board: Board, isShipHit: Boolean)
+case class ShotAtResult(board: Board, shipPosition: Option[ShipPosition])

@@ -13,10 +13,10 @@ class GameSpec extends AnyWordSpec {
       )
       val game = new Game(p1Ships, p2Ships)
       "have player 1 board with player 1 ships" in {
-        assert(game.player1Board.ships == p1Ships)
+        assert(game.humanPlayerBoard.ships == p1Ships)
       }
       "have player 2 board with player 2 ships" in {
-        assert(game.player2Board.ships == p2Ships)
+        assert(game.aiPlayerBoard.ships == p2Ships)
       }
     }
 
@@ -190,6 +190,168 @@ class GameSpec extends AnyWordSpec {
         val resultWinner = testGame.humanPlayerIsWinner()
         assert(resultWinner.isSuccess)
         assert(!resultWinner.get)
+      }
+    }
+
+    "placing ships randomly on boards" should {
+      val p1Ships = Vector(
+        Ship(1, "A")
+      )
+      val p2Ships = Vector(
+        Ship(1, "B")
+      )
+      val game = new Game(p1Ships, p2Ships)
+      val gameWithPlacedShips = game.placeAllShipsRandomly((_: Int) => 2)
+
+      "still have the same round number" in {
+        assert(gameWithPlacedShips.isSuccess)
+        assert(game.roundNum == gameWithPlacedShips.get.roundNum)
+      }
+
+      "have placed all ships correctly" in {
+        assert(gameWithPlacedShips.get.humanPlayerBoard.shipPositions.length == 1)
+        assert(gameWithPlacedShips.get.humanPlayerBoard.shipPositions(0).ship == p1Ships(0))
+        assert(gameWithPlacedShips.get.humanPlayerBoard.shipPositions(0).positions.length == 1)
+        assert(gameWithPlacedShips.get.humanPlayerBoard.shipPositions(0).positions(0).row == 2)
+        assert(gameWithPlacedShips.get.humanPlayerBoard.shipPositions(0).positions(0).col == 2)
+
+        assert(gameWithPlacedShips.get.aiPlayerBoard.shipPositions.length == 1)
+        assert(gameWithPlacedShips.get.aiPlayerBoard.shipPositions(0).ship == p2Ships(0))
+        assert(gameWithPlacedShips.get.aiPlayerBoard.shipPositions(0).positions.length == 1)
+        assert(gameWithPlacedShips.get.aiPlayerBoard.shipPositions(0).positions(0).row == 2)
+        assert(gameWithPlacedShips.get.aiPlayerBoard.shipPositions(0).positions(0).col == 2)
+      }
+
+      "when coordinates on human player board are already blocked" should {
+        val p1Ships = Vector(
+          Ship(1, "A"),
+          Ship(1, "B"),
+          Ship(1, "C")
+        )
+        val p2Ships = Vector(
+          Ship(1, "D")
+        )
+        val gameFailHuman = new Game(p1Ships, p2Ships)
+        val gameFailHumanResult = gameFailHuman.placeAllShipsRandomly((_: Int) => 2)
+
+        "fail" in {
+          assert(gameFailHumanResult.isFailure)
+        }
+      }
+
+      "when coordinates on ai player board are already blocked" should {
+        val p1Ships = Vector(
+          Ship(1, "D")
+        )
+        val p2Ships = Vector(
+          Ship(1, "A"),
+          Ship(1, "B"),
+          Ship(1, "C")
+        )
+        val gameFailAi = new Game(p1Ships, p2Ships)
+        val gameFailAiResult = gameFailAi.placeAllShipsRandomly((_: Int) => 2)
+
+        "fail" in {
+          assert(gameFailAiResult.isFailure)
+        }
+      }
+    }
+  }
+
+  "Human player board" when {
+    val ships = Vector(
+      Ship(2, "Test 1")
+    )
+    val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+    val shipPositions = Vector(
+      ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5)))
+    )
+    val board = Board(matrix, ships, shipPositions)
+
+    "shot at" should {
+      val game = Game(board, null, 1)
+      val shootResult = game.shootAtBoard(humanPlayerBoard = true, 3, 4)
+
+      "register BoardCell hit" in {
+        assert(shootResult.isSuccess)
+        assert(shootResult.get._1.humanPlayerBoard.matrix(3)(4).isHit)
+      }
+
+      "shot at different BoardCell" should {
+        val shoot2Result = shootResult.get._1.shootAtBoard(humanPlayerBoard = true, 8, 1)
+
+        "register both BoardCell hit" in {
+          assert(shoot2Result.isSuccess)
+          assert(shoot2Result.get._1.humanPlayerBoard.matrix(8)(1).isHit)
+          assert(shoot2Result.get._1.humanPlayerBoard.matrix(3)(4).isHit) // First shot
+        }
+
+        "register no ship hit" in {
+          assert(shoot2Result.isSuccess)
+          assert(shoot2Result.get._2.isEmpty)
+        }
+
+        "register ship hit" in {
+          assert(shootResult.isSuccess)
+          assert(shootResult.get._2.isDefined)
+        }
+      }
+
+      "shot at same BoardCell again" should {
+        val result3Shot = shootResult.get._1.shootAtBoard(humanPlayerBoard = true, 3, 4)
+
+        "fail" in {
+          assert(result3Shot.isFailure)
+        }
+      }
+    }
+  }
+
+  "Ai player board" when {
+    val ships = Vector(
+      Ship(2, "Test 1")
+    )
+    val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+    val shipPositions = Vector(
+      ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5)))
+    )
+    val board = Board(matrix, ships, shipPositions)
+
+    "shot at" should {
+      val game = Game(null, board, 1)
+      val shootResult = game.shootAtBoard(humanPlayerBoard = false, 3, 4)
+
+      "register BoardCell hit" in {
+        assert(shootResult.isSuccess)
+        assert(shootResult.get._1.aiPlayerBoard.matrix(3)(4).isHit)
+      }
+
+      "shot at different BoardCell" should {
+        val shoot2Result = shootResult.get._1.shootAtBoard(humanPlayerBoard = false, 8, 1)
+
+        "register both BoardCell hit" in {
+          assert(shoot2Result.isSuccess)
+          assert(shoot2Result.get._1.aiPlayerBoard.matrix(8)(1).isHit)
+          assert(shoot2Result.get._1.aiPlayerBoard.matrix(3)(4).isHit) // First shot
+        }
+
+        "register no ship hit" in {
+          assert(shoot2Result.isSuccess)
+          assert(shoot2Result.get._2.isEmpty)
+        }
+
+        "register ship hit" in {
+          assert(shootResult.isSuccess)
+          assert(shootResult.get._2.isDefined)
+        }
+      }
+
+      "shot at same BoardCell again" should {
+        val result3Shot = shootResult.get._1.shootAtBoard(humanPlayerBoard = false, 3, 4)
+
+        "fail" in {
+          assert(result3Shot.isFailure)
+        }
       }
     }
   }

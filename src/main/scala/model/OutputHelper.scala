@@ -1,5 +1,7 @@
 package model
 
+import scala.util.{Failure, Success, Try}
+
 /** Helper functions for output rendering
  *
  */
@@ -8,20 +10,22 @@ object OutputHelper {
    *
    * @param board     Board to render
    * @param showShips Show ships on board?
+   * @param player    Player name
    * @return
    */
-  def generateBoard(board: Board, showShips: Boolean): Vector[String] = {
+  def generateBoard(board: Board, showShips: Boolean, player: String): Vector[String] = {
+    val headline = "Spielbrett " + player
     val line1 = "~~~~~~~~~~~~~"
     val line2 = "~ 0123456789~"
     val line13 = "~~~~~~~~~~~~~"
-    Vector(line1, line2) ++ generateBoardLineByLine(0, board, showShips) :+ line13
+    Vector(headline, line1, line2) ++ generateBoardLineByLine(0, board, showShips) :+ line13
   }
 
   /** Render board line by line
    *
-   * @param currentRow    Index of current row
-   * @param board         Board to render
-   * @param showShips     Show ships in board?
+   * @param currentRow Index of current row
+   * @param board      Board to render
+   * @param showShips  Show ships in board?
    * @return Board for output
    */
   private def generateBoardLineByLine(currentRow: Int,
@@ -37,10 +41,10 @@ object OutputHelper {
 
   /** Render board line field by field
    *
-   * @param currentRow    Index of current row
-   * @param currentCol    Index of current column
-   * @param board         Board to render
-   * @param showShips     Show ships in board?
+   * @param currentRow Index of current row
+   * @param currentCol Index of current column
+   * @param board      Board to render
+   * @param showShips  Show ships in board?
    * @return BoardRow for output
    */
   private def generateBoardLineFieldByField(currentRow: Int,
@@ -65,11 +69,13 @@ object OutputHelper {
 
   /** Render remaining ships-Infotext for output
    *
-   * @param board Board with remaining ships
+   * @param board  Board with remaining ships
+   * @param player Player name
    * @return Remaining ships infotext
    */
-  def generateRemainingShips(board: Board): Vector[String] = {
-    generateRemainingShipsLineByLine(board.ships, board)
+  def generateRemainingShips(board: Board, player: String): Vector[String] = {
+    val headline = "Schiffstatus " + player
+    Vector(headline) ++ generateRemainingShipsLineByLine(board.ships, board)
   }
 
   /** Render remaining ships-infotext ship by ship
@@ -126,6 +132,24 @@ object OutputHelper {
     }
   }
 
+  /** Render final game info for output
+   *
+   * @param game Game to check
+   * @return Victory / Loss-Screen
+   */
+  def generateFinalText(game: Game): Try[Vector[String]] = {
+    Try(game.isRunning match {
+      case Failure(ex) => throw ex
+      case Success(true) => throw new IllegalStateException
+      case Success(false) =>
+        game.humanPlayerIsWinner() match {
+          case Failure(ex) => throw ex
+          case Success(true) => generateVictory()
+          case Success(false) => generateLoss()
+        }
+    })
+  }
+
   /** Render victory-screen for output
    *
    * @return Victory-screen
@@ -162,33 +186,106 @@ object OutputHelper {
     Vector(viewLine1)
   }
 
-  /** Render info text about AI-actions for output
+  /** Render info text for output
    *
-   * @param coordinates Coordinates that were shot at
-   * @return AI info text
+   * @return Info text human players turn
    */
-  def generateAiInfoText(coordinates: Coordinates): Vector[String] = {
-    val viewLine1 = "Der Computerspieler greift das Feld " + coordinates.row + coordinates.col + " an."
+  def generateHumanPlayerRoundInfoText(): Vector[String] = {
+    val viewLine1 = "Sie sind am Zug."
+    val viewLine2 = "Welches Feld möchten Sie beschießen?"
+    Vector(viewLine1, viewLine2)
+  }
+
+  /** Render info text for output
+   *
+   * @return Info text ai players turn
+   */
+  def generateAiPlayerRoundInfoText(): Vector[String] = {
+    val viewLine1 = "Der Computerspieler ist am Zug."
+    Vector(viewLine1)
+  }
+
+  /** Render info text about shoot for output
+   *
+   * @param row Shot row
+   * @param col Shot column
+   * @return Shoot info text
+   */
+  def generateShootInfoText(row: Int, col: Int): Vector[String] = {
+    val viewLine1 = "Beschuss auf Feld " + row.toString + col.toString
     Vector(viewLine1)
   }
 
   /** Render info text about ship hit for output
    *
-   * @param ship Ship
-   * @return Text
+   * @param ship  Ship
+   * @param isDestroyed Is Ship destroyed?
+   * @return Infotext for output
    */
-  def generateShipHitInfotext(ship: Ship): Vector[String] = {
+  def generateShipHitInfoText(ship: Ship, isDestroyed: Boolean): Vector[String] = {
     val viewLine1 = "Das Schiff " + ship.name + " wurde getroffen."
-    Vector(viewLine1)
+
+    if (isDestroyed)
+      Vector(viewLine1) ++ generateShipDestroyedInfoText(ship)
+    else
+      Vector(viewLine1)
   }
 
   /** Render info text about destroyed ship for output
    *
    * @param ship Ship
-   * @return Text
+   * @return Infotext for output
    */
   def generateShipDestroyedInfoText(ship: Ship): Vector[String] = {
     val viewLine1 = "Das Schiff " + ship.name + " wurde versenkt."
     Vector(viewLine1)
+  }
+
+  /** Render info text about nothing hit for output
+   *
+   * @return Infotext for output
+   */
+  def generateNothingHitInfoText(): Vector[String] = {
+    val viewLine1 = "Es wurde nichts getroffen."
+    Vector(viewLine1)
+  }
+
+  /** Render info text that player is allowed to shoot again
+   *
+   * @return Infotext for output
+   */
+  def generateShootAgainInfoText(): Vector[String] = {
+    val viewLine1 = "Spieler ist erneut am Zug."
+    Vector(viewLine1)
+  }
+
+  /** Render info text that row is not a number
+   *
+   * @return Infotext for output
+   */
+  def generateInvalidRowInputInfoText(): Vector[String] = {
+    val viewLine1 = "Zeilenwert unzulässig. Der Wert muss zwischen 0 und 9 liegen."
+    val viewLine2 = "Bitte geben Sie einen neuen Wert ein."
+    Vector(viewLine1, viewLine2)
+  }
+
+  /** Render info text that column is not a number
+   *
+   * @return Infotext for output
+   */
+  def generateInvalidColInputInfoText(): Vector[String] = {
+    val viewLine1 = "Spaltenwert unzulässig. Der Wert muss zwischen 0 und 9 liegen."
+    val viewLine2 = "Bitte geben Sie einen neuen Wert ein."
+    Vector(viewLine1, viewLine2)
+  }
+
+  /** Render info text that coordinates where already hit
+   *
+   * @return Infotext for output
+   */
+  def generateInvalidInputInfoText(): Vector[String] = {
+    val viewLine1 = "Eingabe unzulässig. Das Feld wurde bereits beschossen."
+    val viewLine2 = "Bitte geben Sie einen neuen Wert ein."
+    Vector(viewLine1, viewLine2)
   }
 }

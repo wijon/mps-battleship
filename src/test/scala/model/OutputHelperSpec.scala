@@ -3,6 +3,103 @@ package model
 import org.scalatest.wordspec.AnyWordSpec
 
 class OutputHelperSpec extends AnyWordSpec {
+  "Final text" when {
+    val shipsHuman = Vector(
+      Ship(2, "humanShip1")
+    )
+    val shipsAi = Vector(
+      Ship(2, "aiShip1")
+    )
+
+    val shipPositionsHuman = Vector(
+      ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+    )
+
+    val shipPositionsAi = Vector(
+      ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+    )
+
+    "Game is still running" should {
+      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+
+      val testBoardHuman = Board(matrixHuman, shipsHuman, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi, shipsAi, shipPositionsAi)
+
+      val testGame = Game(testBoardHuman, testBoardAi, 10)
+      val outputTest = OutputHelper.generateFinalText(testGame)
+
+      "Fail" in {
+        assert(outputTest.isFailure)
+      }
+    }
+
+    "Human player is winner" should {
+      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val matrixAi2 = matrixAi.updated(3, matrixAi(3).updated(4, BoardCell(true)))
+      val matrixAi3 = matrixAi2.updated(3, matrixAi2(3).updated(5, BoardCell(true)))
+
+      val testBoardHuman = Board(matrixHuman, shipsHuman, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi3, shipsAi, shipPositionsAi)
+
+      val testGame = Game(testBoardHuman, testBoardAi, 10)
+      val outputTest = OutputHelper.generateFinalText(testGame)
+
+      val victoryText = OutputHelper.generateVictory()
+
+      "Give victory text" in {
+        assert(outputTest.isSuccess)
+        assert(outputTest.get.mkString(" ") == victoryText.mkString(" "))
+      }
+    }
+
+    "Human player is looser" should {
+      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val matrixHuman2 = matrixHuman.updated(3, matrixHuman(3).updated(4, BoardCell(true)))
+      val matrixHuman3 = matrixHuman2.updated(3, matrixHuman2(3).updated(5, BoardCell(true)))
+      val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+
+      val testBoardHuman = Board(matrixHuman3, shipsHuman, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi, shipsAi, shipPositionsAi)
+
+      val testGame = Game(testBoardHuman, testBoardAi, 10)
+      val outputTest = OutputHelper.generateFinalText(testGame)
+
+      val lossText = OutputHelper.generateLoss()
+
+      "Give loss text" in {
+        assert(outputTest.isSuccess)
+        assert(outputTest.get.mkString(" ") == lossText.mkString(" "))
+      }
+    }
+
+    "Game is inconsistent" should {
+      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val matrixHuman2 = matrixHuman.updated(3, matrixHuman(3).updated(4, BoardCell(true)))
+      val matrixHuman3 = matrixHuman2.updated(3, matrixHuman2(3).updated(5, BoardCell(true)))
+
+      val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+
+      val shipPositionsHuman = Vector()
+
+      val shipPositionsAi = Vector(
+        ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+      )
+
+      val testBoardHuman = Board(matrixHuman3, shipsHuman, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi, shipsAi, shipPositionsAi)
+
+      val testGame = Game(testBoardHuman, testBoardAi, 10)
+      val outputTest = OutputHelper.generateFinalText(testGame)
+
+      "Fail" in {
+        assert(outputTest.isFailure)
+      }
+    }
+
+  }
+
   "Victory view" when {
     "called" should {
       val textAsString = OutputHelper.generateVictory().mkString(" ")
@@ -56,10 +153,30 @@ class OutputHelperSpec extends AnyWordSpec {
     }
   }
 
-  "Ai info text" when {
+  "Human player Round info text view" when {
+    "called" should {
+      val textAsString = OutputHelper.generateHumanPlayerRoundInfoText().mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
+      }
+    }
+  }
+
+  "Ai player Round info text view" when {
+    "called" should {
+      val textAsString = OutputHelper.generateAiPlayerRoundInfoText().mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
+      }
+    }
+  }
+
+  "Shoot info text" when {
     "called" should {
       val testCoordinates = Coordinates(3, 7)
-      val textAsString = OutputHelper.generateAiInfoText(testCoordinates).mkString(" ")
+      val textAsString = OutputHelper.generateShootInfoText(testCoordinates.row, testCoordinates.col).mkString(" ")
 
       "not be empty" in {
         assert(!textAsString.isEmpty)
@@ -73,9 +190,9 @@ class OutputHelperSpec extends AnyWordSpec {
   }
 
   "Ship hit info text" when {
-    "called" should {
+    "called with not-destroyed ship" should {
       val testShip = Ship(3, "TestShip")
-      val textAsString = OutputHelper.generateShipHitInfotext(testShip).mkString(" ")
+      val textAsString = OutputHelper.generateShipHitInfoText(testShip, isDestroyed = false).mkString(" ")
 
       "not be empty" in {
         assert(!textAsString.isEmpty)
@@ -83,6 +200,24 @@ class OutputHelperSpec extends AnyWordSpec {
 
       "contain ship name" in {
         assert(textAsString.contains(testShip.name))
+      }
+    }
+
+    "called with destroyed ship" should {
+      val testShip = Ship(3, "TestShip")
+      val textAsString = OutputHelper.generateShipHitInfoText(testShip, isDestroyed = true).mkString(" ")
+      val destroyedInfo = OutputHelper.generateShipDestroyedInfoText(testShip).mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
+      }
+
+      "contain ship name" in {
+        assert(textAsString.contains(testShip.name))
+      }
+
+      "contain destroyed info" in {
+        assert(textAsString.contains(destroyedInfo))
       }
     }
   }
@@ -98,6 +233,56 @@ class OutputHelperSpec extends AnyWordSpec {
 
       "contain ship name" in {
         assert(textAsString.contains(testShip.name))
+      }
+    }
+  }
+
+  "Nothing hit info text" when {
+    "called" should {
+      val textAsString = OutputHelper.generateNothingHitInfoText().mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
+      }
+    }
+  }
+
+  "Shoot again info text" when {
+    "called" should {
+      val textAsString = OutputHelper.generateShootAgainInfoText().mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
+      }
+    }
+  }
+
+  "Invalid row info text" when {
+    "called" should {
+      val textAsString = OutputHelper.generateInvalidRowInputInfoText().mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
+      }
+    }
+  }
+
+  "Invalid col info text" when {
+    "called" should {
+      val textAsString = OutputHelper.generateInvalidColInputInfoText().mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
+      }
+    }
+  }
+
+  "Invalid input info text" when {
+    "called" should {
+      val textAsString = OutputHelper.generateInvalidInputInfoText().mkString(" ")
+
+      "not be empty" in {
+        assert(!textAsString.isEmpty)
       }
     }
   }
@@ -119,10 +304,10 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix3 = matrix2.updated(1, matrix2(1).updated(2, BoardCell(true)))
       val testBoard = Board(matrix3, ships, shipPositions)
 
-      val test = OutputHelper.generateRemainingShips(testBoard)
+      val test = OutputHelper.generateRemainingShips(testBoard, "human")
 
-      "contain one line for every ship on the board" in {
-        assert(test.length == ships.length)
+      "contain one line for every ship on the board and one headline" in {
+        assert(test.length == (ships.length + 1))
       }
     }
 
@@ -139,7 +324,7 @@ class OutputHelperSpec extends AnyWordSpec {
 
       val testBoard = Board(matrix, ships, shipPositions)
 
-      val test = OutputHelper.generateRemainingShips(testBoard)
+      val test = OutputHelper.generateRemainingShips(testBoard, "human")
 
       "show this ship correctly" in {
         assert(test.mkString(" ").contains("\\__/"))
@@ -168,7 +353,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix1 = matrix.updated(3, matrix(3).updated(5, BoardCell(true)))
       val testBoard = Board(matrix1, ships, shipPositions)
 
-      val test = OutputHelper.generateRemainingShips(testBoard)
+      val test = OutputHelper.generateRemainingShips(testBoard, "human")
 
       "show this ship correctly" in {
         assert(test.mkString(" ").contains("\\_X/"))
@@ -198,7 +383,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix2 = matrix1.updated(3, matrix1(3).updated(5, BoardCell(true)))
       val testBoard = Board(matrix2, ships, shipPositions)
 
-      val test = OutputHelper.generateRemainingShips(testBoard)
+      val test = OutputHelper.generateRemainingShips(testBoard, "human")
 
       "show this ship correctly" in {
         assert(test.mkString(" ").contains("\\XX/"))
@@ -239,7 +424,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix5 = matrix4.updated(7, matrix4(7).updated(6, BoardCell(true)))
       val testBoard = Board(matrix5, ships, shipPositions)
 
-      val test = OutputHelper.generateBoard(testBoard, showShips = true)
+      val test = OutputHelper.generateBoard(testBoard, showShips = true, "human")
 
       "not be empty" in {
         assert(!test.mkString(" ").isEmpty)
@@ -278,7 +463,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix5 = matrix4.updated(7, matrix4(7).updated(6, BoardCell(true)))
       val testBoard = Board(matrix5, ships, shipPositions)
 
-      val test = OutputHelper.generateBoard(testBoard, showShips = false)
+      val test = OutputHelper.generateBoard(testBoard, showShips = false, "ai")
 
       "not be empty" in {
         assert(!test.mkString(" ").isEmpty)

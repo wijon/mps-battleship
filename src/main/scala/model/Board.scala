@@ -1,8 +1,8 @@
 package model
 
 import java.security.InvalidParameterException
-import scala.util.{Failure, Success, Try}
 import model.BoardDirection.BoardDirection
+import scala.util.{Failure, Success, Try}
 
 case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPositions: Vector[ShipPosition]) {
   // Override constructor, this one is used for the initial instantiation
@@ -31,6 +31,30 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
     shipCoordinates.toVector
   }
 
+  /** Places a single ship on board by force. Recursive until successfull
+   *
+   * @param ship                ship to place
+   * @param startingRow         row-index of first ship field
+   * @param startingCol         column-index of first ship field
+   * @param direction           direction to place
+   * @param remainingIterations maximum number of recursive calls until cancelation
+   * @return updated board
+   */
+  def placeSingleShipForce(ship: Ship,
+                           startingRow: Int => Int,
+                           startingCol: Int => Int,
+                           direction: Int => BoardDirection,
+                           remainingIterations: Int): Try[Board] = {
+    if (remainingIterations == 0) {
+      Failure(new IndexOutOfBoundsException)
+    } else {
+      placeSingleShip(ship, startingRow, startingCol, direction) match {
+        case Success(value) => Success(value)
+        case Failure(_) => placeSingleShipForce(ship, startingCol, startingRow, direction, remainingIterations - 1)
+      }
+    }
+  }
+
   /** Places a single ship on board
    *
    * @param ship        ship to place
@@ -40,10 +64,10 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    * @return updated board
    */
   def placeSingleShip(ship: Ship,
-                      startingRow: () => Int,
-                      startingCol: () => Int,
-                      direction: () => BoardDirection): Try[Board] = {
-    placeSingleShip(ship, Coordinates(startingRow(), startingCol()), direction())
+                      startingRow: Int => Int,
+                      startingCol: Int => Int,
+                      direction: Int => BoardDirection): Try[Board] = {
+    placeSingleShip(ship, Coordinates(startingRow(9), startingCol(9)), direction(3))
   }
 
   /** Places a single ship on board
@@ -134,17 +158,27 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    *
    * @param row row coordinate
    * @param col col coordinate
-   * @return a tuple containing the updated board together with a boolean reflecting if the shot hit a ship
+   * @return a tuple containing the updated board together with an option reflecting if the shot hit a ship
    */
   def shoot(row: Int, col: Int): Try[ShotAtResult] = {
-    if (matrix(row)(col).isHit) {
+    if (isHit(row, col)) {
       Failure(new UnsupportedOperationException)
     } else {
       val newMatrix = matrix.updated(row, matrix(row).updated(col, BoardCell(true)))
       val shipPos = shipPositions.find(_.positions.contains(Coordinates(row, col)))
 
-      Success(ShotAtResult(copy(newMatrix, ships, shipPositions), shipPos.isDefined))
+      Success(ShotAtResult(copy(newMatrix, ships, shipPositions), shipPos))
     }
+  }
+
+  /** Are coordinates already hit?
+   *
+   * @param row Row to look at
+   * @param col Column to look at
+   * @return Hit?
+   */
+  def isHit(row: Int, col: Int): Boolean = {
+    matrix(row)(col).isHit
   }
 
   /** Checks if ship is destroyed
