@@ -142,6 +142,9 @@ class BattleshipSpec extends AnyWordSpec {
     val singleShipHuman = Vector(
       Ship(1, "humanShip1")
     )
+    val doubleShipHuman = Vector(
+      Ship(2, "humanShip2")
+    )
 
     val singleShipAi = Vector(
       Ship(1, "aiShip1")
@@ -152,6 +155,10 @@ class BattleshipSpec extends AnyWordSpec {
 
     val singleShipPositionsHuman = Vector(
       ShipPosition(singleShipHuman(0), Vector(Coordinates(0, 0))),
+    )
+
+    val doubleShipPositionsHuman = Vector(
+      ShipPosition(doubleShipHuman(0), Vector(Coordinates(0, 0), Coordinates(0, 1))),
     )
 
     val singleShipPositionsAi = Vector(
@@ -234,6 +241,18 @@ class BattleshipSpec extends AnyWordSpec {
 
       val testGame = Game(testBoardHuman, testBoardAi, 0)
       val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "00", () => "11")
+
+      "fails" in {
+        assert(gameAfterPlaying.isFailure)
+      }
+    }
+
+    "ai player gets to shoot two times and fails to input correct coordinates" should {
+      val testBoardHuman = Board(matrixHuman, doubleShipHuman, doubleShipPositionsHuman)
+      val testBoardAi = Board(matrixAi, singleShipAi, singleShipPositionsAi)
+
+      val testGame = Game(testBoardHuman, testBoardAi, 0)
+      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "11", () => "00")
 
       "fails" in {
         assert(gameAfterPlaying.isFailure)
