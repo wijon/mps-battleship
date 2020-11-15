@@ -85,4 +85,57 @@ class BattleshipSpec extends AnyWordSpec {
       }
     }
   }
+
+  "Playing the game" when {
+    val shipsHuman = Vector(
+      Ship(1, "humanShip1")
+    )
+    val shipsAi = Vector(
+      Ship(1, "aiShip1")
+    )
+
+    val shipPositionsHuman = Vector(
+      ShipPosition(shipsHuman(0), Vector(Coordinates(0, 0))),
+    )
+
+    val shipPositionsAi = Vector(
+      ShipPosition(shipsAi(0), Vector(Coordinates(0, 0))),
+    )
+
+    val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+    val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+
+    val testBoardHuman = Board(matrixHuman, shipsHuman, shipPositionsHuman)
+    val testBoardAi = Board(matrixAi, shipsAi, shipPositionsAi)
+
+    val testGame = Game(testBoardHuman, testBoardAi, 0)
+
+    "human player is winning" should {
+      val gameAfterPlaying= Battleship.play((value: String) => (), testGame, () => "00", () => "11")
+
+      "show human as winner" in {
+        assert(gameAfterPlaying.isSuccess)
+        assert(gameAfterPlaying.get.humanPlayerIsWinner().isSuccess)
+        assert(gameAfterPlaying.get.humanPlayerIsWinner().get)
+      }
+    }
+
+    "ai player is winning" should {
+      val gameAfterPlaying= Battleship.play((value: String) => (), testGame, () => "11", () => "00")
+
+      "show ai as winner" in {
+        assert(gameAfterPlaying.isSuccess)
+        assert(gameAfterPlaying.get.humanPlayerIsWinner().isSuccess)
+        assert(!gameAfterPlaying.get.humanPlayerIsWinner().get)
+      }
+    }
+
+    "max number of wrong inputs exceeds" should {
+      val gameAfterPlaying= Battleship.play((value: String) => (), testGame, () => "11", () => "11")
+
+      "fail" in {
+        assert(gameAfterPlaying.isFailure)
+      }
+    }
+  }
 }

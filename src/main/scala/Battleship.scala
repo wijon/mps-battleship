@@ -106,10 +106,10 @@ object Battleship {
            fktHumanGetCoordinatesToShootAt: () => String,
            fktAiGetCoordinatesToShootAt: () => String
           ): Try[Game] = {
-    generateRoundText(game).foreach(println(_))
+    generateRoundText(game).foreach(fktForInfoTextOutput(_))
 
     // Human
-    (Vector("") ++ generateHumanPlayerRoundInfoText()).foreach(println(_))
+    (Vector("") ++ generateHumanPlayerRoundInfoText()).foreach(fktForInfoTextOutput(_))
 
     Try(playOneRoundOfOnePlayer(
       humanPlayerTurn = true,
@@ -123,7 +123,7 @@ object Battleship {
         if (!gameAfterHumanRound.isRunning.isSuccess || !gameAfterHumanRound.isRunning.get) {
           gameAfterHumanRound
         } else {
-          (Vector("") ++ generateAiPlayerRoundInfoText()).foreach(println(_))
+          (Vector("") ++ generateAiPlayerRoundInfoText()).foreach(fktForInfoTextOutput(_))
 
           playOneRoundOfOnePlayer(
             humanPlayerTurn = false,
