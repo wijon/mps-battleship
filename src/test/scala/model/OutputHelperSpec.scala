@@ -74,30 +74,6 @@ class OutputHelperSpec extends AnyWordSpec {
       }
     }
 
-    "Game (human board) is inconsistent" should {
-      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
-      val matrixHuman2 = matrixHuman.updated(3, matrixHuman(3).updated(4, BoardCell(true)))
-      val matrixHuman3 = matrixHuman2.updated(3, matrixHuman2(3).updated(5, BoardCell(true)))
-
-      val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
-
-      val shipPositionsHuman = Vector()
-
-      val shipPositionsAi = Vector(
-        ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
-      )
-
-      val testBoardHuman = Board(matrixHuman3, shipsHuman, shipPositionsHuman)
-      val testBoardAi = Board(matrixAi, shipsAi, shipPositionsAi)
-
-      val testGame = Game(testBoardHuman, testBoardAi, 10)
-      val outputTest = OutputHelper.generateFinalText(testGame)
-
-      "Fail" in {
-        assert(outputTest.isFailure)
-      }
-    }
-
     "Game (ai board) is inconsistent" should {
       val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
       val matrixAi2 = matrixAi.updated(3, matrixAi(3).updated(4, BoardCell(true)))

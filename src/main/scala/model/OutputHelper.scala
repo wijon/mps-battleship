@@ -143,9 +143,8 @@ object OutputHelper {
       case Success(true) => throw new IllegalStateException
       case Success(false) =>
         game.humanPlayerIsWinner() match {
-          case Failure(ex) => throw ex
-          case Success(true) => generateVictory()
-          case Success(false) => generateLoss()
+          case true => generateVictory()
+          case false => generateLoss()
         }
     })
   }
@@ -218,7 +217,7 @@ object OutputHelper {
 
   /** Render info text about ship hit for output
    *
-   * @param ship  Ship
+   * @param ship        Ship
    * @param isDestroyed Is Ship destroyed?
    * @return Infotext for output
    */

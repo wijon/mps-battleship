@@ -181,8 +181,7 @@ class BattleshipSpec extends AnyWordSpec {
 
       "show human as winner" in {
         assert(gameAfterPlaying.isSuccess)
-        assert(gameAfterPlaying.get.humanPlayerIsWinner().isSuccess)
-        assert(gameAfterPlaying.get.humanPlayerIsWinner().get)
+        assert(gameAfterPlaying.get.humanPlayerIsWinner())
       }
     }
 
@@ -195,8 +194,7 @@ class BattleshipSpec extends AnyWordSpec {
 
       "show ai as winner" in {
         assert(gameAfterPlaying.isSuccess)
-        assert(gameAfterPlaying.get.humanPlayerIsWinner().isSuccess)
-        assert(!gameAfterPlaying.get.humanPlayerIsWinner().get)
+        assert(!gameAfterPlaying.get.humanPlayerIsWinner())
       }
     }
 
@@ -230,8 +228,7 @@ class BattleshipSpec extends AnyWordSpec {
 
       "show human as winner" in {
         assert(gameAfterPlaying.isSuccess)
-        assert(gameAfterPlaying.get.humanPlayerIsWinner().isSuccess)
-        assert(gameAfterPlaying.get.humanPlayerIsWinner().get)
+        assert(gameAfterPlaying.get.humanPlayerIsWinner())
       }
     }
 
@@ -279,8 +276,7 @@ class BattleshipSpec extends AnyWordSpec {
 
       "show human as winner" in {
         assert(gameAfterPlaying.isSuccess)
-        assert(gameAfterPlaying.get.humanPlayerIsWinner().isSuccess)
-        assert(gameAfterPlaying.get.humanPlayerIsWinner().get)
+        assert(gameAfterPlaying.get.humanPlayerIsWinner())
       }
     }
   }

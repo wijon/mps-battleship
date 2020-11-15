@@ -54,9 +54,7 @@ class GameSpec extends AnyWordSpec {
       }
 
       "declare ai as winner" in {
-        val result = testGame.humanPlayerIsWinner()
-        assert(result.isSuccess)
-        assert(!result.get)
+        assert(!testGame.humanPlayerIsWinner())
       }
     }
 
@@ -89,10 +87,6 @@ class GameSpec extends AnyWordSpec {
         "fail on isRunning check" in {
           assert(testGame.isRunning.isFailure)
         }
-
-        "fail on humanPlayerIsWinner check" in {
-          assert(testGame.humanPlayerIsWinner().isFailure)
-        }
       }
 
       "ai ship positions are inconsistent" should {
@@ -109,10 +103,6 @@ class GameSpec extends AnyWordSpec {
 
         "fail on isRunning check" in {
           assert(testGame.isRunning.isFailure)
-        }
-
-        "fail on humanPlayerIsWinner check" in {
-          assert(testGame.humanPlayerIsWinner().isFailure)
         }
       }
     }
@@ -150,9 +140,7 @@ class GameSpec extends AnyWordSpec {
       }
 
       "declare human as winner" in {
-        val result = testGame.humanPlayerIsWinner()
-        assert(result.isSuccess)
-        assert(result.get)
+        assert(testGame.humanPlayerIsWinner())
       }
     }
 
@@ -187,9 +175,7 @@ class GameSpec extends AnyWordSpec {
       }
 
       "human player is not winner" in {
-        val resultWinner = testGame.humanPlayerIsWinner()
-        assert(resultWinner.isSuccess)
-        assert(!resultWinner.get)
+        assert(!testGame.humanPlayerIsWinner())
       }
     }
 

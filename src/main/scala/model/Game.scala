@@ -39,8 +39,8 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
    * @return Board with ships placed
    */
   private def placeAllShipsOfBoardRandomlyOneByOne(board: Board,
-                                           remainingShips: Vector[Ship],
-                                           randomIntGenerator: Int => Int): Try[Board] = {
+                                                   remainingShips: Vector[Ship],
+                                                   randomIntGenerator: Int => Int): Try[Board] = {
     if (remainingShips.isEmpty) {
       Success(board)
     } else {
@@ -57,8 +57,8 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
   /** Shoot at player board
    *
    * @param humanPlayerBoard Shoot at human player board? (false = shoot at ai player board)
-   * @param row Row to shoot at
-   * @param col Column to shoot at
+   * @param row              Row to shoot at
+   * @param col              Column to shoot at
    * @return Game and is ship hit?
    */
   def shootAtBoard(humanPlayerBoard: Boolean, row: Int, col: Int): Try[(Game, Option[ShipPosition])] = {
@@ -112,10 +112,8 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
    *
    * @return Winner?
    */
-  def humanPlayerIsWinner(): Try[Boolean] = {
-    isRunning match {
-      case Success(value) => if (!value) aiPlayerBoard.areAllShipsDestroyed() else Success(false)
-      case Failure(ex) => Failure(ex)
-    }
+  def humanPlayerIsWinner(): Boolean = {
+    val aiPlayerAllShipsDestroyed = aiPlayerBoard.areAllShipsDestroyed()
+    !(aiPlayerAllShipsDestroyed.isFailure || !aiPlayerAllShipsDestroyed.get)
   }
 }
