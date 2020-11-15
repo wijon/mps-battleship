@@ -24,6 +24,58 @@ class BattleshipSpec extends AnyWordSpec {
         assert(ships.exists(s => s.name == "Destroyer" && s.length == 2))
       }
     }
+
+    "check input for correct coordinates" should {
+      val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val matrixWithHit = matrix.updated(4, matrix(4).updated(2, BoardCell(true)))
+      val boardWithHitAt42 = Board(matrixWithHit, Vector(), Vector())
+
+      "succeed for correct input" in {
+        val result = Battleship.checkInputForCorrectCoordinates("35", boardWithHitAt42, _ => {})
+
+        assert(result.isSuccess)
+        assert(result.get.row == 3)
+        assert(result.get.col == 5)
+      }
+
+      "fail for non numeric input for row" in {
+        val result = Battleship.checkInputForCorrectCoordinates("a5", boardWithHitAt42, _ => {})
+
+        assert(result.isFailure)
+      }
+
+      "fail for non numeric input for col" in {
+        val result = Battleship.checkInputForCorrectCoordinates("3$", boardWithHitAt42, _ => {})
+
+        assert(result.isFailure)
+      }
+
+      "fail for already hit board cell" in {
+        val result = Battleship.checkInputForCorrectCoordinates("42", boardWithHitAt42, _ => {})
+
+        assert(result.isFailure)
+      }
+    }
+
+    "waiting for correct input" should {
+      val board = new Board(Vector(Ship(2, "Test")))
+
+      "give coordinates for correct input" in {
+        val result = Battleship.waitingForCorrectInput(0, 1, () => "12", board, _ => {})
+
+        assert(result.isSuccess)
+        assert(result.get.row == 1)
+        assert(result.get.col == 2)
+      }
+
+      "fail for invalid input" in {
+        // Runs twice with same input (currentIteration < maxIteration) this will cover both branches of the if
+        // in the Failure case of waitingForCorrectInput()
+        val result = Battleship.waitingForCorrectInput(0, 1, () => "a2", board, _ => {})
+
+        assert(result.isFailure)
+      }
+    }
   }
 
   "Ships" when {
