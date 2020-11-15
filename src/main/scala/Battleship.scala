@@ -160,7 +160,7 @@ object Battleship {
    * @param fktForInfoTextOutput       Function to put output text
    * @return Game
    */
-  def playOneRoundOfOnePlayer(humanPlayerTurn: Boolean,
+  private def playOneRoundOfOnePlayer(humanPlayerTurn: Boolean,
                               game: Game,
                               fktGetCoordinatesToShootAt: () => String,
                               fktForInfoTextOutput: String => Unit
@@ -197,7 +197,8 @@ object Battleship {
             } else {
               value._1
             }
-          case Failure(ex) => throw ex
+            // Failure not possible --> waitingForCorrectInput() checks, if cell was already hit
+//          case Failure(ex) => throw ex
         }
     })
   }

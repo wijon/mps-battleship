@@ -87,31 +87,38 @@ class BattleshipSpec extends AnyWordSpec {
   }
 
   "Playing the game" when {
-    val shipsHuman = Vector(
+    val singleShipHuman = Vector(
       Ship(1, "humanShip1")
     )
-    val shipsAi = Vector(
+
+    val singleShipAi = Vector(
       Ship(1, "aiShip1")
     )
-
-    val shipPositionsHuman = Vector(
-      ShipPosition(shipsHuman(0), Vector(Coordinates(0, 0))),
+    val doubleShipAi = Vector(
+      Ship(2, "aiShip1")
     )
 
-    val shipPositionsAi = Vector(
-      ShipPosition(shipsAi(0), Vector(Coordinates(0, 0))),
+    val singleShipPositionsHuman = Vector(
+      ShipPosition(singleShipHuman(0), Vector(Coordinates(0, 0))),
+    )
+
+    val singleShipPositionsAi = Vector(
+      ShipPosition(singleShipAi(0), Vector(Coordinates(0, 0))),
+    )
+
+    val doubleShipPositionsAi = Vector(
+      ShipPosition(doubleShipAi(0), Vector(Coordinates(0, 0), Coordinates(0, 1))),
     )
 
     val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
     val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
 
-    val testBoardHuman = Board(matrixHuman, shipsHuman, shipPositionsHuman)
-    val testBoardAi = Board(matrixAi, shipsAi, shipPositionsAi)
-
-    val testGame = Game(testBoardHuman, testBoardAi, 0)
-
     "human player is winning" should {
-      val gameAfterPlaying= Battleship.play((value: String) => (), testGame, () => "00", () => "11")
+      val testBoardHuman = Board(matrixHuman, singleShipHuman, singleShipPositionsHuman)
+      val testBoardAi = Board(matrixAi, singleShipAi, singleShipPositionsAi)
+
+      val testGame = Game(testBoardHuman, testBoardAi, 0)
+      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "00", () => "11")
 
       "show human as winner" in {
         assert(gameAfterPlaying.isSuccess)
@@ -121,7 +128,11 @@ class BattleshipSpec extends AnyWordSpec {
     }
 
     "ai player is winning" should {
-      val gameAfterPlaying= Battleship.play((value: String) => (), testGame, () => "11", () => "00")
+      val testBoardHuman = Board(matrixHuman, singleShipHuman, singleShipPositionsHuman)
+      val testBoardAi = Board(matrixAi, singleShipAi, singleShipPositionsAi)
+
+      val testGame = Game(testBoardHuman, testBoardAi, 0)
+      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "11", () => "00")
 
       "show ai as winner" in {
         assert(gameAfterPlaying.isSuccess)
@@ -131,10 +142,74 @@ class BattleshipSpec extends AnyWordSpec {
     }
 
     "max number of wrong inputs exceeds" should {
-      val gameAfterPlaying= Battleship.play((value: String) => (), testGame, () => "11", () => "11")
+      val testBoardHuman = Board(matrixHuman, singleShipHuman, singleShipPositionsHuman)
+      val testBoardAi = Board(matrixAi, singleShipAi, singleShipPositionsAi)
+
+      val testGame = Game(testBoardHuman, testBoardAi, 0)
+      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "11", () => "11")
 
       "fail" in {
         assert(gameAfterPlaying.isFailure)
+      }
+    }
+
+    "human player gets to shoot two times and wins" should {
+      val testBoardHuman = Board(matrixHuman, singleShipHuman, singleShipPositionsHuman)
+      val testBoardAi = Board(matrixAi, doubleShipAi, doubleShipPositionsAi)
+
+      val testGame = Game(testBoardHuman, testBoardAi, 0)
+      var counter = 0
+
+      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => {
+        counter = counter + 1
+
+        if (counter == 1)
+          "00"
+        else
+          "01"
+      }, () => "11")
+
+      "show human as winner" in {
+        assert(gameAfterPlaying.isSuccess)
+        assert(gameAfterPlaying.get.humanPlayerIsWinner().isSuccess)
+        assert(gameAfterPlaying.get.humanPlayerIsWinner().get)
+      }
+    }
+
+    "human player gets to shoot two times and fails to input correct coordinates" should {
+      val testBoardHuman = Board(matrixHuman, singleShipHuman, singleShipPositionsHuman)
+      val testBoardAi = Board(matrixAi, doubleShipAi, doubleShipPositionsAi)
+
+      val testGame = Game(testBoardHuman, testBoardAi, 0)
+      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "00", () => "11")
+
+      "fails" in {
+        assert(gameAfterPlaying.isFailure)
+      }
+    }
+
+    "human player wins after second round" should {
+      val testBoardHuman = Board(matrixHuman, singleShipHuman, singleShipPositionsHuman)
+      val testBoardAi = Board(matrixAi, doubleShipAi, doubleShipPositionsAi)
+
+      val testGame = Game(testBoardHuman, testBoardAi, 0)
+      var counter = 0
+
+      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => {
+        counter = counter + 1
+
+        if (counter == 1)
+          "00"
+        else if (counter == 2)
+          "55"
+        else
+          "01"
+      }, () => "11")
+
+      "show human as winner" in {
+        assert(gameAfterPlaying.isSuccess)
+        assert(gameAfterPlaying.get.humanPlayerIsWinner().isSuccess)
+        assert(gameAfterPlaying.get.humanPlayerIsWinner().get)
       }
     }
   }
