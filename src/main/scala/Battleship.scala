@@ -223,7 +223,10 @@ object Battleship {
     val humanBoard = model.OutputHelper.generateBoard(game.humanPlayerBoard, showShips = true, "Mensch")
     val aiBoard = model.OutputHelper.generateBoard(game.aiPlayerBoard, showShips = true, "KI")
 
-    Vector(" ") ++ roundInfoText ++ Vector(" ") ++ shipsInfoText ++ Vector(" ") ++ humanBoard ++ Vector(" ") ++ aiBoard
+    val maxLength = humanBoard.map(str => str.length).max
+    val boardText = (humanBoard zip aiBoard).map(x => s"${x._1.padTo(maxLength, ' ')}\t\t\t${x._2}")
+
+    Vector(" ") ++ roundInfoText ++ Vector(" ") ++ shipsInfoText ++ Vector(" ") ++ boardText
   }
 
   /** Create ships
