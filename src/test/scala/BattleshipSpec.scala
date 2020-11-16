@@ -177,7 +177,7 @@ class BattleshipSpec extends AnyWordSpec {
       val testBoardAi = Board(matrixAi, singleShipAi, singleShipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 0)
-      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "00", () => "11")
+      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "00", () => "11", 0)
 
       "show human as winner" in {
         assert(gameAfterPlaying.isSuccess)
@@ -190,7 +190,7 @@ class BattleshipSpec extends AnyWordSpec {
       val testBoardAi = Board(matrixAi, singleShipAi, singleShipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 0)
-      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "11", () => "00")
+      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "11", () => "00", 0)
 
       "show ai as winner" in {
         assert(gameAfterPlaying.isSuccess)
@@ -203,7 +203,7 @@ class BattleshipSpec extends AnyWordSpec {
       val testBoardAi = Board(matrixAi, singleShipAi, singleShipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 0)
-      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "11", () => "11")
+      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "11", () => "11", 0)
 
       "fail" in {
         assert(gameAfterPlaying.isFailure)
@@ -224,7 +224,7 @@ class BattleshipSpec extends AnyWordSpec {
           "00"
         else
           "01"
-      }, () => "11")
+      }, () => "11", 0)
 
       "show human as winner" in {
         assert(gameAfterPlaying.isSuccess)
@@ -237,7 +237,7 @@ class BattleshipSpec extends AnyWordSpec {
       val testBoardAi = Board(matrixAi, doubleShipAi, doubleShipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 0)
-      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "00", () => "11")
+      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "00", () => "11", 0)
 
       "fails" in {
         assert(gameAfterPlaying.isFailure)
@@ -249,7 +249,7 @@ class BattleshipSpec extends AnyWordSpec {
       val testBoardAi = Board(matrixAi, singleShipAi, singleShipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 0)
-      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "11", () => "00")
+      val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "11", () => "00", 0)
 
       "fails" in {
         assert(gameAfterPlaying.isFailure)
@@ -272,7 +272,7 @@ class BattleshipSpec extends AnyWordSpec {
           "55"
         else
           "01"
-      }, () => "11")
+      }, () => "11", 0)
 
       "show human as winner" in {
         assert(gameAfterPlaying.isSuccess)

@@ -142,10 +142,7 @@ object OutputHelper {
       case Failure(ex) => throw ex
       case Success(true) => throw new IllegalStateException
       case Success(false) =>
-        game.humanPlayerIsWinner() match {
-          case true => generateVictory()
-          case false => generateLoss()
-        }
+        if (game.humanPlayerIsWinner()) generateVictory() else generateLoss()
     })
   }
 

@@ -17,7 +17,8 @@ object Battleship {
           () => {
             val input = scala.util.Random.nextInt(100).toString
             if (input.length == 1) "0" + input else input
-          }) match {
+          },
+          1000) match {
           case Failure(ex) => throw ex
           case Success(value) =>
             // End of game. Show victory / loss
@@ -99,23 +100,22 @@ object Battleship {
    * @param game                            Game to play
    * @param fktHumanGetCoordinatesToShootAt Function to get coordinates to shoot at for human player
    * @param fktAiGetCoordinatesToShootAt    Function to get coordinates to shoot at for ai player
+   * @param aiPlayerDelay                   Delay in ms after every ai action
    * @return Finished game
    */
   def play(fktForInfoTextOutput: String => Unit,
            game: Game,
            fktHumanGetCoordinatesToShootAt: () => String,
-           fktAiGetCoordinatesToShootAt: () => String
+           fktAiGetCoordinatesToShootAt: () => String,
+           aiPlayerDelay: Int
           ): Try[Game] = {
     generateRoundText(game).foreach(fktForInfoTextOutput(_))
 
     // Human
     (Vector("") ++ generateHumanPlayerRoundInfoText()).foreach(fktForInfoTextOutput(_))
 
-    Try(playOneRoundOfOnePlayer(
-      humanPlayerTurn = true,
-      game,
-      fktHumanGetCoordinatesToShootAt,
-      fktForInfoTextOutput) match {
+    Try(playOneRoundOfOnePlayer(humanPlayerTurn = true, game, fktHumanGetCoordinatesToShootAt,
+      fktForInfoTextOutput, 0) match {
       case Failure(ex) => throw ex
       case Success(gameAfterHumanRound) =>
 
@@ -125,21 +125,16 @@ object Battleship {
         } else {
           (Vector("") ++ generateAiPlayerRoundInfoText()).foreach(fktForInfoTextOutput(_))
 
-          playOneRoundOfOnePlayer(
-            humanPlayerTurn = false,
-            gameAfterHumanRound,
-            fktAiGetCoordinatesToShootAt,
-            fktForInfoTextOutput) match {
+          playOneRoundOfOnePlayer(humanPlayerTurn = false, gameAfterHumanRound, fktAiGetCoordinatesToShootAt,
+            fktForInfoTextOutput, aiPlayerDelay) match {
             case Failure(ex) => throw ex
             case Success(gameAfterAiRound) =>
-              Thread.sleep(1000)
+              Thread.sleep(aiPlayerDelay)
 
               // Next round or finished?
               if (gameAfterAiRound.isRunning.isSuccess && gameAfterAiRound.isRunning.get) {
-                play(fktForInfoTextOutput,
-                  startNewRound(gameAfterAiRound),
-                  fktHumanGetCoordinatesToShootAt,
-                  fktAiGetCoordinatesToShootAt)
+                play(fktForInfoTextOutput, startNewRound(gameAfterAiRound), fktHumanGetCoordinatesToShootAt,
+                  fktAiGetCoordinatesToShootAt, aiPlayerDelay)
                 match {
                   case Failure(ex) => throw ex
                   case Success(value) => value
@@ -158,14 +153,16 @@ object Battleship {
    * @param game                       Game to play
    * @param fktGetCoordinatesToShootAt Function to get coordinates
    * @param fktForInfoTextOutput       Function to put output text
+   * @param delay                      Delay in ms after every move
    * @return Game
    */
   private def playOneRoundOfOnePlayer(humanPlayerTurn: Boolean,
-                              game: Game,
-                              fktGetCoordinatesToShootAt: () => String,
-                              fktForInfoTextOutput: String => Unit
-                             ): Try[Game] = {
-    if (!humanPlayerTurn) Thread.sleep(1000)
+                                      game: Game,
+                                      fktGetCoordinatesToShootAt: () => String,
+                                      fktForInfoTextOutput: String => Unit,
+                                      delay: Int
+                                     ): Try[Game] = {
+    Thread.sleep(delay)
 
     Try(waitingForCorrectInput(currentIteration = 0, maxIterations = 10, fktGetInput = fktGetCoordinatesToShootAt,
       board = if (humanPlayerTurn) game.aiPlayerBoard else game.humanPlayerBoard,
@@ -190,15 +187,16 @@ object Battleship {
             if (value._2.isDefined && value._1.isRunning.isSuccess && value._1.isRunning.get) {
               generateShootAgainInfoText().foreach(fktForInfoTextOutput(_))
 
-              playOneRoundOfOnePlayer(humanPlayerTurn, value._1, fktGetCoordinatesToShootAt, fktForInfoTextOutput) match {
+              playOneRoundOfOnePlayer(humanPlayerTurn, value._1, fktGetCoordinatesToShootAt, fktForInfoTextOutput,
+                delay) match {
                 case Success(value) => value
                 case Failure(ex) => throw ex
               }
             } else {
               value._1
             }
-            // Failure not possible --> waitingForCorrectInput() checks, if cell was already hit
-//          case Failure(ex) => throw ex
+          // Failure not possible --> waitingForCorrectInput() checks, if cell was already hit
+          //          case Failure(ex) => throw ex
         }
     })
   }
