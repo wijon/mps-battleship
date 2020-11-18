@@ -25,7 +25,13 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
     val board1 = Board(placement.shipPositionsPlayer1.toVector)
     val board2 = Board(placement.shipPositionsPlayer2.toVector)
 
-    Game(board1, board2, 0)
+    // ToDo: Question for Marko
+    // Instead of returning copy, should we change 'humanPlayerBoard' and 'aiPlayerBoard' to 'var'
+    // and assign 'board1' and 'board2' to it? What's the correct "DSL" way to do it?
+    //    humanPlayerBoard = board1
+    //    aiPlayerBoard = board2
+    //    this
+    copy(board1, board2, roundNum)
   }
 
   /** Places all ships of both board. Uses parameter to generate coordinates
@@ -134,9 +140,9 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
 }
 
 object Game {
-  def newGame(init: Game => Unit): Game = {
-    val game = new Game(Board(Vector.empty), Board(Vector.empty), 0)
+  def newGame(init: Game => Game): Game = {
+    val game = new Game(Vector.empty, Vector.empty)
     init(game)
-    game
+    //    game
   }
 }
