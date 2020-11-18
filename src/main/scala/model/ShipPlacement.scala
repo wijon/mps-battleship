@@ -6,7 +6,7 @@ import scala.collection.mutable
 
 class ShipPlacement {
   val shipPositionsPlayer1: mutable.HashSet[ShipPosition] = mutable.HashSet.empty
-  val shipPositionsPlayer2: mutable.HashSet[ShipPosition] = mutable.HashSet.empty;
+  val shipPositionsPlayer2: mutable.HashSet[ShipPosition] = mutable.HashSet.empty
 
   def place(name: String): ShipPlacementLength = new ShipPlacementLength(name)
 
@@ -25,19 +25,10 @@ class ShipPlacement {
       val row = strCoord.slice(0, 1).toInt
       val col = strCoord.slice(1, 2).toInt
 
-      val coordinates = dir match {
-        case BoardDirection.North =>
-          for (r <- row until row - len by -1) yield Coordinates(r, col)
-        case BoardDirection.East =>
-          for (c <- col until col + len) yield Coordinates(row, c)
-        case BoardDirection.South =>
-          for (r <- row until row + len) yield Coordinates(r, col)
-        case BoardDirection.West =>
-          for (c <- col until col - len by -1) yield Coordinates(row, c)
-      }
+      val coordinates = Board.generateShipCoordinates(Coordinates(row, col), len, dir)
 
       val ship = Ship(len, name)
-      new ShipPlacementPlayer(ShipPosition(ship, Vector.from(coordinates)))
+      new ShipPlacementPlayer(ShipPosition(ship, coordinates))
     }
   }
 
