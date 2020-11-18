@@ -4,7 +4,9 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class GameSpec extends AnyWordSpec {
   "A Game" when {
+
     "new" should {
+
       val p1Ships = Vector(
         Ship(1, "A")
       )
@@ -12,11 +14,40 @@ class GameSpec extends AnyWordSpec {
         Ship(2, "B")
       )
       val game = new Game(p1Ships, p2Ships)
+
       "have player 1 board with player 1 ships" in {
         assert(game.humanPlayerBoard.ships == p1Ships)
       }
+
       "have player 2 board with player 2 ships" in {
         assert(game.aiPlayerBoard.ships == p2Ships)
+      }
+    }
+
+    "build with DSL" should {
+      val game = Game.newGame { game =>
+        game ships { ship =>
+          ship place "Submarine" length 3 at 14 facing BoardDirection.West as Player1
+          ship place "Submarine" length 3 at 14 facing BoardDirection.West as Player2
+        }
+      }
+
+      "contain board with correct ship positions for player 1" in {
+        val shipPositions = game.humanPlayerBoard.shipPositions
+        assert(shipPositions.length == 1)
+
+        val shipPosition = shipPositions(0)
+        assert(shipPosition.ship == Ship(3, "Submarine"))
+        assert(shipPosition.positions == Vector(Coordinates(1, 4), Coordinates(1, 3), Coordinates(1, 2)))
+      }
+
+      "contain board with correct ship positions for player 2" in {
+        val shipPositions = game.aiPlayerBoard.shipPositions
+        assert(shipPositions.length == 1)
+
+        val shipPosition = shipPositions(0)
+        assert(shipPosition.ship == Ship(3, "Submarine"))
+        assert(shipPosition.positions == Vector(Coordinates(1, 4), Coordinates(1, 3), Coordinates(1, 2)))
       }
     }
 

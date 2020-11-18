@@ -1,4 +1,4 @@
-import model.OutputHelper.{generateAiPlayerRoundInfoText, generateHumanPlayerRoundInfoText, generateInvalidColInputInfoText, generateInvalidInputInfoText, generateInvalidRowInputInfoText, generateNothingHitInfoText, generateShipHitInfoText, generateShootAgainInfoText, generateShootInfoText}
+import model.OutputHelper._
 import model.{Board, Coordinates, Game, Ship}
 
 import scala.annotation.tailrec

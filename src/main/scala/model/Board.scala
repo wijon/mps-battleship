@@ -8,29 +8,6 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
   // Override constructor, this one is used for the initial instantiation
   def this(ships: Vector[Ship]) = this(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, ships, Vector())
 
-  /** Generate ship coordinates
-   *
-   * @param coordinates coordinate of first ship element
-   * @param shipLength  ship length
-   * @param direction   ship direction
-   * @return all ship coordinates
-   */
-  def generateShipCoordinates(coordinates: Coordinates, shipLength: Int, direction: BoardDirection):
-  Vector[Coordinates] = {
-    val shipCoordinates = direction match {
-      case BoardDirection.North =>
-        for (row <- coordinates.row until coordinates.row - shipLength by -1) yield Coordinates(row, coordinates.col)
-      case BoardDirection.East =>
-        for (col <- coordinates.col until coordinates.col + shipLength) yield Coordinates(coordinates.row, col)
-      case BoardDirection.South =>
-        for (row <- coordinates.row until coordinates.row + shipLength) yield Coordinates(row, coordinates.col)
-      case BoardDirection.West =>
-        for (col <- coordinates.col until coordinates.col - shipLength by -1) yield Coordinates(coordinates.row, col)
-    }
-
-    shipCoordinates.toVector
-  }
-
   /** Places a single ship on board by force. Recursive until successfull
    *
    * @param ship                ship to place
@@ -98,7 +75,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
       }
     }
 
-    placeSingleShip(ship, generateShipCoordinates(Coordinates(startRow, startCol), ship.length, direction))
+    placeSingleShip(ship, Board.generateShipCoordinates(Coordinates(startRow, startCol), ship.length, direction))
   }
 
   /** Places a single ship on board
@@ -205,5 +182,33 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
       case Success(y) => y
       case Failure(ex) => throw ex
     }.reduce((res, cur) => res && cur))
+  }
+}
+
+object Board{
+  def apply(shipPositions: Vector[ShipPosition]): Board =
+    this(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, shipPositions.map(s => s.ship), shipPositions)
+
+  /** Generate ship coordinates
+   *
+   * @param coordinates coordinate of first ship element
+   * @param shipLength  ship length
+   * @param direction   ship direction
+   * @return all ship coordinates
+   */
+  def generateShipCoordinates(coordinates: Coordinates, shipLength: Int, direction: BoardDirection):
+  Vector[Coordinates] = {
+    val shipCoordinates = direction match {
+      case BoardDirection.North =>
+        for (row <- coordinates.row until coordinates.row - shipLength by -1) yield Coordinates(row, coordinates.col)
+      case BoardDirection.East =>
+        for (col <- coordinates.col until coordinates.col + shipLength) yield Coordinates(coordinates.row, col)
+      case BoardDirection.South =>
+        for (row <- coordinates.row until coordinates.row + shipLength) yield Coordinates(row, coordinates.col)
+      case BoardDirection.West =>
+        for (col <- coordinates.col until coordinates.col - shipLength by -1) yield Coordinates(coordinates.row, col)
+    }
+
+    shipCoordinates.toVector
   }
 }

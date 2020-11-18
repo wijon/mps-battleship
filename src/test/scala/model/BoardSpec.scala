@@ -1337,12 +1337,11 @@ class BoardSpec extends AnyWordSpec {
   }
 
   "Generating ship coordinates" when {
-    val board = Board(Vector.empty, Vector.empty, Vector.empty)
     val startCoordinate = Coordinates(5, 5)
     val shipLength = 3
 
     "direction is north" should {
-      val coordinates = board.generateShipCoordinates(startCoordinate, shipLength, BoardDirection.North)
+      val coordinates = Board.generateShipCoordinates(startCoordinate, shipLength, BoardDirection.North)
 
       "contain correct number of elements" in {
         assert(coordinates.length == shipLength)
@@ -1356,7 +1355,7 @@ class BoardSpec extends AnyWordSpec {
     }
 
     "direction is east" should {
-      val coordinates = board.generateShipCoordinates(startCoordinate, shipLength, BoardDirection.East)
+      val coordinates = Board.generateShipCoordinates(startCoordinate, shipLength, BoardDirection.East)
 
       "contain correct number of elements" in {
         assert(coordinates.length == shipLength)
@@ -1370,7 +1369,7 @@ class BoardSpec extends AnyWordSpec {
     }
 
     "direction is south" should {
-      val coordinates = board.generateShipCoordinates(startCoordinate, shipLength, BoardDirection.South)
+      val coordinates = Board.generateShipCoordinates(startCoordinate, shipLength, BoardDirection.South)
 
       "contain correct number of elements" in {
         assert(coordinates.length == shipLength)
@@ -1384,7 +1383,7 @@ class BoardSpec extends AnyWordSpec {
     }
 
     "direction is west" should {
-      val coordinates = board.generateShipCoordinates(startCoordinate, shipLength, BoardDirection.West)
+      val coordinates = Board.generateShipCoordinates(startCoordinate, shipLength, BoardDirection.West)
 
       "contain correct number of elements" in {
         assert(coordinates.length == shipLength)

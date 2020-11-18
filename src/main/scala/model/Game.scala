@@ -13,6 +13,27 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
   def this(player1Ships: Vector[Ship], player2Ships: Vector[Ship]) =
     this(new Board(player1Ships), new Board(player2Ships), 0)
 
+  /** DSL function for manually placing ships
+   *
+   * @param init A function which handles the ship placement
+   * @return
+   */
+  def ships(init: ShipPlacement => Unit): Game = {
+    val placement = new ShipPlacement
+    init(placement)
+
+    val board1 = Board(placement.shipPositionsPlayer1.toVector)
+    val board2 = Board(placement.shipPositionsPlayer2.toVector)
+
+    // ToDo: Question for Marko
+    // Instead of returning copy, should we change 'humanPlayerBoard' and 'aiPlayerBoard' to 'var'
+    // and assign 'board1' and 'board2' to it? What's the correct "DSL" way to do it?
+    //    humanPlayerBoard = board1
+    //    aiPlayerBoard = board2
+    //    this
+    copy(board1, board2, roundNum)
+  }
+
   /** Places all ships of both board. Uses parameter to generate coordinates
    *
    * @param randomIntGenerator Function for random ints
@@ -115,5 +136,13 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
   def humanPlayerIsWinner(): Boolean = {
     val aiPlayerAllShipsDestroyed = aiPlayerBoard.areAllShipsDestroyed()
     !(aiPlayerAllShipsDestroyed.isFailure || !aiPlayerAllShipsDestroyed.get)
+  }
+}
+
+object Game {
+  def newGame(init: Game => Game): Game = {
+    val game = new Game(Vector.empty, Vector.empty)
+    init(game)
+    //    game
   }
 }
