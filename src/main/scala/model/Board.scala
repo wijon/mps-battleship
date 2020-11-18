@@ -207,3 +207,8 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
     }.reduce((res, cur) => res && cur))
   }
 }
+
+object Board{
+  def apply(shipPositions: Vector[ShipPosition]): Board =
+    this(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, shipPositions.map(s => s.ship), shipPositions)
+}

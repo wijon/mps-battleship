@@ -1,5 +1,5 @@
 import model.OutputHelper.{generateAiPlayerRoundInfoText, generateHumanPlayerRoundInfoText, generateInvalidColInputInfoText, generateInvalidInputInfoText, generateInvalidRowInputInfoText, generateNothingHitInfoText, generateShipHitInfoText, generateShootAgainInfoText, generateShootInfoText}
-import model.{Board, Coordinates, Game, Ship}
+import model.{Board, BoardDirection, Coordinates, Game, Player1, Player2, Ship}
 
 import scala.annotation.tailrec
 import scala.io.StdIn
@@ -7,6 +7,16 @@ import scala.util.{Failure, Success, Try}
 
 object Battleship {
   def main(args: Array[String]): Unit = {
+
+    // Example of creating a game object with manually placed ships by utilizing DSL
+    //    val game = Game.newGame { game =>
+    //      game ships { ship =>
+    //        ship place "Submarine" length 3 at 14 facing BoardDirection.West as Player1
+    //        ship place "Submarine" length 5 at 14 facing BoardDirection.West as Player1
+    //        ship place "Submarine" length 4 at 14 facing BoardDirection.West as Player2
+    //      }
+    //    }
+
     // New game. Randomly place ships
     new Game(getShips, getShips).placeAllShipsRandomly((maxValue: Int) => scala.util.Random.nextInt(maxValue)) match {
       case Success(game) =>
