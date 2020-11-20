@@ -4,6 +4,7 @@ import enums.BoardDirection.BoardDirection
 import enums.Player.Player
 import enums.{BoardDirection, Player}
 
+import scala.util.Try
 import scala.util.parsing.combinator.RegexParsers
 
 class FleetParser extends RegexParsers {
@@ -36,4 +37,12 @@ class FleetParser extends RegexParsers {
     }
 
   def multiFleetParser: Parser[Vector[FleetParserResult]] = rep(fleetParser) ^^ (fleets => fleets.toVector)
+
+  def parseFleetText(txt: String) : Try[Vector[FleetParserResult]] = {
+    parse(multiFleetParser, txt) match {
+      case Success(matched, _) => scala.util.Success(matched)
+      case Failure(msg, _) => scala.util.Failure(throw new Exception(s"FAILURE: $msg"))
+      case Error(msg, _) => scala.util.Failure(throw new Exception(s"ERROR: $msg"))
+    }
+  }
 }

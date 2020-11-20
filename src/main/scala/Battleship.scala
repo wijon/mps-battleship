@@ -1,4 +1,5 @@
 import dataTransferObjects.Coordinates
+import dsl.extern.{FleetParser, FleetParserResult}
 import view.OutputHelper._
 import model.{Board, Game}
 import view.OutputHelper
@@ -9,29 +10,58 @@ import scala.util.{Failure, Success, Try}
 
 object Battleship {
   def main(args: Array[String]): Unit = {
-    // New game. Randomly place ships
-    new Game(Settings.getShipsForOnePlayer, Settings.getShipsForOnePlayer).placeAllShipsRandomly((maxValue: Int) =>
-      scala.util.Random.nextInt(maxValue)) match {
-      case Success(game) =>
-        // Play game. Round by Round
-        play(printValue => println(printValue),
-          game.startNewRound(),
-          () => StdIn.readLine(),
-          () => {
-            val input = scala.util.Random.nextInt(100).toString
-            if (input.length == 1) "0" + input else input
-          },
-          1000) match {
-          case Failure(ex) => throw ex
-          case Success(value) =>
-            // End of game. Show victory / loss
-            OutputHelper.generateFinalText(value) match {
-              case Success(value) => value.foreach(println(_))
-              case Failure(ex) => throw ex
-            }
-        }
-      case Failure(ex) => throw ex
+
+    val game = if (args.isEmpty) {
+      // New game. Randomly place ships
+      new Game(Settings.getShipsForOnePlayer, Settings.getShipsForOnePlayer).placeAllShipsRandomly((maxValue: Int) =>
+        scala.util.Random.nextInt(maxValue)) match {
+        case Success(game) => game
+        case Failure(ex) => throw ex
+      }
+    } else {
+      // New game get ship + positions from file
+      createGameWithExplicitShips(args(0))
     }
+
+    play(game)
+  }
+
+  def createGameWithExplicitShips(txt: String): Game = {
+    val parser = new FleetParser
+    parser.parseFleetText(txt) match {
+      case Failure(ex) => throw ex
+      case Success(value) => {
+        Game.newGame { game =>
+          game ships { ship =>
+            value.map(fpr => fpr.ships.map(s => (s, fpr.player))).flatten(sp => sp).map(sp => {
+              ship place sp._1.name length sp._1.length at sp._1.startingPos facing sp._1.dir as sp._2
+            })
+          }
+        }
+      }
+    }
+  }
+
+  def play(game: Game): Game = {
+    // Play game. Round by Round
+    play(printValue => println(printValue),
+      game.startNewRound(),
+      () => StdIn.readLine(),
+      () => {
+        val input = scala.util.Random.nextInt(100).toString
+        if (input.length == 1) "0" + input else input
+      },
+      1000) match {
+      case Failure(ex) => throw ex
+      case Success(value) =>
+        // End of game. Show victory / loss
+        OutputHelper.generateFinalText(value) match {
+          case Success(value) => value.foreach(println(_))
+          case Failure(ex) => throw ex
+        }
+    }
+
+    game
   }
 
   /** Trying to get correct input for [maxIterations] times
