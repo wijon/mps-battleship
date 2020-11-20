@@ -171,27 +171,29 @@ object Battleship {
 
         game.shootAtBoard(!humanPlayerTurn, value.row, value.col) match {
           case Success(value) =>
-            if (value._2.isDefined) {
+            if (value.shipPosition.isDefined) {
               if (humanPlayerTurn)
-                generateShipHitInfoText(value._2.get.ship, value._1.aiPlayerBoard.isDestroyed(value._2.get.ship).get)
+                generateShipHitInfoText(value.shipPosition.get.ship,
+                  value.game.aiPlayerBoard.isDestroyed(value.shipPosition.get.ship).get)
                   .foreach(fktForInfoTextOutput(_))
               else
-                generateShipHitInfoText(value._2.get.ship, value._1.humanPlayerBoard.isDestroyed(value._2.get.ship).get)
+                generateShipHitInfoText(value.shipPosition.get.ship,
+                  value.game.humanPlayerBoard.isDestroyed(value.shipPosition.get.ship).get)
                   .foreach(fktForInfoTextOutput(_))
             } else {
               generateNothingHitInfoText().foreach(fktForInfoTextOutput(_))
             }
 
-            if (value._2.isDefined && value._1.isRunning.isSuccess && value._1.isRunning.get) {
+            if (value.shipPosition.isDefined && value.game.isRunning.isSuccess && value.game.isRunning.get) {
               generateShootAgainInfoText().foreach(fktForInfoTextOutput(_))
 
-              playOneRoundOfOnePlayer(humanPlayerTurn, value._1, fktGetCoordinatesToShootAt, fktForInfoTextOutput,
+              playOneRoundOfOnePlayer(humanPlayerTurn, value.game, fktGetCoordinatesToShootAt, fktForInfoTextOutput,
                 delay) match {
                 case Success(value) => value
                 case Failure(ex) => throw ex
               }
             } else {
-              value._1
+              value.game
             }
           // Failure impossible --> waitingForCorrectInput() checks, if cell was already hit
           //          case Failure(ex) => throw ex

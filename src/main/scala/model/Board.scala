@@ -2,7 +2,7 @@ package model
 
 import java.security.InvalidParameterException
 
-import dataTransferObjects.functionResults.ShotAtResult
+import dataTransferObjects.functionResults.BoardShotAtResult
 import dataTransferObjects.{BoardCell, Coordinates, Ship, ShipPosition}
 import enums.BoardDirection
 import enums.BoardDirection.BoardDirection
@@ -143,14 +143,14 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    * @param col col coordinate
    * @return a tuple containing the updated board together with an option reflecting if the shot hit a ship
    */
-  def shoot(row: Int, col: Int): Try[ShotAtResult] = {
+  def shoot(row: Int, col: Int): Try[BoardShotAtResult] = {
     if (isHit(row, col)) {
       Failure(new UnsupportedOperationException)
     } else {
       val newMatrix = matrix.updated(row, matrix(row).updated(col, BoardCell(true)))
       val shipPos = shipPositions.find(_.positions.contains(Coordinates(row, col)))
 
-      Success(ShotAtResult(copy(newMatrix, ships, shipPositions), shipPos))
+      Success(BoardShotAtResult(copy(newMatrix, ships, shipPositions), shipPos))
     }
   }
 
@@ -191,9 +191,9 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
   }
 }
 
-object Board{
+object Board {
   def apply(shipPositions: Vector[ShipPosition]): Board =
-    this(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, shipPositions.map(s => s.ship), shipPositions)
+    this (Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, shipPositions.map(s => s.ship), shipPositions)
 
   /** Generate ship coordinates
    *
