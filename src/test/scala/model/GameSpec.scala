@@ -1,7 +1,7 @@
 package model
 
 import dataTransferObjects.{BoardCell, Coordinates, Ship, ShipPosition}
-import enums.{BoardDirection, Player1, Player2}
+import enums.{BoardDirection, Player}
 import org.scalatest.wordspec.AnyWordSpec
 
 class GameSpec extends AnyWordSpec {
@@ -42,8 +42,8 @@ class GameSpec extends AnyWordSpec {
     "build with DSL" should {
       val game = Game.newGame { game =>
         game ships { ship =>
-          ship place "Submarine" length 3 at 14 facing BoardDirection.West as Player1
-          ship place "Submarine" length 3 at 14 facing BoardDirection.West as Player2
+          ship place "Submarine" length 3 at 14 facing BoardDirection.West as Player.Player1
+          ship place "Submarine" length 3 at 14 facing BoardDirection.West as Player.Player2
         }
       }
 

@@ -1,6 +1,7 @@
 package enums
 
-sealed trait Player
-
-final case object Player1 extends Player
-final case object Player2 extends Player
+object Player extends Enumeration {
+  type Player = Value
+  val Player1: enums.Player.Value = Value(0)
+  val Player2: enums.Player.Value = Value(1)
+}

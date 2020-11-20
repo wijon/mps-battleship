@@ -2,7 +2,7 @@ package dsl
 
 import dataTransferObjects.{Coordinates, Ship}
 import dsl.intern.ShipPlacement
-import enums.{BoardDirection, Player1, Player2}
+import enums.{BoardDirection, Player}
 import org.scalatest.wordspec.AnyWordSpec
 
 class ShipPlacementSpec extends AnyWordSpec {
@@ -10,7 +10,7 @@ class ShipPlacementSpec extends AnyWordSpec {
 
     "placing a ship for player 1" should {
       val shipPlacement = new ShipPlacement
-      shipPlacement place "Submarine" length 3 at 14 facing BoardDirection.West as Player1
+      shipPlacement place "Submarine" length 3 at 14 facing BoardDirection.West as Player.Player1
 
       "generate positioning data for player 1" in {
         assert(shipPlacement.shipPositionsPlayer1.size == 1)
@@ -24,7 +24,7 @@ class ShipPlacementSpec extends AnyWordSpec {
 
     "placing a ship for player 2" should {
       val shipPlacement = new ShipPlacement
-      shipPlacement place "Destroyer" length 2 at 44 facing BoardDirection.East as Player2
+      shipPlacement place "Destroyer" length 2 at 44 facing BoardDirection.East as Player.Player2
 
       "generate positioning data for player 2" in {
         assert(shipPlacement.shipPositionsPlayer1.isEmpty)
