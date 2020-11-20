@@ -1,7 +1,12 @@
 package model
 
 import java.security.InvalidParameterException
-import model.BoardDirection.BoardDirection
+
+import dataTransferObjects.functionResults.ShotAtResult
+import dataTransferObjects.{BoardCell, Coordinates, Ship, ShipPosition}
+import enums.BoardDirection
+import enums.BoardDirection.BoardDirection
+
 import scala.util.{Failure, Success, Try}
 
 case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPositions: Vector[ShipPosition]) {
@@ -92,7 +97,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
       !coordinatesAreCorrect(shipCoordinates)) {
       Failure(new InvalidParameterException)
     } else {
-      Success(copy(matrix, ships, shipPositions :+ ShipPosition(ship, shipCoordinates)))
+      Success(copy(matrix, ships, shipPositions :+ dataTransferObjects.ShipPosition(ship, shipCoordinates)))
     }
   }
 

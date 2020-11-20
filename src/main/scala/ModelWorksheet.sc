@@ -9,8 +9,9 @@
 //case class MediumAiPlayer(ownBoard: Board, enemyBoard: Board) extends AiPlayer(ownBoard, enemyBoard)
 //case class DifficultAiPlayer(ownBoard: Board, enemyBoard: Board) extends AiPlayer(ownBoard, enemyBoard)
 
-import model.BoardDirection.BoardDirection
-import model.{BoardDirection, Coordinates, Player, Player1, Player2, Ship, ShipPosition}
+import dataTransferObjects.{Coordinates, Ship, ShipPosition}
+import enums.{BoardDirection, Player, Player1, Player2}
+import enums.BoardDirection.BoardDirection
 
 import scala.collection.mutable
 
@@ -39,7 +40,7 @@ object Game1 {
 
 class ShipPlacement {
   val shipPositionsPlayer1: mutable.HashSet[ShipPosition] = mutable.HashSet.empty
-  val shipPositionsPlayer2: mutable.HashSet[ShipPosition] = mutable.HashSet.empty;
+  val shipPositionsPlayer2: mutable.HashSet[ShipPosition] = mutable.HashSet.empty
 
   def place(name: String): ShipPlacementLength = new ShipPlacementLength(shipPositionsPlayer2, name)
 
@@ -70,7 +71,7 @@ class ShipPlacement {
       }
 
       val ship = Ship(len, name)
-      new ShipPlacementPlayer(ShipPosition(ship, Vector.from(coordinates)))
+      new ShipPlacementPlayer(dataTransferObjects.ShipPosition(ship, Vector.from(coordinates)))
     }
   }
 

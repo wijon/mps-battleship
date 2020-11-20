@@ -1,5 +1,7 @@
 package model
 
+import dataTransferObjects.{BoardCell, Coordinates, Ship, ShipPosition}
+import enums.{BoardDirection, Player1, Player2}
 import org.scalatest.wordspec.AnyWordSpec
 
 class GameSpec extends AnyWordSpec {
@@ -77,7 +79,7 @@ class GameSpec extends AnyWordSpec {
       )
 
       val shipPositionsAi = Vector(
-        ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        dataTransferObjects.ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
       val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
@@ -120,7 +122,7 @@ class GameSpec extends AnyWordSpec {
         val shipPositionsHuman = Vector()
 
         val shipPositionsAi = Vector(
-          ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+          dataTransferObjects.ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
         )
 
         val testBoardHuman = Board(matrixHuman3, shipsHuman, shipPositionsHuman)
@@ -135,7 +137,7 @@ class GameSpec extends AnyWordSpec {
 
       "ai ship positions are inconsistent" should {
         val shipPositionsHuman = Vector(
-          ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+          dataTransferObjects.ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
         )
 
         val shipPositionsAi = Vector()
@@ -160,11 +162,11 @@ class GameSpec extends AnyWordSpec {
       )
 
       val shipPositionsHuman = Vector(
-        ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        dataTransferObjects.ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
       val shipPositionsAi = Vector(
-        ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        dataTransferObjects.ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
       val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
@@ -197,11 +199,11 @@ class GameSpec extends AnyWordSpec {
       )
 
       val shipPositionsHuman = Vector(
-        ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        dataTransferObjects.ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
       val shipPositionsAi = Vector(
-        ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        dataTransferObjects.ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
       val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
@@ -294,7 +296,7 @@ class GameSpec extends AnyWordSpec {
     )
     val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
     val shipPositions = Vector(
-      ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5)))
+      dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5)))
     )
     val board = Board(matrix, ships, shipPositions)
 
@@ -343,7 +345,7 @@ class GameSpec extends AnyWordSpec {
     )
     val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
     val shipPositions = Vector(
-      ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5)))
+      dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5)))
     )
     val board = Board(matrix, ships, shipPositions)
 

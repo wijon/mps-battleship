@@ -1,4 +1,4 @@
-import model.Ship
+import dataTransferObjects.Ship
 
 object Settings {
   /** Get all ships for one player

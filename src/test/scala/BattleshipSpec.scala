@@ -1,4 +1,5 @@
-import model.{Board, BoardCell, Coordinates, Game, Ship, ShipPosition}
+import dataTransferObjects.{BoardCell, Coordinates, Ship, ShipPosition}
+import model.{Board, Game}
 import org.scalatest.wordspec.AnyWordSpec
 
 class BattleshipSpec extends AnyWordSpec {
@@ -76,15 +77,15 @@ class BattleshipSpec extends AnyWordSpec {
     )
 
     val doubleShipPositionsHuman = Vector(
-      ShipPosition(doubleShipHuman(0), Vector(Coordinates(0, 0), Coordinates(0, 1))),
+      dataTransferObjects.ShipPosition(doubleShipHuman(0), Vector(Coordinates(0, 0), Coordinates(0, 1))),
     )
 
     val singleShipPositionsAi = Vector(
-      ShipPosition(singleShipAi(0), Vector(Coordinates(0, 0))),
+      dataTransferObjects.ShipPosition(singleShipAi(0), Vector(Coordinates(0, 0))),
     )
 
     val doubleShipPositionsAi = Vector(
-      ShipPosition(doubleShipAi(0), Vector(Coordinates(0, 0), Coordinates(0, 1))),
+      dataTransferObjects.ShipPosition(doubleShipAi(0), Vector(Coordinates(0, 0), Coordinates(0, 1))),
     )
 
     val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }

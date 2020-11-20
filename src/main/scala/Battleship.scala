@@ -1,5 +1,7 @@
-import model.OutputHelper._
-import model.{Board, Coordinates, Game, Ship}
+import dataTransferObjects.Coordinates
+import view.OutputHelper._
+import model.{Board, Game}
+import view.OutputHelper
 
 import scala.annotation.tailrec
 import scala.io.StdIn
@@ -23,7 +25,7 @@ object Battleship {
           case Failure(ex) => throw ex
           case Success(value) =>
             // End of game. Show victory / loss
-            model.OutputHelper.generateFinalText(value) match {
+            OutputHelper.generateFinalText(value) match {
               case Success(value) => value.foreach(println(_))
               case Failure(ex) => throw ex
             }

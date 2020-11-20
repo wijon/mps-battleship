@@ -1,4 +1,7 @@
-package model
+package view
+
+import dataTransferObjects.{Coordinates, Ship}
+import model.{Board, Game}
 
 import scala.util.{Failure, Success, Try}
 
@@ -178,10 +181,10 @@ object OutputHelper {
    * @return Round text for output
    */
   def generateRoundText(game: Game): Vector[String] = {
-    val roundInfoText = model.OutputHelper.generateRoundInfoText(game)
-    val shipsInfoText = model.OutputHelper.generateRemainingShips(game.humanPlayerBoard, "Mensch")
-    val humanBoard = model.OutputHelper.generateBoard(game.humanPlayerBoard, showShips = true, "Mensch")
-    val aiBoard = model.OutputHelper.generateBoard(game.aiPlayerBoard, showShips = true, "KI")
+    val roundInfoText = generateRoundInfoText(game)
+    val shipsInfoText = generateRemainingShips(game.humanPlayerBoard, "Mensch")
+    val humanBoard = generateBoard(game.humanPlayerBoard, showShips = true, "Mensch")
+    val aiBoard = generateBoard(game.aiPlayerBoard, showShips = true, "KI")
 
     val maxLength = humanBoard.map(str => str.length).max
     val boardText = (humanBoard zip aiBoard).map(x => s"${x._1.padTo(maxLength, ' ')}\t\t\t${x._2}")

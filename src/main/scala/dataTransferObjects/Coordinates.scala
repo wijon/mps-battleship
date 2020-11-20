@@ -1,4 +1,4 @@
-package model
+package dataTransferObjects
 
 import scala.util.Try
 

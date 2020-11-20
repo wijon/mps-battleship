@@ -1,5 +1,7 @@
-package model
+package view
 
+import dataTransferObjects.{BoardCell, Coordinates, Ship, ShipPosition}
+import model._
 import org.scalatest.wordspec.AnyWordSpec
 
 class OutputHelperSpec extends AnyWordSpec {
@@ -16,7 +18,7 @@ class OutputHelperSpec extends AnyWordSpec {
     )
 
     val shipPositionsAi = Vector(
-      ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+      dataTransferObjects.ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
     )
 
     "Game is still running" should {
@@ -84,7 +86,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val shipPositionsAi = Vector()
 
       val shipPositionsHuman = Vector(
-        ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        dataTransferObjects.ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
       val testBoardHuman = Board(matrixHuman, shipsHuman, shipPositionsHuman)
@@ -294,8 +296,8 @@ class OutputHelperSpec extends AnyWordSpec {
       )
       val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
       val shipPositions = Vector(
-        ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
-        ShipPosition(ships(1), Vector(Coordinates(1, 1), Coordinates(1, 2), Coordinates(1, 3)))
+        dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        dataTransferObjects.ShipPosition(ships(1), Vector(Coordinates(1, 1), Coordinates(1, 2), Coordinates(1, 3)))
       )
 
       val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
@@ -318,7 +320,7 @@ class OutputHelperSpec extends AnyWordSpec {
       )
       val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
       val shipPositions = Vector(
-        ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
       val testBoard = Board(matrix, ships, shipPositions)
@@ -346,7 +348,7 @@ class OutputHelperSpec extends AnyWordSpec {
       )
       val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
       val shipPositions = Vector(
-        ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
       val matrix1 = matrix.updated(3, matrix(3).updated(5, BoardCell(true)))
@@ -375,7 +377,7 @@ class OutputHelperSpec extends AnyWordSpec {
       )
       val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
       val shipPositions = Vector(
-        ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
       val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
@@ -411,9 +413,9 @@ class OutputHelperSpec extends AnyWordSpec {
       )
       val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
       val shipPositions = Vector(
-        ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
-        ShipPosition(ships(1), Vector(Coordinates(1, 1), Coordinates(1, 2), Coordinates(1, 3))),
-        ShipPosition(ships(2), Vector(Coordinates(9, 0), Coordinates(8, 0), Coordinates(7, 0), Coordinates(6, 0), Coordinates(5, 0))),
+        dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        dataTransferObjects.ShipPosition(ships(1), Vector(Coordinates(1, 1), Coordinates(1, 2), Coordinates(1, 3))),
+        dataTransferObjects.ShipPosition(ships(2), Vector(Coordinates(9, 0), Coordinates(8, 0), Coordinates(7, 0), Coordinates(6, 0), Coordinates(5, 0))),
       )
 
       val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
@@ -450,9 +452,9 @@ class OutputHelperSpec extends AnyWordSpec {
       )
       val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
       val shipPositions = Vector(
-        ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
-        ShipPosition(ships(1), Vector(Coordinates(1, 1), Coordinates(1, 2), Coordinates(1, 3))),
-        ShipPosition(ships(2), Vector(Coordinates(9, 0), Coordinates(8, 0), Coordinates(7, 0), Coordinates(6, 0), Coordinates(5, 0))),
+        dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        dataTransferObjects.ShipPosition(ships(1), Vector(Coordinates(1, 1), Coordinates(1, 2), Coordinates(1, 3))),
+        dataTransferObjects.ShipPosition(ships(2), Vector(Coordinates(9, 0), Coordinates(8, 0), Coordinates(7, 0), Coordinates(6, 0), Coordinates(5, 0))),
       )
 
       val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
@@ -492,11 +494,11 @@ class OutputHelperSpec extends AnyWordSpec {
       )
 
       val shipPositionsHuman = Vector(
-        ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        dataTransferObjects.ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
       val shipPositionsAi = Vector(
-        ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+        dataTransferObjects.ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
       val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }

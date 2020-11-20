@@ -1,5 +1,9 @@
 package model
 
+import dataTransferObjects.{Ship, ShipPosition}
+import dsl.intern.ShipPlacement
+import enums.BoardDirection
+
 import scala.util.{Failure, Success, Try}
 
 /** Game-class manages boards and game specific values
@@ -150,8 +154,6 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
 
 object Game {
   def newGame(init: Game => Game): Game = {
-    val game = new Game(Vector.empty, Vector.empty)
-    init(game)
-    //    game
+    init(new Game(Vector.empty, Vector.empty))
   }
 }
