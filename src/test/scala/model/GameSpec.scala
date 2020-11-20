@@ -306,31 +306,31 @@ class GameSpec extends AnyWordSpec {
 
       "register BoardCell hit" in {
         assert(shootResult.isSuccess)
-        assert(shootResult.get._1.humanPlayerBoard.matrix(3)(4).isHit)
+        assert(shootResult.get.game.humanPlayerBoard.matrix(3)(4).isHit)
       }
 
       "shot at different BoardCell" should {
-        val shoot2Result = shootResult.get._1.shootAtBoard(humanPlayerBoard = true, 8, 1)
+        val shoot2Result = shootResult.get.game.shootAtBoard(humanPlayerBoard = true, 8, 1)
 
         "register both BoardCell hit" in {
           assert(shoot2Result.isSuccess)
-          assert(shoot2Result.get._1.humanPlayerBoard.matrix(8)(1).isHit)
-          assert(shoot2Result.get._1.humanPlayerBoard.matrix(3)(4).isHit) // First shot
+          assert(shoot2Result.get.game.humanPlayerBoard.matrix(8)(1).isHit)
+          assert(shoot2Result.get.game.humanPlayerBoard.matrix(3)(4).isHit) // First shot
         }
 
         "register no ship hit" in {
           assert(shoot2Result.isSuccess)
-          assert(shoot2Result.get._2.isEmpty)
+          assert(shoot2Result.get.shipPosition.isEmpty)
         }
 
         "register ship hit" in {
           assert(shootResult.isSuccess)
-          assert(shootResult.get._2.isDefined)
+          assert(shootResult.get.shipPosition.isDefined)
         }
       }
 
       "shot at same BoardCell again" should {
-        val result3Shot = shootResult.get._1.shootAtBoard(humanPlayerBoard = true, 3, 4)
+        val result3Shot = shootResult.get.game.shootAtBoard(humanPlayerBoard = true, 3, 4)
 
         "fail" in {
           assert(result3Shot.isFailure)
@@ -355,31 +355,31 @@ class GameSpec extends AnyWordSpec {
 
       "register BoardCell hit" in {
         assert(shootResult.isSuccess)
-        assert(shootResult.get._1.aiPlayerBoard.matrix(3)(4).isHit)
+        assert(shootResult.get.game.aiPlayerBoard.matrix(3)(4).isHit)
       }
 
       "shot at different BoardCell" should {
-        val shoot2Result = shootResult.get._1.shootAtBoard(humanPlayerBoard = false, 8, 1)
+        val shoot2Result = shootResult.get.game.shootAtBoard(humanPlayerBoard = false, 8, 1)
 
         "register both BoardCell hit" in {
           assert(shoot2Result.isSuccess)
-          assert(shoot2Result.get._1.aiPlayerBoard.matrix(8)(1).isHit)
-          assert(shoot2Result.get._1.aiPlayerBoard.matrix(3)(4).isHit) // First shot
+          assert(shoot2Result.get.game.aiPlayerBoard.matrix(8)(1).isHit)
+          assert(shoot2Result.get.game.aiPlayerBoard.matrix(3)(4).isHit) // First shot
         }
 
         "register no ship hit" in {
           assert(shoot2Result.isSuccess)
-          assert(shoot2Result.get._2.isEmpty)
+          assert(shoot2Result.get.shipPosition.isEmpty)
         }
 
         "register ship hit" in {
           assert(shootResult.isSuccess)
-          assert(shootResult.get._2.isDefined)
+          assert(shootResult.get.shipPosition.isDefined)
         }
       }
 
       "shot at same BoardCell again" should {
-        val result3Shot = shootResult.get._1.shootAtBoard(humanPlayerBoard = false, 3, 4)
+        val result3Shot = shootResult.get.game.shootAtBoard(humanPlayerBoard = false, 3, 4)
 
         "fail" in {
           assert(result3Shot.isFailure)
