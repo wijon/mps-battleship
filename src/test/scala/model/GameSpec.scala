@@ -13,14 +13,14 @@ class GameSpec extends AnyWordSpec {
       val p2Ships = Vector(
         Ship(2, "B")
       )
-      val game = new Game(p1Ships, p2Ships)
+      val game = new Game(p1Ships, p2Ships, (_: Int) => 3)
 
       "have player 1 board with player 1 ships" in {
-        assert(game.humanPlayerBoard.ships == p1Ships)
+        assert(game.humanPlayerBoard.shipPositions.map(_.ship) == p1Ships)
       }
 
       "have player 2 board with player 2 ships" in {
-        assert(game.aiPlayerBoard.ships == p2Ships)
+        assert(game.aiPlayerBoard.shipPositions.map(_.ship) == p2Ships)
       }
     }
 
@@ -31,7 +31,7 @@ class GameSpec extends AnyWordSpec {
       val p2Ships = Vector(
         Ship(2, "B")
       )
-      val game = new Game(p1Ships, p2Ships)
+      val game = new Game(p1Ships, p2Ships, (_: Int) => 3)
       val gameNextRound = game.startNewRound()
 
       "have a round number which is 1 greater than last round" in {
@@ -88,68 +88,17 @@ class GameSpec extends AnyWordSpec {
 
       val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
 
-      val testBoardHuman = Board(matrixHuman3, shipsHuman, shipPositionsHuman)
-      val testBoardAi = Board(matrixAi, shipsAi, shipPositionsAi)
+      val testBoardHuman = Board(matrixHuman3, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi, shipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 10)
 
       "not be running" in {
-        val result = testGame.isRunning
-        assert(result.isSuccess)
-        assert(!result.get)
+        assert(!testGame.isRunning)
       }
 
       "declare ai as winner" in {
         assert(!testGame.humanPlayerIsWinner())
-      }
-    }
-
-    "ship positions are inconsistent" should {
-      val shipsHuman = Vector(
-        Ship(2, "humanShip1")
-      )
-      val shipsAi = Vector(
-        Ship(2, "aiShip1")
-      )
-
-      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
-      val matrixHuman2 = matrixHuman.updated(3, matrixHuman(3).updated(4, BoardCell(true)))
-      val matrixHuman3 = matrixHuman2.updated(3, matrixHuman2(3).updated(5, BoardCell(true)))
-
-      val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
-
-      "human ship positions are inconsistent" should {
-        val shipPositionsHuman = Vector()
-
-        val shipPositionsAi = Vector(
-          dataTransferObjects.ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
-        )
-
-        val testBoardHuman = Board(matrixHuman3, shipsHuman, shipPositionsHuman)
-        val testBoardAi = Board(matrixAi, shipsAi, shipPositionsAi)
-
-        val testGame = Game(testBoardHuman, testBoardAi, 10)
-
-        "fail on isRunning check" in {
-          assert(testGame.isRunning.isFailure)
-        }
-      }
-
-      "ai ship positions are inconsistent" should {
-        val shipPositionsHuman = Vector(
-          dataTransferObjects.ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
-        )
-
-        val shipPositionsAi = Vector()
-
-        val testBoardHuman = Board(matrixHuman3, shipsHuman, shipPositionsHuman)
-        val testBoardAi = Board(matrixAi, shipsAi, shipPositionsAi)
-
-        val testGame = Game(testBoardHuman, testBoardAi, 10)
-
-        "fail on isRunning check" in {
-          assert(testGame.isRunning.isFailure)
-        }
       }
     }
 
@@ -174,15 +123,13 @@ class GameSpec extends AnyWordSpec {
       val matrixAi2 = matrixAi.updated(3, matrixAi(3).updated(4, BoardCell(true)))
       val matrixAi3 = matrixAi2.updated(3, matrixAi2(3).updated(5, BoardCell(true)))
 
-      val testBoardHuman = Board(matrixHuman, shipsHuman, shipPositionsHuman)
-      val testBoardAi = Board(matrixAi3, shipsAi, shipPositionsAi)
+      val testBoardHuman = Board(matrixHuman, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi3, shipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 10)
 
       "not be running" in {
-        val result = testGame.isRunning
-        assert(result.isSuccess)
-        assert(!result.get)
+        assert(!testGame.isRunning)
       }
 
       "declare human as winner" in {
@@ -209,15 +156,13 @@ class GameSpec extends AnyWordSpec {
       val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
       val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
 
-      val testBoardHuman = Board(matrixHuman, shipsHuman, shipPositionsHuman)
-      val testBoardAi = Board(matrixAi, shipsAi, shipPositionsAi)
+      val testBoardHuman = Board(matrixHuman, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi, shipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 10)
 
       "be running" in {
-        val result = testGame.isRunning
-        assert(result.isSuccess)
-        assert(result.get)
+        assert(testGame.isRunning)
       }
 
       "human player is not winner" in {
@@ -232,26 +177,20 @@ class GameSpec extends AnyWordSpec {
       val p2Ships = Vector(
         Ship(1, "B")
       )
-      val game = new Game(p1Ships, p2Ships)
-      val gameWithPlacedShips = game.placeAllShipsRandomly((_: Int) => 2)
-
-      "still have the same round number" in {
-        assert(gameWithPlacedShips.isSuccess)
-        assert(game.roundNum == gameWithPlacedShips.get.roundNum)
-      }
+      val gameWithPlacedShips = new Game(p1Ships, p2Ships, (_: Int) => 2)
 
       "have placed all ships correctly" in {
-        assert(gameWithPlacedShips.get.humanPlayerBoard.shipPositions.length == 1)
-        assert(gameWithPlacedShips.get.humanPlayerBoard.shipPositions(0).ship == p1Ships(0))
-        assert(gameWithPlacedShips.get.humanPlayerBoard.shipPositions(0).positions.length == 1)
-        assert(gameWithPlacedShips.get.humanPlayerBoard.shipPositions(0).positions(0).row == 2)
-        assert(gameWithPlacedShips.get.humanPlayerBoard.shipPositions(0).positions(0).col == 2)
+        assert(gameWithPlacedShips.humanPlayerBoard.shipPositions.length == 1)
+        assert(gameWithPlacedShips.humanPlayerBoard.shipPositions(0).ship == p1Ships(0))
+        assert(gameWithPlacedShips.humanPlayerBoard.shipPositions(0).positions.length == 1)
+        assert(gameWithPlacedShips.humanPlayerBoard.shipPositions(0).positions(0).row == 2)
+        assert(gameWithPlacedShips.humanPlayerBoard.shipPositions(0).positions(0).col == 2)
 
-        assert(gameWithPlacedShips.get.aiPlayerBoard.shipPositions.length == 1)
-        assert(gameWithPlacedShips.get.aiPlayerBoard.shipPositions(0).ship == p2Ships(0))
-        assert(gameWithPlacedShips.get.aiPlayerBoard.shipPositions(0).positions.length == 1)
-        assert(gameWithPlacedShips.get.aiPlayerBoard.shipPositions(0).positions(0).row == 2)
-        assert(gameWithPlacedShips.get.aiPlayerBoard.shipPositions(0).positions(0).col == 2)
+        assert(gameWithPlacedShips.aiPlayerBoard.shipPositions.length == 1)
+        assert(gameWithPlacedShips.aiPlayerBoard.shipPositions(0).ship == p2Ships(0))
+        assert(gameWithPlacedShips.aiPlayerBoard.shipPositions(0).positions.length == 1)
+        assert(gameWithPlacedShips.aiPlayerBoard.shipPositions(0).positions(0).row == 2)
+        assert(gameWithPlacedShips.aiPlayerBoard.shipPositions(0).positions(0).col == 2)
       }
 
       "when coordinates on human player board are already blocked" should {
@@ -263,11 +202,9 @@ class GameSpec extends AnyWordSpec {
         val p2Ships = Vector(
           Ship(1, "D")
         )
-        val gameFailHuman = new Game(p1Ships, p2Ships)
-        val gameFailHumanResult = gameFailHuman.placeAllShipsRandomly((_: Int) => 2)
 
         "fail" in {
-          assert(gameFailHumanResult.isFailure)
+          assertThrows[IndexOutOfBoundsException](new Game(p1Ships, p2Ships, (_: Int) => 2))
         }
       }
 
@@ -280,11 +217,9 @@ class GameSpec extends AnyWordSpec {
           Ship(1, "B"),
           Ship(1, "C")
         )
-        val gameFailAi = new Game(p1Ships, p2Ships)
-        val gameFailAiResult = gameFailAi.placeAllShipsRandomly((_: Int) => 2)
 
         "fail" in {
-          assert(gameFailAiResult.isFailure)
+          assertThrows[IndexOutOfBoundsException](new Game(p1Ships, p2Ships, (_: Int) => 2))
         }
       }
     }
@@ -298,7 +233,7 @@ class GameSpec extends AnyWordSpec {
     val shipPositions = Vector(
       dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5)))
     )
-    val board = Board(matrix, ships, shipPositions)
+    val board = Board(matrix, shipPositions)
 
     "shot at" should {
       val game = Game(board, null, 1)
@@ -347,7 +282,7 @@ class GameSpec extends AnyWordSpec {
     val shipPositions = Vector(
       dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5)))
     )
-    val board = Board(matrix, ships, shipPositions)
+    val board = Board(matrix, shipPositions)
 
     "shot at" should {
       val game = Game(null, board, 1)

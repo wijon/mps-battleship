@@ -10,27 +10,25 @@ import scala.util.{Failure, Success, Try}
 object Battleship {
   def main(args: Array[String]): Unit = {
     // New game. Randomly place ships
-    new Game(Settings.getShipsForOnePlayer, Settings.getShipsForOnePlayer).placeAllShipsRandomly((maxValue: Int) =>
-      scala.util.Random.nextInt(maxValue)) match {
-      case Success(game) =>
-        // Play game. Round by Round
-        play(printValue => println(printValue),
-          game.startNewRound(),
-          () => StdIn.readLine(),
-          () => {
-            val input = scala.util.Random.nextInt(100).toString
-            if (input.length == 1) "0" + input else input
-          },
-          1000) match {
-          case Failure(ex) => throw ex
-          case Success(value) =>
-            // End of game. Show victory / loss
-            OutputHelper.generateFinalText(value) match {
-              case Success(value) => value.foreach(println(_))
-              case Failure(ex) => throw ex
-            }
-        }
+    val game = new Game(Settings.getShipsForOnePlayer, Settings.getShipsForOnePlayer,
+      (maxValue: Int) => scala.util.Random.nextInt(maxValue))
+
+    // Play game. Round by Round
+    play(printValue => println(printValue),
+      game.startNewRound(),
+      () => StdIn.readLine(),
+      () => {
+        val input = scala.util.Random.nextInt(100).toString
+        if (input.length == 1) "0" + input else input
+      },
+      1000) match {
       case Failure(ex) => throw ex
+      case Success(value) =>
+        // End of game. Show victory / loss
+        OutputHelper.generateFinalText(value) match {
+          case Success(value) => value.foreach(println(_))
+          case Failure(ex) => throw ex
+        }
     }
   }
 
@@ -118,7 +116,7 @@ object Battleship {
       case Success(gameAfterHumanRound) =>
 
         // AI or finished?
-        if (!gameAfterHumanRound.isRunning.isSuccess || !gameAfterHumanRound.isRunning.get) {
+        if (!gameAfterHumanRound.isRunning) {
           gameAfterHumanRound
         } else {
           (Vector("") ++ generateAiPlayerRoundInfoText()).foreach(fktForInfoTextOutput(_))
@@ -130,7 +128,7 @@ object Battleship {
               Thread.sleep(aiPlayerDelay)
 
               // Next round or finished?
-              if (gameAfterAiRound.isRunning.isSuccess && gameAfterAiRound.isRunning.get) {
+              if (gameAfterAiRound.isRunning) {
                 play(fktForInfoTextOutput, gameAfterAiRound.startNewRound(), fktHumanGetCoordinatesToShootAt,
                   fktAiGetCoordinatesToShootAt, aiPlayerDelay)
                 match {
@@ -174,17 +172,17 @@ object Battleship {
             if (value.shipPosition.isDefined) {
               if (humanPlayerTurn)
                 generateShipHitInfoText(value.shipPosition.get.ship,
-                  value.game.aiPlayerBoard.isDestroyed(value.shipPosition.get.ship).get)
+                  value.game.aiPlayerBoard.isDestroyed(value.shipPosition.get.ship))
                   .foreach(fktForInfoTextOutput(_))
               else
                 generateShipHitInfoText(value.shipPosition.get.ship,
-                  value.game.humanPlayerBoard.isDestroyed(value.shipPosition.get.ship).get)
+                  value.game.humanPlayerBoard.isDestroyed(value.shipPosition.get.ship))
                   .foreach(fktForInfoTextOutput(_))
             } else {
               generateNothingHitInfoText().foreach(fktForInfoTextOutput(_))
             }
 
-            if (value.shipPosition.isDefined && value.game.isRunning.isSuccess && value.game.isRunning.get) {
+            if (value.shipPosition.isDefined && value.game.isRunning) {
               generateShootAgainInfoText().foreach(fktForInfoTextOutput(_))
 
               playOneRoundOfOnePlayer(humanPlayerTurn, value.game, fktGetCoordinatesToShootAt, fktForInfoTextOutput,

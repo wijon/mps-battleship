@@ -1,9 +1,8 @@
 package model
 
 import dataTransferObjects.functionResults.GameShotAtResult
-import dataTransferObjects.{Ship, ShipPosition}
+import dataTransferObjects.{Ship}
 import dsl.intern.ShipPlacement
-import enums.BoardDirection
 
 import scala.util.{Failure, Success, Try}
 
@@ -16,8 +15,8 @@ import scala.util.{Failure, Success, Try}
 case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
   /** Override constructor, this one is used for the initial instantiation
    */
-  def this(player1Ships: Vector[Ship], player2Ships: Vector[Ship]) =
-    this(new Board(player1Ships), new Board(player2Ships), 0)
+  def this(player1Ships: Vector[Ship], player2Ships: Vector[Ship], fktRandomInt: Int => Int) =
+    this(Board(player1Ships, fktRandomInt), Board(player2Ships, fktRandomInt), 0)
 
   /** Start new round of battleship. Increment round number
    *
@@ -46,47 +45,6 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
     //    aiPlayerBoard = board2
     //    this
     copy(board1, board2, roundNum)
-  }
-
-  /** Places all ships of both board. Uses parameter to generate coordinates
-   *
-   * @param randomIntGenerator Function for random ints
-   * @return Modified game
-   */
-  def placeAllShipsRandomly(randomIntGenerator: Int => Int): Try[Game] = {
-    val humanBoard = placeAllShipsOfBoardRandomlyOneByOne(humanPlayerBoard, humanPlayerBoard.ships, randomIntGenerator)
-    val aiBoard = placeAllShipsOfBoardRandomlyOneByOne(aiPlayerBoard, aiPlayerBoard.ships, randomIntGenerator)
-
-    if (humanBoard.isFailure) {
-      Failure(humanBoard.failed.get)
-    } else if (aiBoard.isFailure) {
-      Failure(aiBoard.failed.get)
-    } else {
-      Success(copy(humanBoard.get, aiBoard.get, roundNum))
-    }
-  }
-
-  /** Place ships of board recursively
-   *
-   * @param board              Board
-   * @param remainingShips     Ships to place
-   * @param randomIntGenerator Function for coordinate and BoardDirection generation
-   * @return Board with ships placed
-   */
-  private def placeAllShipsOfBoardRandomlyOneByOne(board: Board,
-                                                   remainingShips: Vector[Ship],
-                                                   randomIntGenerator: Int => Int): Try[Board] = {
-    if (remainingShips.isEmpty) {
-      Success(board)
-    } else {
-      placeAllShipsOfBoardRandomlyOneByOne(board, remainingShips.drop(1), randomIntGenerator) match {
-        case Success(board) => board.placeSingleShipForce(remainingShips(0), randomIntGenerator, randomIntGenerator,
-          (maxValue: Int) => {
-            BoardDirection(randomIntGenerator(maxValue))
-          }, 100)
-        case Failure(ex) => Failure(ex)
-      }
-    }
   }
 
   /** Shoot at player board
@@ -130,17 +88,8 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
    *
    * @return Game still running?
    */
-  def isRunning: Try[Boolean] = {
-    val p1Result = humanPlayerBoard.areAllShipsDestroyed()
-    val p2Result = aiPlayerBoard.areAllShipsDestroyed()
-
-    if (p1Result.isFailure) {
-      p1Result
-    } else if (p2Result.isFailure) {
-      p2Result
-    } else {
-      Success(!p1Result.get && !p2Result.get)
-    }
+  def isRunning: Boolean = {
+    !humanPlayerBoard.areAllShipsDestroyed() && !aiPlayerBoard.areAllShipsDestroyed()
   }
 
   /** Check if human player is winner
@@ -148,13 +97,12 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
    * @return Winner?
    */
   def humanPlayerIsWinner(): Boolean = {
-    val aiPlayerAllShipsDestroyed = aiPlayerBoard.areAllShipsDestroyed()
-    !(aiPlayerAllShipsDestroyed.isFailure || !aiPlayerAllShipsDestroyed.get)
+    aiPlayerBoard.areAllShipsDestroyed()
   }
 }
 
 object Game {
   def newGame(init: Game => Game): Game = {
-    init(new Game(Vector.empty, Vector.empty))
+    init(new Game(Vector.empty, Vector.empty, (_: Int) => 0))
   }
 }

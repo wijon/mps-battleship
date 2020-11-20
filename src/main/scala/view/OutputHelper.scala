@@ -3,7 +3,7 @@ package view
 import dataTransferObjects.{Coordinates, Ship}
 import model.{Board, Game}
 
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 /** Helper functions for output rendering
  *
@@ -78,7 +78,7 @@ object OutputHelper {
    */
   def generateRemainingShips(board: Board, player: String): Vector[String] = {
     val headline = "Schiffstatus " + player
-    Vector(headline) ++ generateRemainingShipsLineByLine(board.ships, board)
+    Vector(headline) ++ generateRemainingShipsLineByLine(board.shipPositions.map(_.ship), board)
   }
 
   /** Render remaining ships-infotext ship by ship
@@ -141,12 +141,10 @@ object OutputHelper {
    * @return Victory / Loss-Screen
    */
   def generateFinalText(game: Game): Try[Vector[String]] = {
-    Try(game.isRunning match {
-      case Failure(ex) => throw ex
-      case Success(true) => throw new IllegalStateException
-      case Success(false) =>
-        if (game.humanPlayerIsWinner()) generateVictory() else generateLoss()
-    })
+    Try(if (game.isRunning)
+      throw new IllegalStateException
+    else if (game.humanPlayerIsWinner()) generateVictory() else generateLoss()
+    )
   }
 
   /** Render victory-screen for output

@@ -25,8 +25,8 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
       val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
 
-      val testBoardHuman = Board(matrixHuman, shipsHuman, shipPositionsHuman)
-      val testBoardAi = Board(matrixAi, shipsAi, shipPositionsAi)
+      val testBoardHuman = Board(matrixHuman, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi, shipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 10)
       val outputTest = OutputHelper.generateFinalText(testGame)
@@ -42,8 +42,8 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrixAi2 = matrixAi.updated(3, matrixAi(3).updated(4, BoardCell(true)))
       val matrixAi3 = matrixAi2.updated(3, matrixAi2(3).updated(5, BoardCell(true)))
 
-      val testBoardHuman = Board(matrixHuman, shipsHuman, shipPositionsHuman)
-      val testBoardAi = Board(matrixAi3, shipsAi, shipPositionsAi)
+      val testBoardHuman = Board(matrixHuman, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi3, shipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 10)
       val outputTest = OutputHelper.generateFinalText(testGame)
@@ -62,8 +62,8 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrixHuman3 = matrixHuman2.updated(3, matrixHuman2(3).updated(5, BoardCell(true)))
       val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
 
-      val testBoardHuman = Board(matrixHuman3, shipsHuman, shipPositionsHuman)
-      val testBoardAi = Board(matrixAi, shipsAi, shipPositionsAi)
+      val testBoardHuman = Board(matrixHuman3, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi, shipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 10)
       val outputTest = OutputHelper.generateFinalText(testGame)
@@ -89,8 +89,8 @@ class OutputHelperSpec extends AnyWordSpec {
         dataTransferObjects.ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
-      val testBoardHuman = Board(matrixHuman, shipsHuman, shipPositionsHuman)
-      val testBoardAi = Board(matrixAi3, shipsAi, shipPositionsAi)
+      val testBoardHuman = Board(matrixHuman, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi3, shipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 10)
       val outputTest = OutputHelper.generateFinalText(testGame)
@@ -303,7 +303,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
       val matrix2 = matrix1.updated(3, matrix1(3).updated(5, BoardCell(true)))
       val matrix3 = matrix2.updated(1, matrix2(1).updated(2, BoardCell(true)))
-      val testBoard = Board(matrix3, ships, shipPositions)
+      val testBoard = Board(matrix3, shipPositions)
 
       val test = OutputHelper.generateRemainingShips(testBoard, "human")
 
@@ -323,7 +323,7 @@ class OutputHelperSpec extends AnyWordSpec {
         dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
-      val testBoard = Board(matrix, ships, shipPositions)
+      val testBoard = Board(matrix, shipPositions)
 
       val test = OutputHelper.generateRemainingShips(testBoard, "human")
 
@@ -352,7 +352,7 @@ class OutputHelperSpec extends AnyWordSpec {
       )
 
       val matrix1 = matrix.updated(3, matrix(3).updated(5, BoardCell(true)))
-      val testBoard = Board(matrix1, ships, shipPositions)
+      val testBoard = Board(matrix1, shipPositions)
 
       val test = OutputHelper.generateRemainingShips(testBoard, "human")
 
@@ -382,7 +382,7 @@ class OutputHelperSpec extends AnyWordSpec {
 
       val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
       val matrix2 = matrix1.updated(3, matrix1(3).updated(5, BoardCell(true)))
-      val testBoard = Board(matrix2, ships, shipPositions)
+      val testBoard = Board(matrix2, shipPositions)
 
       val test = OutputHelper.generateRemainingShips(testBoard, "human")
 
@@ -423,7 +423,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix3 = matrix2.updated(1, matrix2(1).updated(2, BoardCell(true)))
       val matrix4 = matrix3.updated(9, matrix3(9).updated(8, BoardCell(true)))
       val matrix5 = matrix4.updated(7, matrix4(7).updated(6, BoardCell(true)))
-      val testBoard = Board(matrix5, ships, shipPositions)
+      val testBoard = Board(matrix5, shipPositions)
 
       val test = OutputHelper.generateBoard(testBoard, showShips = true, "human")
 
@@ -462,7 +462,7 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrix3 = matrix2.updated(1, matrix2(1).updated(2, BoardCell(true)))
       val matrix4 = matrix3.updated(9, matrix3(9).updated(8, BoardCell(true)))
       val matrix5 = matrix4.updated(7, matrix4(7).updated(6, BoardCell(true)))
-      val testBoard = Board(matrix5, ships, shipPositions)
+      val testBoard = Board(matrix5, shipPositions)
 
       val test = OutputHelper.generateBoard(testBoard, showShips = false, "ai")
 
@@ -504,8 +504,8 @@ class OutputHelperSpec extends AnyWordSpec {
       val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
       val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
 
-      val testBoardHuman = Board(matrixHuman, shipsHuman, shipPositionsHuman)
-      val testBoardAi = Board(matrixAi, shipsAi, shipPositionsAi)
+      val testBoardHuman = Board(matrixHuman, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi, shipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 10)
       val roundText = OutputHelper.generateRoundText(testGame)
