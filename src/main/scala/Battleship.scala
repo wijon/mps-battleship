@@ -23,26 +23,6 @@ object Battleship {
       createGameWithExplicitShips(args(0))
     }
 
-    play(game)
-  }
-
-  def createGameWithExplicitShips(txt: String): Game = {
-    val parser = new FleetParser
-    parser.parseFleetText(txt) match {
-      case Failure(ex) => throw ex
-      case Success(value) => {
-        Game.newGame { game =>
-          game ships { ship =>
-            value.map(fpr => fpr.ships.map(s => (s, fpr.player))).flatten(sp => sp).map(sp => {
-              ship place sp._1.name length sp._1.length at sp._1.startingPos facing sp._1.dir as sp._2
-            })
-          }
-        }
-      }
-    }
-  }
-
-  def play(game: Game): Game = {
     // Play game. Round by Round
     play(printValue => println(printValue),
       game.startNewRound(),
@@ -60,8 +40,22 @@ object Battleship {
           case Failure(ex) => throw ex
         }
     }
+  }
 
-    game
+  def createGameWithExplicitShips(txt: String): Game = {
+    val parser = new FleetParser
+    parser.parseFleetText(txt) match {
+      case Failure(ex) => throw ex
+      case Success(value) => {
+        Game.newGame { game =>
+          game ships { ship =>
+            value.map(fpr => fpr.ships.map(s => (s, fpr.player))).flatten(sp => sp).map(sp => {
+              ship place sp._1.name length sp._1.length at sp._1.startingPos facing sp._1.dir as sp._2
+            })
+          }
+        }
+      }
+    }
   }
 
   /** Trying to get correct input for [maxIterations] times
