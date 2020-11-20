@@ -8,11 +8,12 @@ import scala.util.{Failure, Success, Try}
 object Battleship {
   def main(args: Array[String]): Unit = {
     // New game. Randomly place ships
-    new Game(getShips, getShips).placeAllShipsRandomly((maxValue: Int) => scala.util.Random.nextInt(maxValue)) match {
+    new Game(Settings.getShipsForOnePlayer, Settings.getShipsForOnePlayer).placeAllShipsRandomly((maxValue: Int) =>
+      scala.util.Random.nextInt(maxValue)) match {
       case Success(game) =>
         // Play game. Round by Round
         play(printValue => println(printValue),
-          startNewRound(game),
+          game.startNewRound(),
           () => StdIn.readLine(),
           () => {
             val input = scala.util.Random.nextInt(100).toString
@@ -69,28 +70,23 @@ object Battleship {
                                       board: Board,
                                       fktErrorMessageOutput: String => Unit): Try[Coordinates] = {
     Try({
-      val row = input.slice(0, 1)
-      val col = input.slice(1, 2)
+      val coordinates = Coordinates.coordinatesFromString(input)
 
-      if (!row.charAt(0).isDigit) {
-        generateInvalidRowInputInfoText().foreach(fktErrorMessageOutput(_))
-        throw new IndexOutOfBoundsException(row)
+      coordinates match {
+        case Success(value) =>
+          if (board.isHit(value.row, value.col)) {
+            generateInvalidInputInfoText().foreach(fktErrorMessageOutput(_))
+            throw new IndexOutOfBoundsException(input)
+          }
+          value
+        case Failure(ex) =>
+          if (ex.getMessage == "row")
+            generateInvalidRowInputInfoText().foreach(fktErrorMessageOutput(_))
+          else
+            generateInvalidColInputInfoText().foreach(fktErrorMessageOutput(_))
+
+          throw ex
       }
-
-      if (!col.charAt(0).isDigit) {
-        generateInvalidColInputInfoText().foreach(fktErrorMessageOutput(_))
-        throw new IndexOutOfBoundsException(col)
-      }
-
-      val rowAsInt = row.toInt
-      val colAsInt = col.toInt
-
-      if (board.isHit(rowAsInt, colAsInt)) {
-        generateInvalidInputInfoText().foreach(fktErrorMessageOutput(_))
-        throw new IndexOutOfBoundsException(input)
-      }
-
-      Coordinates(rowAsInt, colAsInt)
     })
   }
 
@@ -133,7 +129,7 @@ object Battleship {
 
               // Next round or finished?
               if (gameAfterAiRound.isRunning.isSuccess && gameAfterAiRound.isRunning.get) {
-                play(fktForInfoTextOutput, startNewRound(gameAfterAiRound), fktHumanGetCoordinatesToShootAt,
+                play(fktForInfoTextOutput, gameAfterAiRound.startNewRound(), fktHumanGetCoordinatesToShootAt,
                   fktAiGetCoordinatesToShootAt, aiPlayerDelay)
                 match {
                   case Failure(ex) => throw ex
@@ -164,7 +160,7 @@ object Battleship {
                                      ): Try[Game] = {
     Thread.sleep(delay)
 
-    Try(waitingForCorrectInput(currentIteration = 0, maxIterations = 10, fktGetInput = fktGetCoordinatesToShootAt,
+    Try(waitingForCorrectInput(currentIteration = 0, maxIterations = 100, fktGetInput = fktGetCoordinatesToShootAt,
       board = if (humanPlayerTurn) game.aiPlayerBoard else game.humanPlayerBoard,
       fktErrorMessageOutput = fktForInfoTextOutput) match {
       case Failure(ex) => throw ex
@@ -195,49 +191,9 @@ object Battleship {
             } else {
               value._1
             }
-          // Failure not possible --> waitingForCorrectInput() checks, if cell was already hit
+          // Failure impossible --> waitingForCorrectInput() checks, if cell was already hit
           //          case Failure(ex) => throw ex
         }
     })
-  }
-
-  /** Start new round of battleship. Increment round number
-   *
-   * @param game Game
-   * @return Changed game
-   */
-  def startNewRound(game: Game): Game = {
-    game.copy(game.humanPlayerBoard, game.aiPlayerBoard, game.roundNum + 1)
-  }
-
-  /** Generate round text for output
-   *
-   * @param game Game
-   * @return Round text for output
-   */
-  def generateRoundText(game: Game): Vector[String] = {
-    val roundInfoText = model.OutputHelper.generateRoundInfoText(game)
-    val shipsInfoText = model.OutputHelper.generateRemainingShips(game.humanPlayerBoard, "Mensch")
-    val humanBoard = model.OutputHelper.generateBoard(game.humanPlayerBoard, showShips = true, "Mensch")
-    val aiBoard = model.OutputHelper.generateBoard(game.aiPlayerBoard, showShips = true, "KI")
-
-    val maxLength = humanBoard.map(str => str.length).max
-    val boardText = (humanBoard zip aiBoard).map(x => s"${x._1.padTo(maxLength, ' ')}\t\t\t${x._2}")
-
-    Vector(" ") ++ roundInfoText ++ Vector(" ") ++ shipsInfoText ++ Vector(" ") ++ boardText
-  }
-
-  /** Create ships
-   *
-   * @return List of all ships
-   */
-  def getShips: Vector[Ship] = {
-    Vector(
-      Ship(5, "Carrier"),
-      Ship(4, "Battleship"),
-      Ship(3, "Cruiser"),
-      Ship(3, "Submarine"),
-      Ship(2, "Destroyer")
-    )
   }
 }

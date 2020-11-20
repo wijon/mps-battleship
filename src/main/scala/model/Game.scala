@@ -9,9 +9,18 @@ import scala.util.{Failure, Success, Try}
  * @param roundNum         Current round number
  */
 case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
-  // Override constructor, this one is used for the initial instantiation
+  /** Override constructor, this one is used for the initial instantiation
+   */
   def this(player1Ships: Vector[Ship], player2Ships: Vector[Ship]) =
     this(new Board(player1Ships), new Board(player2Ships), 0)
+
+  /** Start new round of battleship. Increment round number
+   *
+   * @return Changed game
+   */
+  def startNewRound(): Game = {
+    copy(humanPlayerBoard, aiPlayerBoard, roundNum + 1)
+  }
 
   /** DSL function for manually placing ships
    *

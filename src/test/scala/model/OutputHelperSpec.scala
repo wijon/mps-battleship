@@ -481,4 +481,36 @@ class OutputHelperSpec extends AnyWordSpec {
       }
     }
   }
+
+  "Round text" when {
+    "called" should {
+      val shipsHuman = Vector(
+        Ship(2, "humanShip1")
+      )
+      val shipsAi = Vector(
+        Ship(2, "aiShip1")
+      )
+
+      val shipPositionsHuman = Vector(
+        ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+      )
+
+      val shipPositionsAi = Vector(
+        ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+      )
+
+      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+
+      val testBoardHuman = Board(matrixHuman, shipsHuman, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi, shipsAi, shipPositionsAi)
+
+      val testGame = Game(testBoardHuman, testBoardAi, 10)
+      val roundText = OutputHelper.generateRoundText(testGame)
+
+      "not be empty" in {
+        assert(roundText.nonEmpty)
+      }
+    }
+  }
 }

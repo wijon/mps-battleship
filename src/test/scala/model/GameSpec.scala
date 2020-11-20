@@ -4,9 +4,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class GameSpec extends AnyWordSpec {
   "A Game" when {
-
     "new" should {
-
       val p1Ships = Vector(
         Ship(1, "A")
       )
@@ -21,6 +19,21 @@ class GameSpec extends AnyWordSpec {
 
       "have player 2 board with player 2 ships" in {
         assert(game.aiPlayerBoard.ships == p2Ships)
+      }
+    }
+
+    "starting a new round" should {
+      val p1Ships = Vector(
+        Ship(1, "A")
+      )
+      val p2Ships = Vector(
+        Ship(2, "B")
+      )
+      val game = new Game(p1Ships, p2Ships)
+      val gameNextRound = game.startNewRound()
+
+      "have a round number which is 1 greater than last round" in {
+        assert((game.roundNum + 1) == gameNextRound.roundNum)
       }
     }
 

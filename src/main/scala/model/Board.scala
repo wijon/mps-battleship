@@ -5,7 +5,8 @@ import model.BoardDirection.BoardDirection
 import scala.util.{Failure, Success, Try}
 
 case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPositions: Vector[ShipPosition]) {
-  // Override constructor, this one is used for the initial instantiation
+  /** Override constructor, this one is used for the initial instantiation
+   */
   def this(ships: Vector[Ship]) = this(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, ships, Vector())
 
   /** Places a single ship on board by force. Recursive until successfull

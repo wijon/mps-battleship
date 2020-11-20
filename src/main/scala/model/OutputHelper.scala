@@ -172,6 +172,23 @@ object OutputHelper {
     Vector(viewLine1, viewLine2, viewLine3, viewLine4, viewLine5)
   }
 
+  /** Generate round text for output
+   *
+   * @param game Game
+   * @return Round text for output
+   */
+  def generateRoundText(game: Game): Vector[String] = {
+    val roundInfoText = model.OutputHelper.generateRoundInfoText(game)
+    val shipsInfoText = model.OutputHelper.generateRemainingShips(game.humanPlayerBoard, "Mensch")
+    val humanBoard = model.OutputHelper.generateBoard(game.humanPlayerBoard, showShips = true, "Mensch")
+    val aiBoard = model.OutputHelper.generateBoard(game.aiPlayerBoard, showShips = true, "KI")
+
+    val maxLength = humanBoard.map(str => str.length).max
+    val boardText = (humanBoard zip aiBoard).map(x => s"${x._1.padTo(maxLength, ' ')}\t\t\t${x._2}")
+
+    Vector(" ") ++ roundInfoText ++ Vector(" ") ++ shipsInfoText ++ Vector(" ") ++ boardText
+  }
+
   /** Render round info text for output
    *
    * @param game Current game
