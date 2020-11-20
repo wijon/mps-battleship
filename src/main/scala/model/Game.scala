@@ -1,5 +1,6 @@
 package model
 
+import dataTransferObjects.functionResults.GameShotAtResult
 import dataTransferObjects.{Ship, ShipPosition}
 import dsl.intern.ShipPlacement
 import enums.BoardDirection
@@ -95,7 +96,7 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
    * @param col              Column to shoot at
    * @return Game and is ship hit?
    */
-  def shootAtBoard(humanPlayerBoard: Boolean, row: Int, col: Int): Try[(Game, Option[ShipPosition])] = {
+  def shootAtBoard(humanPlayerBoard: Boolean, row: Int, col: Int): Try[GameShotAtResult] = {
     if (humanPlayerBoard) shootAtHumanBoard(row, col) else shootAtAiBoard(row, col)
   }
 
@@ -105,9 +106,9 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
    * @param col Column to shoot
    * @return Game and Is ship hit?
    */
-  private def shootAtHumanBoard(row: Int, col: Int): Try[(Game, Option[ShipPosition])] = {
+  private def shootAtHumanBoard(row: Int, col: Int): Try[GameShotAtResult] = {
     Try(humanPlayerBoard.shoot(row, col) match {
-      case Success(value) => (copy(value.board, aiPlayerBoard, roundNum), value.shipPosition)
+      case Success(value) => GameShotAtResult(copy(value.board, aiPlayerBoard, roundNum), value.shipPosition)
       case Failure(ex) => throw ex
     })
   }
@@ -118,9 +119,9 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
    * @param col Column to shoot
    * @return Game and Is ship hit?
    */
-  private def shootAtAiBoard(row: Int, col: Int): Try[(Game, Option[ShipPosition])] = {
+  private def shootAtAiBoard(row: Int, col: Int): Try[GameShotAtResult] = {
     Try(aiPlayerBoard.shoot(row, col) match {
-      case Success(value) => (copy(humanPlayerBoard, value.board, roundNum), value.shipPosition)
+      case Success(value) => GameShotAtResult(copy(humanPlayerBoard, value.board, roundNum), value.shipPosition)
       case Failure(ex) => throw ex
     })
   }
