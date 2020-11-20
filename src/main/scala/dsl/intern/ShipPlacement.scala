@@ -2,7 +2,8 @@ package dsl.intern
 
 import dataTransferObjects.{Coordinates, Ship, ShipPosition}
 import enums.BoardDirection.BoardDirection
-import enums.{Player, Player1, Player2}
+import enums.Player
+import enums.Player.Player
 import model.Board
 
 import scala.collection.mutable
@@ -38,8 +39,8 @@ class ShipPlacement {
   class ShipPlacementPlayer(shipPosition: ShipPosition){
     def as(player: Player) : Unit = {
       player match {
-        case Player1 => shipPositionsPlayer1 += shipPosition
-        case Player2 => shipPositionsPlayer2 += shipPosition
+        case Player.Player1 => shipPositionsPlayer1 += shipPosition
+        case Player.Player2 => shipPositionsPlayer2 += shipPosition
       }
     }
   }
