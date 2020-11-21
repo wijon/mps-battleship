@@ -103,6 +103,6 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
 
 object Game {
   def newGame(init: Game => Game): Game = {
-    init(new Game(Vector.empty, Vector.empty, (_: Int) => 0))
+    init(new Game(Vector.empty, Vector.empty, null))
   }
 }
