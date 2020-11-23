@@ -36,13 +36,12 @@ class FleetParser extends RegexParsers {
       case player ~ _ ~ ships => FleetParserResult(player, ships)
     }
 
-  def multiFleetParser: Parser[Vector[FleetParserResult]] = rep(fleetParser) ^^ (fleets => fleets.toVector)
+  def multiFleetParser: Parser[Vector[FleetParserResult]] = repN(2, fleetParser) ^^ (fleets => fleets.toVector)
 
   def parseFleetText(txt: String) : Try[Vector[FleetParserResult]] = {
     parse(multiFleetParser, txt) match {
       case Success(matched, _) => scala.util.Success(matched)
-      case Failure(msg, _) => scala.util.Failure(throw new Exception(s"FAILURE: $msg"))
-      case Error(msg, _) => scala.util.Failure(throw new Exception(s"ERROR: $msg"))
+      case Failure(msg, _) => scala.util.Failure(new Exception(s"FAILURE: $msg"))
     }
   }
 }

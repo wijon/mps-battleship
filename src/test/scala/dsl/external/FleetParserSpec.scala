@@ -36,15 +36,44 @@ class FleetParserSpec extends AnyWordSpec {
       }
     }
 
-//    "parse incorrect fleet text" should {
-//      val txt = "Player: 1\nNome\t\tLength\tStartingPos\tDirection\nCarrier\t\ts\t14\t\tEast\nBattleship\t4\t23\t\tSouth\n\nPlayer: 2\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\t5\t38\t\tWest\nBattleship\t4\t72\t\tNorth"
-//      val parser = new FleetParser
-//      val result = parser.parseFleetText(txt)
-//      val x = result;
-//
-//      "fail" in {
-//        assert(!result.isSuccess)
-//      }
-//    }
+    "parse incorrect fleet text missing player" should {
+      val txt = "Player: 1\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\ts\t14\t\tEast\nBattleship\t4\t23\t\tSouth"
+      val parser = new FleetParser
+      val result = parser.parseFleetText(txt)
+
+      "fail" in {
+        assert(!result.isSuccess)
+      }
+    }
+
+    "parse incorrect fleet text wrong length input" should {
+      val txt = "Player: 1\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\ts\t14\t\tEast\nBattleship\t4\t23\t\tSouth\n\nPlayer: 2\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\t5\t38\t\tWest\nBattleship\t4\t72\t\tNorth"
+      val parser = new FleetParser
+      val result = parser.parseFleetText(txt)
+
+      "fail" in {
+        assert(!result.isSuccess)
+      }
+    }
+
+    "parse incorrect fleet text wrong starting position input" should {
+      val txt = "Player: 1\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\t2\t1\t\tEast\nBattleship\t4\t23\t\tSouth\n\nPlayer: 2\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\t5\t38\t\tWest\nBattleship\t4\t72\t\tNorth"
+      val parser = new FleetParser
+      val result = parser.parseFleetText(txt)
+
+      "fail" in {
+        assert(!result.isSuccess)
+      }
+    }
+
+    "parse incorrect fleet text wrong direction input" should {
+      val txt = "Player: 1\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\t2\t1\t\tSouthEast\nBattleship\t4\t23\t\tSouth\n\nPlayer: 2\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\t5\t38\t\tWest\nBattleship\t4\t72\t\tNorth"
+      val parser = new FleetParser
+      val result = parser.parseFleetText(txt)
+
+      "fail" in {
+        assert(!result.isSuccess)
+      }
+    }
   }
 }
