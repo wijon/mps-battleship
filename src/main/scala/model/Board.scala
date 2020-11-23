@@ -184,6 +184,17 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    * @return true if all are destroyed, otherwise false
    */
   def areAllShipsDestroyed(): Try[Boolean] = {
+    // ToDo: Uncomment after refactoring play() function to be able to simulate playing a game inside of a test by not
+    //  passing any ships
+    //    if(ships.isEmpty){
+    //      Success(true)
+    //    } else {
+    //      Try(ships.map(isDestroyed).map {
+    //        case Success(y) => y
+    //        case Failure(ex) => throw ex
+    //      }.reduce((res, cur) => res && cur))
+    //    }
+
     Try(ships.map(isDestroyed).map {
       case Success(y) => y
       case Failure(ex) => throw ex

@@ -42,6 +42,12 @@ object Battleship {
     }
   }
 
+  /** Create a game utilizing the external and internal ship placement DSL by receiving a string containing
+   * the player fleets formatted to match the external DSL format
+   *
+   * @param txt player fleets formatted to match the external DSL format
+   * @return An initialized game object
+   */
   def createGameWithExplicitShips(txt: String): Game = {
     val parser = new FleetParser
     parser.parseFleetText(txt) match {
