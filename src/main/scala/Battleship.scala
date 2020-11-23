@@ -1,5 +1,5 @@
 import dataTransferObjects.Coordinates
-import dsl.extern.{FleetParser, FleetParserResult}
+import dsl.extern.FleetParser
 import view.OutputHelper._
 import model.{Board, Game}
 import view.OutputHelper
@@ -13,11 +13,8 @@ object Battleship {
 
     val game = if (args.isEmpty) {
       // New game. Randomly place ships
-      new Game(Settings.getShipsForOnePlayer, Settings.getShipsForOnePlayer).placeAllShipsRandomly((maxValue: Int) =>
-        scala.util.Random.nextInt(maxValue)) match {
-        case Success(game) => game
-        case Failure(ex) => throw ex
-      }
+      new Game(Settings.getShipsForOnePlayer, Settings.getShipsForOnePlayer,
+        (maxValue: Int) => scala.util.Random.nextInt(maxValue))
     } else {
       // New game get ship + positions from file
       createGameWithExplicitShips(args(0))
@@ -52,7 +49,7 @@ object Battleship {
     val parser = new FleetParser
     parser.parseFleetText(txt) match {
       case Failure(ex) => throw ex
-      case Success(value) => {
+      case Success(value) =>
         Game.newGame { game =>
           game ships { ship =>
             value.map(fpr => fpr.ships.map(s => (s, fpr.player))).flatten(sp => sp).map(sp => {
@@ -60,7 +57,6 @@ object Battleship {
             })
           }
         }
-      }
     }
   }
 
@@ -148,7 +144,7 @@ object Battleship {
       case Success(gameAfterHumanRound) =>
 
         // AI or finished?
-        if (!gameAfterHumanRound.isRunning.isSuccess || !gameAfterHumanRound.isRunning.get) {
+        if (!gameAfterHumanRound.isRunning) {
           gameAfterHumanRound
         } else {
           (Vector("") ++ generateAiPlayerRoundInfoText()).foreach(fktForInfoTextOutput(_))
@@ -160,7 +156,7 @@ object Battleship {
               Thread.sleep(aiPlayerDelay)
 
               // Next round or finished?
-              if (gameAfterAiRound.isRunning.isSuccess && gameAfterAiRound.isRunning.get) {
+              if (gameAfterAiRound.isRunning) {
                 play(fktForInfoTextOutput, gameAfterAiRound.startNewRound(), fktHumanGetCoordinatesToShootAt,
                   fktAiGetCoordinatesToShootAt, aiPlayerDelay)
                 match {
@@ -204,17 +200,17 @@ object Battleship {
             if (value.shipPosition.isDefined) {
               if (humanPlayerTurn)
                 generateShipHitInfoText(value.shipPosition.get.ship,
-                  value.game.aiPlayerBoard.isDestroyed(value.shipPosition.get.ship).get)
+                  value.game.aiPlayerBoard.isDestroyed(value.shipPosition.get.ship))
                   .foreach(fktForInfoTextOutput(_))
               else
                 generateShipHitInfoText(value.shipPosition.get.ship,
-                  value.game.humanPlayerBoard.isDestroyed(value.shipPosition.get.ship).get)
+                  value.game.humanPlayerBoard.isDestroyed(value.shipPosition.get.ship))
                   .foreach(fktForInfoTextOutput(_))
             } else {
               generateNothingHitInfoText().foreach(fktForInfoTextOutput(_))
             }
 
-            if (value.shipPosition.isDefined && value.game.isRunning.isSuccess && value.game.isRunning.get) {
+            if (value.shipPosition.isDefined && value.game.isRunning) {
               generateShootAgainInfoText().foreach(fktForInfoTextOutput(_))
 
               playOneRoundOfOnePlayer(humanPlayerTurn, value.game, fktGetCoordinatesToShootAt, fktForInfoTextOutput,

@@ -3,17 +3,14 @@ package model
 import java.security.InvalidParameterException
 
 import dataTransferObjects.functionResults.BoardShotAtResult
-import dataTransferObjects.{BoardCell, Coordinates, Ship, ShipPosition}
+import dataTransferObjects.{Coordinates, Ship, ShipPosition}
 import enums.BoardDirection
 import enums.BoardDirection.BoardDirection
 
+import scala.annotation.tailrec
 import scala.util.{Failure, Success, Try}
 
-case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPositions: Vector[ShipPosition]) {
-  /** Override constructor, this one is used for the initial instantiation
-   */
-  def this(ships: Vector[Ship]) = this(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, ships, Vector())
-
+case class Board(matrix: Vector[Vector[Boolean]], shipPositions: Vector[ShipPosition]) {
   /** Places a single ship on board by force. Recursive until successfull
    *
    * @param ship                ship to place
@@ -91,23 +88,12 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    * @return updated board
    */
   def placeSingleShip(ship: Ship, shipCoordinates: Vector[Coordinates]): Try[Board] = {
-    if (!shipBelongsToBoard(ship) ||
-      shipIsPlacedOnBoard(ship) ||
-      !noShipIsPlacedAtCoordinates(shipCoordinates) ||
-      !coordinatesAreCorrect(shipCoordinates)) {
+    if (shipIsPlacedOnBoard(ship) || !noShipIsPlacedAtCoordinates(shipCoordinates)
+      || !coordinatesAreCorrect(shipCoordinates)) {
       Failure(new InvalidParameterException)
     } else {
-      Success(copy(matrix, ships, shipPositions :+ dataTransferObjects.ShipPosition(ship, shipCoordinates)))
+      Success(copy(matrix, shipPositions :+ dataTransferObjects.ShipPosition(ship, shipCoordinates)))
     }
-  }
-
-  /** Check if ship belongs to board
-   *
-   * @param ship Ship to check
-   * @return Ship belongs to board?
-   */
-  private def shipBelongsToBoard(ship: Ship): Boolean = {
-    ships.contains(ship)
   }
 
   /** Check if ship is already placed on board
@@ -147,10 +133,9 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
     if (isHit(row, col)) {
       Failure(new UnsupportedOperationException)
     } else {
-      val newMatrix = matrix.updated(row, matrix(row).updated(col, BoardCell(true)))
+      val newMatrix = matrix.updated(row, matrix(row).updated(col, true))
       val shipPos = shipPositions.find(_.positions.contains(Coordinates(row, col)))
-
-      Success(BoardShotAtResult(copy(newMatrix, ships, shipPositions), shipPos))
+      Success(BoardShotAtResult(copy(newMatrix, shipPositions), shipPos))
     }
   }
 
@@ -161,7 +146,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    * @return Hit?
    */
   def isHit(row: Int, col: Int): Boolean = {
-    matrix(row)(col).isHit
+    matrix(row)(col)
   }
 
   /** Checks if ship is destroyed
@@ -169,42 +154,37 @@ case class Board(matrix: Vector[Vector[BoardCell]], ships: Vector[Ship], shipPos
    * @param ship Ship to check
    * @return destroyed?
    */
-  def isDestroyed(ship: Ship): Try[Boolean] = {
+  def isDestroyed(ship: Ship): Boolean = {
     val shipPosition = shipPositions.find(_.ship == ship)
-
-    shipPosition
-      .map(sp => Success(sp.positions.forall(c => {
-        matrix(c.row)(c.col).isHit
-      })))
-      .getOrElse(Failure(new NoSuchElementException))
+    shipPosition.get.positions.forall(c => {
+      matrix(c.row)(c.col)
+    })
   }
 
   /** Checks if all ships of this board are destroyed
    *
    * @return true if all are destroyed, otherwise false
    */
-  def areAllShipsDestroyed(): Try[Boolean] = {
-    // ToDo: Uncomment after refactoring play() function to be able to simulate playing a game inside of a test by not
-    //  passing any ships
-    //    if(ships.isEmpty){
-    //      Success(true)
-    //    } else {
-    //      Try(ships.map(isDestroyed).map {
-    //        case Success(y) => y
-    //        case Failure(ex) => throw ex
-    //      }.reduce((res, cur) => res && cur))
-    //    }
+  def areAllShipsDestroyed(): Boolean = {
+    // ToDo: Check for empty ships
 
-    Try(ships.map(isDestroyed).map {
-      case Success(y) => y
-      case Failure(ex) => throw ex
-    }.reduce((res, cur) => res && cur))
+    shipPositions.map(_.ship).map(isDestroyed).reduce((res, cur) => res && cur)
   }
 }
 
 object Board {
+  /** Override constructor, this one is used for the initial instantiation
+   */
+  def apply(ships: Vector[Ship], fktRandomInt: Int => Int): Board = {
+    val board = this (Vector.tabulate(10, 10) { (_, _) => false }, Vector())
+    placeAllShipsRandomlyOneByOne(board, ships, fktRandomInt) match {
+      case Success(value) => value
+      case Failure(ex) => throw ex
+    }
+  }
+
   def apply(shipPositions: Vector[ShipPosition]): Board =
-    this (Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, shipPositions.map(s => s.ship), shipPositions)
+    this (Vector.tabulate(10, 10) { (_, _) => false }, shipPositions)
 
   /** Generate ship coordinates
    *
@@ -225,7 +205,31 @@ object Board {
       case BoardDirection.West =>
         for (col <- coordinates.col until coordinates.col - shipLength by -1) yield Coordinates(coordinates.row, col)
     }
-
     shipCoordinates.toVector
+  }
+
+
+  /** Place ships of board recursively
+   *
+   * @param board              Board
+   * @param remainingShips     Ships to place
+   * @param randomIntGenerator Function for coordinate and BoardDirection generation
+   * @return Board with ships placed
+   */
+  @tailrec
+  def placeAllShipsRandomlyOneByOne(board: Board,
+                                    remainingShips: Vector[Ship],
+                                    randomIntGenerator: Int => Int): Try[Board] = {
+    if (remainingShips.isEmpty) {
+      Success(board)
+    } else {
+      board.placeSingleShipForce(remainingShips(0), randomIntGenerator, randomIntGenerator,
+        (maxValue: Int) => {
+          BoardDirection(randomIntGenerator(maxValue))
+        }, 100) match {
+        case Success(board) => placeAllShipsRandomlyOneByOne(board, remainingShips.drop(1), randomIntGenerator)
+        case Failure(ex) => Failure(ex)
+      }
+    }
   }
 }

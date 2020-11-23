@@ -1,4 +1,4 @@
-import dataTransferObjects.{BoardCell, Coordinates, Ship, ShipPosition}
+import dataTransferObjects.{Coordinates, Ship, ShipPosition}
 import model.{Board, Game}
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -92,9 +92,9 @@ class BattleshipSpec extends AnyWordSpec {
     }
 
     "check input for correct coordinates" should {
-      val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
-      val matrixWithHit = matrix.updated(4, matrix(4).updated(2, BoardCell(true)))
-      val boardWithHitAt42 = Board(matrixWithHit, Vector(), Vector())
+      val matrix = Vector.tabulate(10, 10) { (_, _) => false }
+      val matrixWithHit = matrix.updated(4, matrix(4).updated(2, true))
+      val boardWithHitAt42 = Board(matrixWithHit, Vector())
 
       "succeed for correct input" in {
         val result = Battleship.checkInputForCorrectCoordinates("35", boardWithHitAt42, _ => {})
@@ -124,7 +124,7 @@ class BattleshipSpec extends AnyWordSpec {
     }
 
     "waiting for correct input" should {
-      val board = new Board(Vector(Ship(2, "Test")))
+      val board = Board(Vector(Ship(2, "Test")), (_: Int) => 1)
 
       "give coordinates for correct input" in {
         val result = Battleship.waitingForCorrectInput(0, 1, () => "12", board, _ => {})
@@ -138,7 +138,6 @@ class BattleshipSpec extends AnyWordSpec {
         // Runs twice with same input (currentIteration < maxIteration) this will cover both branches of the if
         // in the Failure case of waitingForCorrectInput()
         val result = Battleship.waitingForCorrectInput(0, 1, () => "a2", board, _ => {})
-
         assert(result.isFailure)
       }
     }
@@ -175,12 +174,12 @@ class BattleshipSpec extends AnyWordSpec {
       dataTransferObjects.ShipPosition(doubleShipAi(0), Vector(Coordinates(0, 0), Coordinates(0, 1))),
     )
 
-    val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
-    val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+    val matrixHuman = Vector.tabulate(10, 10) { (_, _) => false }
+    val matrixAi = Vector.tabulate(10, 10) { (_, _) => false }
 
     "human player is winning" should {
-      val testBoardHuman = Board(matrixHuman, singleShipHuman, singleShipPositionsHuman)
-      val testBoardAi = Board(matrixAi, singleShipAi, singleShipPositionsAi)
+      val testBoardHuman = Board(matrixHuman, singleShipPositionsHuman)
+      val testBoardAi = Board(matrixAi, singleShipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 0)
       val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "00", () => "11", 0)
@@ -192,8 +191,8 @@ class BattleshipSpec extends AnyWordSpec {
     }
 
     "ai player is winning" should {
-      val testBoardHuman = Board(matrixHuman, singleShipHuman, singleShipPositionsHuman)
-      val testBoardAi = Board(matrixAi, singleShipAi, singleShipPositionsAi)
+      val testBoardHuman = Board(matrixHuman, singleShipPositionsHuman)
+      val testBoardAi = Board(matrixAi, singleShipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 0)
       val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "11", () => "00", 0)
@@ -205,8 +204,8 @@ class BattleshipSpec extends AnyWordSpec {
     }
 
     "max number of wrong inputs exceeds" should {
-      val testBoardHuman = Board(matrixHuman, singleShipHuman, singleShipPositionsHuman)
-      val testBoardAi = Board(matrixAi, singleShipAi, singleShipPositionsAi)
+      val testBoardHuman = Board(matrixHuman, singleShipPositionsHuman)
+      val testBoardAi = Board(matrixAi, singleShipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 0)
       val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "11", () => "11", 0)
@@ -217,8 +216,8 @@ class BattleshipSpec extends AnyWordSpec {
     }
 
     "human player gets to shoot two times and wins" should {
-      val testBoardHuman = Board(matrixHuman, singleShipHuman, singleShipPositionsHuman)
-      val testBoardAi = Board(matrixAi, doubleShipAi, doubleShipPositionsAi)
+      val testBoardHuman = Board(matrixHuman, singleShipPositionsHuman)
+      val testBoardAi = Board(matrixAi, doubleShipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 0)
       var counter = 0
@@ -239,8 +238,8 @@ class BattleshipSpec extends AnyWordSpec {
     }
 
     "human player gets to shoot two times and fails to input correct coordinates" should {
-      val testBoardHuman = Board(matrixHuman, singleShipHuman, singleShipPositionsHuman)
-      val testBoardAi = Board(matrixAi, doubleShipAi, doubleShipPositionsAi)
+      val testBoardHuman = Board(matrixHuman, singleShipPositionsHuman)
+      val testBoardAi = Board(matrixAi, doubleShipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 0)
       val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "00", () => "11", 0)
@@ -251,8 +250,8 @@ class BattleshipSpec extends AnyWordSpec {
     }
 
     "ai player gets to shoot two times and fails to input correct coordinates" should {
-      val testBoardHuman = Board(matrixHuman, doubleShipHuman, doubleShipPositionsHuman)
-      val testBoardAi = Board(matrixAi, singleShipAi, singleShipPositionsAi)
+      val testBoardHuman = Board(matrixHuman, doubleShipPositionsHuman)
+      val testBoardAi = Board(matrixAi, singleShipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 0)
       val gameAfterPlaying = Battleship.play((_: String) => (), testGame, () => "11", () => "00", 0)
@@ -263,8 +262,8 @@ class BattleshipSpec extends AnyWordSpec {
     }
 
     "human player wins after second round" should {
-      val testBoardHuman = Board(matrixHuman, singleShipHuman, singleShipPositionsHuman)
-      val testBoardAi = Board(matrixAi, doubleShipAi, doubleShipPositionsAi)
+      val testBoardHuman = Board(matrixHuman, singleShipPositionsHuman)
+      val testBoardAi = Board(matrixAi, doubleShipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 0)
       var counter = 0

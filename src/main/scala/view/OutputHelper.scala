@@ -3,7 +3,7 @@ package view
 import dataTransferObjects.{Coordinates, Ship}
 import model.{Board, Game}
 
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 /** Helper functions for output rendering
  *
@@ -57,7 +57,7 @@ object OutputHelper {
     currentCol match {
       case x if x >= 10 => ""
       case _ =>
-        val cellIsHit = board.matrix(currentRow)(currentCol).isHit
+        val cellIsHit = board.matrix(currentRow)(currentCol)
         val shipPos = board.shipPositions.find(_.positions.contains(Coordinates(currentRow, currentCol)))
 
         val newOutput = if (cellIsHit) {
@@ -78,7 +78,7 @@ object OutputHelper {
    */
   def generateRemainingShips(board: Board, player: String): Vector[String] = {
     val headline = "Schiffstatus " + player
-    Vector(headline) ++ generateRemainingShipsLineByLine(board.ships, board)
+    Vector(headline) ++ generateRemainingShipsLineByLine(board.shipPositions.map(_.ship), board)
   }
 
   /** Render remaining ships-infotext ship by ship
@@ -126,7 +126,7 @@ object OutputHelper {
       ("", currentNumberOfHits)
     } else {
       val shipPositionToProcess = remainingShipPos(0)
-      val boardCellHit = board.matrix(shipPositionToProcess.row)(shipPositionToProcess.col).isHit
+      val boardCellHit = board.matrix(shipPositionToProcess.row)(shipPositionToProcess.col)
       val newChar = if (boardCellHit) 'X' else '_'
       val newNumberOfHits = if (boardCellHit) currentNumberOfHits + 1 else currentNumberOfHits
 
@@ -141,12 +141,10 @@ object OutputHelper {
    * @return Victory / Loss-Screen
    */
   def generateFinalText(game: Game): Try[Vector[String]] = {
-    Try(game.isRunning match {
-      case Failure(ex) => throw ex
-      case Success(true) => throw new IllegalStateException
-      case Success(false) =>
-        if (game.humanPlayerIsWinner()) generateVictory() else generateLoss()
-    })
+    Try(if (game.isRunning)
+      throw new IllegalStateException
+    else if (game.humanPlayerIsWinner()) generateVictory() else generateLoss()
+    )
   }
 
   /** Render victory-screen for output

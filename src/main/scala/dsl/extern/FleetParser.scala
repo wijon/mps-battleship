@@ -14,7 +14,7 @@ class FleetParser extends RegexParsers {
 
   def intCoordinates: Parser[Int] = """\d\d""".r ^^ (_.toInt)
 
-  def boardDirection: Parser[BoardDirection] = """(North|East|South|West)""".r ^^ (BoardDirection.withName(_))
+  def boardDirection: Parser[BoardDirection] = """(North|East|South|West)""".r ^^ BoardDirection.withName
 
   def player: Parser[Player] = text ~ integer ^^ {
     case _ ~ i => i match {
