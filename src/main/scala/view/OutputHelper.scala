@@ -57,7 +57,7 @@ object OutputHelper {
     currentCol match {
       case x if x >= 10 => ""
       case _ =>
-        val cellIsHit = board.matrix(currentRow)(currentCol).isHit
+        val cellIsHit = board.matrix(currentRow)(currentCol)
         val shipPos = board.shipPositions.find(_.positions.contains(Coordinates(currentRow, currentCol)))
 
         val newOutput = if (cellIsHit) {
@@ -126,7 +126,7 @@ object OutputHelper {
       ("", currentNumberOfHits)
     } else {
       val shipPositionToProcess = remainingShipPos(0)
-      val boardCellHit = board.matrix(shipPositionToProcess.row)(shipPositionToProcess.col).isHit
+      val boardCellHit = board.matrix(shipPositionToProcess.row)(shipPositionToProcess.col)
       val newChar = if (boardCellHit) 'X' else '_'
       val newNumberOfHits = if (boardCellHit) currentNumberOfHits + 1 else currentNumberOfHits
 

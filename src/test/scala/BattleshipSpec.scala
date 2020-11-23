@@ -1,12 +1,12 @@
-import dataTransferObjects.{BoardCell, Coordinates, Ship, ShipPosition}
+import dataTransferObjects.{Coordinates, Ship, ShipPosition}
 import model.{Board, Game}
 import org.scalatest.wordspec.AnyWordSpec
 
 class BattleshipSpec extends AnyWordSpec {
   "Battleship" when {
     "check input for correct coordinates" should {
-      val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
-      val matrixWithHit = matrix.updated(4, matrix(4).updated(2, BoardCell(true)))
+      val matrix = Vector.tabulate(10, 10) { (_, _) => false }
+      val matrixWithHit = matrix.updated(4, matrix(4).updated(2, true))
       val boardWithHitAt42 = Board(matrixWithHit, Vector())
 
       "succeed for correct input" in {
@@ -87,8 +87,8 @@ class BattleshipSpec extends AnyWordSpec {
       dataTransferObjects.ShipPosition(doubleShipAi(0), Vector(Coordinates(0, 0), Coordinates(0, 1))),
     )
 
-    val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
-    val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+    val matrixHuman = Vector.tabulate(10, 10) { (_, _) => false }
+    val matrixAi = Vector.tabulate(10, 10) { (_, _) => false }
 
     "human player is winning" should {
       val testBoardHuman = Board(matrixHuman, singleShipPositionsHuman)

@@ -1,7 +1,7 @@
 package model
 
 import dataTransferObjects.functionResults.GameShotAtResult
-import dataTransferObjects.{Ship}
+import dataTransferObjects.Ship
 import dsl.intern.ShipPlacement
 
 import scala.util.{Failure, Success, Try}

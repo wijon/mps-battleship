@@ -1,6 +1,6 @@
 package model
 
-import dataTransferObjects.{BoardCell, Coordinates, Ship, ShipPosition}
+import dataTransferObjects.{Coordinates, Ship, ShipPosition}
 import enums.{BoardDirection, Player}
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -82,11 +82,11 @@ class GameSpec extends AnyWordSpec {
         dataTransferObjects.ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
-      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
-      val matrixHuman2 = matrixHuman.updated(3, matrixHuman(3).updated(4, BoardCell(true)))
-      val matrixHuman3 = matrixHuman2.updated(3, matrixHuman2(3).updated(5, BoardCell(true)))
+      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => false }
+      val matrixHuman2 = matrixHuman.updated(3, matrixHuman(3).updated(4, true))
+      val matrixHuman3 = matrixHuman2.updated(3, matrixHuman2(3).updated(5, true))
 
-      val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val matrixAi = Vector.tabulate(10, 10) { (_, _) => false }
 
       val testBoardHuman = Board(matrixHuman3, shipPositionsHuman)
       val testBoardAi = Board(matrixAi, shipPositionsAi)
@@ -118,10 +118,10 @@ class GameSpec extends AnyWordSpec {
         dataTransferObjects.ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
-      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
-      val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
-      val matrixAi2 = matrixAi.updated(3, matrixAi(3).updated(4, BoardCell(true)))
-      val matrixAi3 = matrixAi2.updated(3, matrixAi2(3).updated(5, BoardCell(true)))
+      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => false }
+      val matrixAi = Vector.tabulate(10, 10) { (_, _) => false }
+      val matrixAi2 = matrixAi.updated(3, matrixAi(3).updated(4, true))
+      val matrixAi3 = matrixAi2.updated(3, matrixAi2(3).updated(5, true))
 
       val testBoardHuman = Board(matrixHuman, shipPositionsHuman)
       val testBoardAi = Board(matrixAi3, shipPositionsAi)
@@ -153,8 +153,8 @@ class GameSpec extends AnyWordSpec {
         dataTransferObjects.ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
       )
 
-      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
-      val matrixAi = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => false }
+      val matrixAi = Vector.tabulate(10, 10) { (_, _) => false }
 
       val testBoardHuman = Board(matrixHuman, shipPositionsHuman)
       val testBoardAi = Board(matrixAi, shipPositionsAi)
@@ -229,7 +229,7 @@ class GameSpec extends AnyWordSpec {
     val ships = Vector(
       Ship(2, "Test 1")
     )
-    val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+    val matrix = Vector.tabulate(10, 10) { (_, _) => false }
     val shipPositions = Vector(
       dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5)))
     )
@@ -241,7 +241,7 @@ class GameSpec extends AnyWordSpec {
 
       "register BoardCell hit" in {
         assert(shootResult.isSuccess)
-        assert(shootResult.get.game.humanPlayerBoard.matrix(3)(4).isHit)
+        assert(shootResult.get.game.humanPlayerBoard.matrix(3)(4))
       }
 
       "shot at different BoardCell" should {
@@ -249,8 +249,8 @@ class GameSpec extends AnyWordSpec {
 
         "register both BoardCell hit" in {
           assert(shoot2Result.isSuccess)
-          assert(shoot2Result.get.game.humanPlayerBoard.matrix(8)(1).isHit)
-          assert(shoot2Result.get.game.humanPlayerBoard.matrix(3)(4).isHit) // First shot
+          assert(shoot2Result.get.game.humanPlayerBoard.matrix(8)(1))
+          assert(shoot2Result.get.game.humanPlayerBoard.matrix(3)(4)) // First shot
         }
 
         "register no ship hit" in {
@@ -278,7 +278,7 @@ class GameSpec extends AnyWordSpec {
     val ships = Vector(
       Ship(2, "Test 1")
     )
-    val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+    val matrix = Vector.tabulate(10, 10) { (_, _) => false }
     val shipPositions = Vector(
       dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5)))
     )
@@ -290,7 +290,7 @@ class GameSpec extends AnyWordSpec {
 
       "register BoardCell hit" in {
         assert(shootResult.isSuccess)
-        assert(shootResult.get.game.aiPlayerBoard.matrix(3)(4).isHit)
+        assert(shootResult.get.game.aiPlayerBoard.matrix(3)(4))
       }
 
       "shot at different BoardCell" should {
@@ -298,8 +298,8 @@ class GameSpec extends AnyWordSpec {
 
         "register both BoardCell hit" in {
           assert(shoot2Result.isSuccess)
-          assert(shoot2Result.get.game.aiPlayerBoard.matrix(8)(1).isHit)
-          assert(shoot2Result.get.game.aiPlayerBoard.matrix(3)(4).isHit) // First shot
+          assert(shoot2Result.get.game.aiPlayerBoard.matrix(8)(1))
+          assert(shoot2Result.get.game.aiPlayerBoard.matrix(3)(4)) // First shot
         }
 
         "register no ship hit" in {

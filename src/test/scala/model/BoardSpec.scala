@@ -1,6 +1,6 @@
 package model
 
-import dataTransferObjects.{BoardCell, Coordinates, Ship, ShipPosition}
+import dataTransferObjects.{Coordinates, Ship, ShipPosition}
 import enums.BoardDirection
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -21,7 +21,7 @@ class BoardSpec extends AnyWordSpec {
       }
 
       "have no hits registered" in {
-        assert(board.matrix.flatten.forall(bc => !bc.isHit))
+        assert(board.matrix.flatten.forall(bc => !bc))
       }
     }
 
@@ -29,7 +29,7 @@ class BoardSpec extends AnyWordSpec {
       val ships = Vector(
         Ship(2, "Test 1")
       )
-      val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val matrix = Vector.tabulate(10, 10) { (_, _) => false }
       val shipPositions = Vector(
         ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5)))
       )
@@ -38,7 +38,7 @@ class BoardSpec extends AnyWordSpec {
 
       "register BoardCell hit" in {
         assert(result1Shot.isSuccess)
-        assert(result1Shot.get.board.matrix(3)(4).isHit)
+        assert(result1Shot.get.board.matrix(3)(4))
       }
 
       "shot at different BoardCell" should {
@@ -46,8 +46,8 @@ class BoardSpec extends AnyWordSpec {
 
         "register both BoardCell hit" in {
           assert(result2Shot.isSuccess)
-          assert(result2Shot.get.board.matrix(8)(1).isHit)
-          assert(result2Shot.get.board.matrix(3)(4).isHit) // First shot
+          assert(result2Shot.get.board.matrix(8)(1))
+          assert(result2Shot.get.board.matrix(3)(4)) // First shot
         }
 
         "register no ship hit" in {
@@ -74,13 +74,13 @@ class BoardSpec extends AnyWordSpec {
       val ships = Vector(
         Ship(2, "Test 1")
       )
-      val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val matrix = Vector.tabulate(10, 10) { (_, _) => false }
       val shipPositions = Vector(
         dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5)))
       )
 
-      val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
-      val matrix2 = matrix1.updated(3, matrix1(3).updated(5, BoardCell(true)))
+      val matrix1 = matrix.updated(3, matrix(3).updated(4, true))
+      val matrix2 = matrix1.updated(3, matrix1(3).updated(5, true))
       val board = Board(matrix2, shipPositions)
 
       "ship is destroyed" in {
@@ -92,12 +92,12 @@ class BoardSpec extends AnyWordSpec {
       val ships = Vector(
         Ship(2, "Test 1")
       )
-      val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val matrix = Vector.tabulate(10, 10) { (_, _) => false }
       val shipPositions = Vector(
         dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5)))
       )
 
-      val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
+      val matrix1 = matrix.updated(3, matrix(3).updated(4, true))
       val board = Board(matrix1, shipPositions)
 
       "ship is not destroyed" in {
@@ -110,17 +110,17 @@ class BoardSpec extends AnyWordSpec {
         Ship(2, "Test 1"),
         Ship(2, "Test 2")
       )
-      val matrix = Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }
+      val matrix = Vector.tabulate(10, 10) { (_, _) => false }
       val shipPositions = Vector(
         dataTransferObjects.ShipPosition(ships(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
         dataTransferObjects.ShipPosition(ships(1), Vector(Coordinates(4, 4), Coordinates(4, 5)))
       )
 
-      val matrix1 = matrix.updated(3, matrix(3).updated(4, BoardCell(true)))
-      val matrix2 = matrix1.updated(3, matrix1(3).updated(5, BoardCell(true)))
+      val matrix1 = matrix.updated(3, matrix(3).updated(4, true))
+      val matrix2 = matrix1.updated(3, matrix1(3).updated(5, true))
 
-      val matrix3 = matrix2.updated(4, matrix2(4).updated(4, BoardCell(true)))
-      val matrix4 = matrix3.updated(4, matrix3(4).updated(5, BoardCell(true)))
+      val matrix3 = matrix2.updated(4, matrix2(4).updated(4, true))
+      val matrix4 = matrix3.updated(4, matrix3(4).updated(5, true))
       val board = Board(matrix4, shipPositions)
 
       "all ships are destroyed" in {
@@ -131,7 +131,7 @@ class BoardSpec extends AnyWordSpec {
     "ship is placed on empty board by coordinates" should {
       val ship = Ship(2, "TestShip1")
       val shipCoordinates = Vector(Coordinates(3, 4), Coordinates(3, 5))
-      val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+      val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
       val newBoard = board.placeSingleShip(ship, shipCoordinates)
 
       "know ship position" in {
@@ -146,7 +146,7 @@ class BoardSpec extends AnyWordSpec {
       val ship2 = Ship(2, "TestShip2")
       val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
       val ship2Position = dataTransferObjects.ShipPosition(ship2, ship2Coordinates)
-      val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+      val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
       val newBoard = board.placeSingleShip(ship, shipCoordinates)
 
       "know new ship position" in {
@@ -164,7 +164,7 @@ class BoardSpec extends AnyWordSpec {
       "when direction is north" should {
         val ship = Ship(2, "TestShip1")
         val shipDirection = BoardDirection.North
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
 
         "when ship is placed" should {
           val startCoordinates = Coordinates(5, 5)
@@ -200,7 +200,7 @@ class BoardSpec extends AnyWordSpec {
       "when direction is east" should {
         val ship = Ship(2, "TestShip1")
         val shipDirection = BoardDirection.East
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
 
         "when ship is placed" should {
           val startCoordinates = Coordinates(5, 5)
@@ -236,7 +236,7 @@ class BoardSpec extends AnyWordSpec {
       "when direction is south" should {
         val ship = Ship(2, "TestShip1")
         val shipDirection = BoardDirection.South
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
 
         "when ship is placed" should {
           val startCoordinates = Coordinates(5, 5)
@@ -272,7 +272,7 @@ class BoardSpec extends AnyWordSpec {
       "when direction is west" should {
         val ship = Ship(2, "TestShip1")
         val shipDirection = BoardDirection.West
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
 
         "when ship is placed" should {
           val startCoordinates = Coordinates(5, 5)
@@ -313,7 +313,7 @@ class BoardSpec extends AnyWordSpec {
         val ship2 = Ship(2, "TestShip2")
         val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
         val ship2Position = dataTransferObjects.ShipPosition(ship2, ship2Coordinates)
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
 
         "when ship is placed" should {
           val startCoordinates = Coordinates(5, 5)
@@ -362,7 +362,7 @@ class BoardSpec extends AnyWordSpec {
         val ship2 = Ship(2, "TestShip2")
         val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
         val ship2Position = dataTransferObjects.ShipPosition(ship2, ship2Coordinates)
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
 
         "when ship is placed" should {
           val startCoordinates = Coordinates(5, 5)
@@ -411,7 +411,7 @@ class BoardSpec extends AnyWordSpec {
         val ship2 = Ship(2, "TestShip2")
         val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
         val ship2Position = dataTransferObjects.ShipPosition(ship2, ship2Coordinates)
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
 
         "when ship is placed" should {
           val startCoordinates = Coordinates(5, 5)
@@ -460,7 +460,7 @@ class BoardSpec extends AnyWordSpec {
         val ship2 = Ship(2, "TestShip2")
         val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
         val ship2Position = dataTransferObjects.ShipPosition(ship2, ship2Coordinates)
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
 
         "when ship is placed" should {
           val startCoordinates = Coordinates(5, 5)
@@ -509,7 +509,7 @@ class BoardSpec extends AnyWordSpec {
         val ship = Ship(2, "TestShip1")
         val shipDirection = BoardDirection.North
         val fktDirection = (_: Int) => shipDirection
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -550,7 +550,7 @@ class BoardSpec extends AnyWordSpec {
         val ship = Ship(2, "TestShip1")
         val shipDirection = BoardDirection.East
         val fktDirection = (_: Int) => shipDirection
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -591,7 +591,7 @@ class BoardSpec extends AnyWordSpec {
         val ship = Ship(2, "TestShip1")
         val shipDirection = BoardDirection.South
         val fktDirection = (_: Int) => shipDirection
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -632,7 +632,7 @@ class BoardSpec extends AnyWordSpec {
         val ship = Ship(2, "TestShip1")
         val shipDirection = BoardDirection.West
         val fktDirection = (_: Int) => shipDirection
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -678,7 +678,7 @@ class BoardSpec extends AnyWordSpec {
         val ship2 = Ship(2, "TestShip2")
         val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
         val ship2Position = dataTransferObjects.ShipPosition(ship2, ship2Coordinates)
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -732,7 +732,7 @@ class BoardSpec extends AnyWordSpec {
         val ship2 = Ship(2, "TestShip2")
         val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
         val ship2Position = dataTransferObjects.ShipPosition(ship2, ship2Coordinates)
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -786,7 +786,7 @@ class BoardSpec extends AnyWordSpec {
         val ship2 = Ship(2, "TestShip2")
         val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
         val ship2Position = dataTransferObjects.ShipPosition(ship2, ship2Coordinates)
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -840,7 +840,7 @@ class BoardSpec extends AnyWordSpec {
         val ship2 = Ship(2, "TestShip2")
         val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
         val ship2Position = dataTransferObjects.ShipPosition(ship2, ship2Coordinates)
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -893,7 +893,7 @@ class BoardSpec extends AnyWordSpec {
         val ship = Ship(2, "TestShip1")
         val shipDirection = BoardDirection.North
         val fktDirection = (_: Int) => shipDirection
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -934,7 +934,7 @@ class BoardSpec extends AnyWordSpec {
         val ship = Ship(2, "TestShip1")
         val shipDirection = BoardDirection.East
         val fktDirection = (_: Int) => shipDirection
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -975,7 +975,7 @@ class BoardSpec extends AnyWordSpec {
         val ship = Ship(2, "TestShip1")
         val shipDirection = BoardDirection.South
         val fktDirection = (_: Int) => shipDirection
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -1016,7 +1016,7 @@ class BoardSpec extends AnyWordSpec {
         val ship = Ship(2, "TestShip1")
         val shipDirection = BoardDirection.West
         val fktDirection = (_: Int) => shipDirection
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -1062,7 +1062,7 @@ class BoardSpec extends AnyWordSpec {
         val ship2 = Ship(2, "TestShip2")
         val ship2Coordinates = Vector(Coordinates(5, 5), Coordinates(5, 1))
         val ship2Position = dataTransferObjects.ShipPosition(ship2, ship2Coordinates)
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
 
         val fktStartingRow = (_: Int) => 5
         val fktStartingCol = (_: Int) => 5
@@ -1081,7 +1081,7 @@ class BoardSpec extends AnyWordSpec {
         val ship2 = Ship(2, "TestShip2")
         val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
         val ship2Position = dataTransferObjects.ShipPosition(ship2, ship2Coordinates)
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -1135,7 +1135,7 @@ class BoardSpec extends AnyWordSpec {
         val ship2 = Ship(2, "TestShip2")
         val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
         val ship2Position = dataTransferObjects.ShipPosition(ship2, ship2Coordinates)
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -1189,7 +1189,7 @@ class BoardSpec extends AnyWordSpec {
         val ship2 = Ship(2, "TestShip2")
         val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
         val ship2Position = dataTransferObjects.ShipPosition(ship2, ship2Coordinates)
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -1243,7 +1243,7 @@ class BoardSpec extends AnyWordSpec {
         val ship2 = Ship(2, "TestShip2")
         val ship2Coordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
         val ship2Position = dataTransferObjects.ShipPosition(ship2, ship2Coordinates)
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
 
         "when ship is placed" should {
           val fktStartingRow = (_: Int) => 5
@@ -1361,7 +1361,7 @@ class BoardSpec extends AnyWordSpec {
     val ship2Position = dataTransferObjects.ShipPosition(ship2, ship2Coordinates)
 
     "ship is already placed on board" should {
-      val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+      val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
       val newBoardByFunction = board.placeSingleShip(ship2,
         (_: Int) => 0, (_: Int) => 0, (_: Int) => BoardDirection.North)
       val newBoardByDirection = board.placeSingleShip(ship2, Coordinates(0, 0), BoardDirection.North)
@@ -1376,7 +1376,7 @@ class BoardSpec extends AnyWordSpec {
 
     "another ship is already placed at coordinates" should {
       val shipCoordinates = Vector(Coordinates(0, 0), Coordinates(0, 1))
-      val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector(ship2Position))
+      val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector(ship2Position))
       val newBoardByFunction = board.placeSingleShip(ship,
         (_: Int) => 0, (_: Int) => 0, (_: Int) => BoardDirection.East)
       val newBoardByDirection = board.placeSingleShip(ship, Coordinates(0, 0), BoardDirection.East)
@@ -1392,7 +1392,7 @@ class BoardSpec extends AnyWordSpec {
     "coordinates are incorrect" should {
       "row over 9" should {
         val ship2Coordinates = Vector(Coordinates(10, 5), Coordinates(11, 5))
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
         val newBoardByFunction = board.placeSingleShip(ship,
           (_: Int) => 10, (_: Int) => 5, (_: Int) => BoardDirection.East)
         val newBoardByDirection = board.placeSingleShip(ship, Coordinates(10, 5), BoardDirection.East)
@@ -1407,7 +1407,7 @@ class BoardSpec extends AnyWordSpec {
 
       "row lower 0" should {
         val ship2Coordinates = Vector(Coordinates(-1, 5), Coordinates(-2, 5))
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
         val newBoardByFunction = board.placeSingleShip(ship,
           (_: Int) => -1, (_: Int) => 5, (_: Int) => BoardDirection.West)
         val newBoardByDirection = board.placeSingleShip(ship, Coordinates(-1, 5), BoardDirection.West)
@@ -1422,7 +1422,7 @@ class BoardSpec extends AnyWordSpec {
 
       "col over 9" should {
         val ship2Coordinates = Vector(Coordinates(5, 10), Coordinates(5, 11))
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
         val newBoardByFunction = board.placeSingleShip(ship,
           (_: Int) => 5, (_: Int) => 10, (_: Int) => BoardDirection.North)
         val newBoardByDirection = board.placeSingleShip(ship, Coordinates(5, 10), BoardDirection.North)
@@ -1437,7 +1437,7 @@ class BoardSpec extends AnyWordSpec {
 
       "col lower 0" should {
         val ship2Coordinates = Vector(Coordinates(5, -1), Coordinates(5, -2))
-        val board = Board(Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector.empty)
+        val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
         val newBoardByFunction = board.placeSingleShip(ship,
           (_: Int) => 5, (_: Int) => -1, (_: Int) => BoardDirection.South)
         val newBoardByDirection = board.placeSingleShip(ship, Coordinates(5, -1), BoardDirection.South)

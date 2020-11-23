@@ -3,14 +3,14 @@ package model
 import java.security.InvalidParameterException
 
 import dataTransferObjects.functionResults.BoardShotAtResult
-import dataTransferObjects.{BoardCell, Coordinates, Ship, ShipPosition}
+import dataTransferObjects.{Coordinates, Ship, ShipPosition}
 import enums.BoardDirection
 import enums.BoardDirection.BoardDirection
 
 import scala.annotation.tailrec
 import scala.util.{Failure, Success, Try}
 
-case class Board(matrix: Vector[Vector[BoardCell]], shipPositions: Vector[ShipPosition]) {
+case class Board(matrix: Vector[Vector[Boolean]], shipPositions: Vector[ShipPosition]) {
   /** Places a single ship on board by force. Recursive until successfull
    *
    * @param ship                ship to place
@@ -133,7 +133,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], shipPositions: Vector[ShipPo
     if (isHit(row, col)) {
       Failure(new UnsupportedOperationException)
     } else {
-      val newMatrix = matrix.updated(row, matrix(row).updated(col, BoardCell(true)))
+      val newMatrix = matrix.updated(row, matrix(row).updated(col, true))
       val shipPos = shipPositions.find(_.positions.contains(Coordinates(row, col)))
       Success(BoardShotAtResult(copy(newMatrix, shipPositions), shipPos))
     }
@@ -146,7 +146,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], shipPositions: Vector[ShipPo
    * @return Hit?
    */
   def isHit(row: Int, col: Int): Boolean = {
-    matrix(row)(col).isHit
+    matrix(row)(col)
   }
 
   /** Checks if ship is destroyed
@@ -157,7 +157,7 @@ case class Board(matrix: Vector[Vector[BoardCell]], shipPositions: Vector[ShipPo
   def isDestroyed(ship: Ship): Boolean = {
     val shipPosition = shipPositions.find(_.ship == ship)
     shipPosition.get.positions.forall(c => {
-      matrix(c.row)(c.col).isHit
+      matrix(c.row)(c.col)
     })
   }
 
@@ -174,7 +174,7 @@ object Board {
   /** Override constructor, this one is used for the initial instantiation
    */
   def apply(ships: Vector[Ship], fktRandomInt: Int => Int): Board = {
-    val board = this (Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, Vector())
+    val board = this (Vector.tabulate(10, 10) { (_, _) => false }, Vector())
     placeAllShipsRandomlyOneByOne(board, ships, fktRandomInt) match {
       case Success(value) => value
       case Failure(ex) => throw ex
@@ -182,7 +182,7 @@ object Board {
   }
 
   def apply(shipPositions: Vector[ShipPosition]): Board =
-    this (Vector.tabulate(10, 10) { (_, _) => BoardCell(false) }, shipPositions)
+    this (Vector.tabulate(10, 10) { (_, _) => false }, shipPositions)
 
   /** Generate ship coordinates
    *
