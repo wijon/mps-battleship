@@ -1,4 +1,5 @@
 import dataTransferObjects.Coordinates
+import dsl.extern.FleetParser
 import view.OutputHelper._
 import model.{Board, Game}
 import view.OutputHelper
@@ -9,9 +10,15 @@ import scala.util.{Failure, Success, Try}
 
 object Battleship {
   def main(args: Array[String]): Unit = {
-    // New game. Randomly place ships
-    val game = new Game(Settings.getShipsForOnePlayer, Settings.getShipsForOnePlayer,
-      (maxValue: Int) => scala.util.Random.nextInt(maxValue))
+
+    val game = if (args.isEmpty) {
+      // New game. Randomly place ships
+      new Game(Settings.getShipsForOnePlayer, Settings.getShipsForOnePlayer,
+        (maxValue: Int) => scala.util.Random.nextInt(maxValue))
+    } else {
+      // New game get ship + positions from file
+      createGameWithExplicitShips(args(0))
+    }
 
     // Play game. Round by Round
     play(printValue => println(printValue),
@@ -28,6 +35,27 @@ object Battleship {
         OutputHelper.generateFinalText(value) match {
           case Success(value) => value.foreach(println(_))
           case Failure(ex) => throw ex
+        }
+    }
+  }
+
+  /** Create a game utilizing the external and internal ship placement DSL by receiving a string containing
+   * the player fleets formatted to match the external DSL format
+   *
+   * @param txt player fleets formatted to match the external DSL format
+   * @return An initialized game object
+   */
+  def createGameWithExplicitShips(txt: String): Game = {
+    val parser = new FleetParser
+    parser.parseFleetText(txt) match {
+      case Failure(ex) => throw ex
+      case Success(value) =>
+        Game.newGame { game =>
+          game ships { ship =>
+            value.map(fpr => fpr.ships.map(s => (s, fpr.player))).flatten(sp => sp).map(sp => {
+              ship place sp._1.name length sp._1.length at sp._1.startingPos facing sp._1.dir as sp._2
+            })
+          }
         }
     }
   }

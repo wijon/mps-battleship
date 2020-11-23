@@ -1,4 +1,4 @@
-package dsl
+package dsl.internal
 
 import dataTransferObjects.{Coordinates, Ship}
 import dsl.intern.ShipPlacement

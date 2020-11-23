@@ -4,6 +4,93 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class BattleshipSpec extends AnyWordSpec {
   "Battleship" when {
+
+    // Currently not testable because of how play is working
+    //    "instantiated with ship positions" should {
+    //
+    //      "not fail" in {
+    //        val txt = "Player: 1\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\t5\t14\t\tEast\nBattleship\t4\t23\t\tSouth\n\nPlayer: 2\nName\t\tLength\tStartingPos\tDirection\n"
+    //        Battleship.main(Array(txt))
+    //      }
+    //    }
+
+    "create game with explicit ships" should {
+      val txt = "Player: 1\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\t5\t14\t\tEast\nBattleship\t4\t23\t\tSouth\n\nPlayer: 2\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\t5\t38\t\tWest\nBattleship\t4\t72\t\tNorth"
+      val game = Battleship.createGameWithExplicitShips(txt)
+
+      "have human board" should {
+        val board = game.humanPlayerBoard
+
+        "be initialized" in {
+          assert(board.matrix.flatten(m => m).length == 100)
+        }
+
+        "contain given ships" in {
+          val ships = board.shipPositions.map(sp => sp.ship)
+          assert(ships.length == 2)
+          assert(ships.contains(Ship(5, "Carrier")))
+          assert(ships.contains(Ship(4, "Battleship")))
+        }
+
+        "contain ships at correct position" in {
+          val carrierPos = board.shipPositions.find(sp => sp.ship == Ship(5, "Carrier")).get.positions
+          assert(carrierPos.length == 5)
+          assert(carrierPos == Vector(
+            Coordinates(1, 4),
+            Coordinates(1, 5),
+            Coordinates(1, 6),
+            Coordinates(1, 7),
+            Coordinates(1, 8))
+          )
+
+          val battleshipPos = board.shipPositions.find(sp => sp.ship == Ship(4, "Battleship")).get.positions
+          assert(battleshipPos.length == 4)
+          assert(battleshipPos == Vector(
+            Coordinates(2, 3),
+            Coordinates(3, 3),
+            Coordinates(4, 3),
+            Coordinates(5, 3))
+          )
+        }
+      }
+
+      "have ai board" should {
+        val board = game.aiPlayerBoard
+
+        "be initialized" in {
+          assert(board.matrix.flatten(m => m).length == 100)
+        }
+
+        "contain given ships" in {
+          val ships = board.shipPositions.map(sp => sp.ship)
+          assert(ships.length == 2)
+          assert(ships.contains(Ship(5, "Carrier")))
+          assert(ships.contains(Ship(4, "Battleship")))
+        }
+
+        "contain ships at correct position" in {
+          val carrierPos = board.shipPositions.find(sp => sp.ship == Ship(5, "Carrier")).get.positions
+          assert(carrierPos.length == 5)
+          assert(carrierPos == Vector(
+            Coordinates(3, 8),
+            Coordinates(3, 7),
+            Coordinates(3, 6),
+            Coordinates(3, 5),
+            Coordinates(3, 4))
+          )
+
+          val battleshipPos = board.shipPositions.find(sp => sp.ship == Ship(4, "Battleship")).get.positions
+          assert(battleshipPos.length == 4)
+          assert(battleshipPos == Vector(
+            Coordinates(7, 2),
+            Coordinates(6, 2),
+            Coordinates(5, 2),
+            Coordinates(4, 2))
+          )
+        }
+      }
+    }
+
     "check input for correct coordinates" should {
       val matrix = Vector.tabulate(10, 10) { (_, _) => false }
       val matrixWithHit = matrix.updated(4, matrix(4).updated(2, true))

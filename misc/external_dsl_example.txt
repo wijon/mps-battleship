@@ -1,0 +1,9 @@
+Player: 1
+Name		Length	StartingPos	Direction
+Carrier		5	14		East
+Battleship	4	23		South
+
+Player: 2
+Name		Length	StartingPos	Direction
+Carrier		5	38		West
+Battleship	4	72		North
