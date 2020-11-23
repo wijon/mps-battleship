@@ -4,15 +4,13 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class BattleshipSpec extends AnyWordSpec {
   "Battleship" when {
+    "instantiated with ship positions" should {
 
-    // Currently not testable because of how play is working
-    //    "instantiated with ship positions" should {
-    //
-    //      "not fail" in {
-    //        val txt = "Player: 1\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\t5\t14\t\tEast\nBattleship\t4\t23\t\tSouth\n\nPlayer: 2\nName\t\tLength\tStartingPos\tDirection\n"
-    //        Battleship.main(Array(txt))
-    //      }
-    //    }
+      "not fail" in {
+        val txt = "Player: 1\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\t5\t14\t\tEast\nBattleship\t4\t23\t\tSouth\n\nPlayer: 2\nName\t\tLength\tStartingPos\tDirection\n"
+        Battleship.main(Array(txt))
+      }
+    }
 
     "create game with explicit ships" should {
       val txt = "Player: 1\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\t5\t14\t\tEast\nBattleship\t4\t23\t\tSouth\n\nPlayer: 2\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\t5\t38\t\tWest\nBattleship\t4\t72\t\tNorth"

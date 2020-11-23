@@ -133,6 +133,9 @@ object Battleship {
            fktAiGetCoordinatesToShootAt: () => String,
            aiPlayerDelay: Int
           ): Try[Game] = {
+    if (!game.isRunning)
+      return Success(game)
+
     generateRoundText(game).foreach(fktForInfoTextOutput(_))
 
     // Human
@@ -155,17 +158,9 @@ object Battleship {
             case Success(gameAfterAiRound) =>
               Thread.sleep(aiPlayerDelay)
 
-              // Next round or finished?
-              if (gameAfterAiRound.isRunning) {
-                play(fktForInfoTextOutput, gameAfterAiRound.startNewRound(), fktHumanGetCoordinatesToShootAt,
-                  fktAiGetCoordinatesToShootAt, aiPlayerDelay)
-                match {
-                  case Failure(ex) => throw ex
-                  case Success(value) => value
-                }
-              } else {
-                gameAfterAiRound
-              }
+              // Next round
+              play(fktForInfoTextOutput, gameAfterAiRound.startNewRound(), fktHumanGetCoordinatesToShootAt,
+                fktAiGetCoordinatesToShootAt, aiPlayerDelay).get
           }
         }
     })
@@ -214,10 +209,7 @@ object Battleship {
               generateShootAgainInfoText().foreach(fktForInfoTextOutput(_))
 
               playOneRoundOfOnePlayer(humanPlayerTurn, value.game, fktGetCoordinatesToShootAt, fktForInfoTextOutput,
-                delay) match {
-                case Success(value) => value
-                case Failure(ex) => throw ex
-              }
+                delay).get
             } else {
               value.game
             }

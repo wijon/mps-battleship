@@ -102,6 +102,33 @@ class GameSpec extends AnyWordSpec {
       }
     }
 
+    "human player has no ships" should {
+      val shipsAi = Vector(
+        Ship(2, "aiShip1")
+      )
+
+      val shipPositionsHuman = Vector.empty
+      val shipPositionsAi = Vector(
+        dataTransferObjects.ShipPosition(shipsAi(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+      )
+
+      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => false }
+      val matrixAi = Vector.tabulate(10, 10) { (_, _) => false }
+
+      val testBoardHuman = Board(matrixHuman, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi, shipPositionsAi)
+
+      val testGame = Game(testBoardHuman, testBoardAi, 10)
+
+      "not be running" in {
+        assert(!testGame.isRunning)
+      }
+
+      "declare ai as winner" in {
+        assert(!testGame.humanPlayerIsWinner())
+      }
+    }
+
     "all ships of ai player are destroyed" should {
       val shipsHuman = Vector(
         Ship(2, "humanShip1")
@@ -125,6 +152,34 @@ class GameSpec extends AnyWordSpec {
 
       val testBoardHuman = Board(matrixHuman, shipPositionsHuman)
       val testBoardAi = Board(matrixAi3, shipPositionsAi)
+
+      val testGame = Game(testBoardHuman, testBoardAi, 10)
+
+      "not be running" in {
+        assert(!testGame.isRunning)
+      }
+
+      "declare human as winner" in {
+        assert(testGame.humanPlayerIsWinner())
+      }
+    }
+
+    "ai player has no ships" should {
+      val shipsHuman = Vector(
+        Ship(2, "humanShip1")
+      )
+
+      val shipPositionsHuman = Vector(
+        dataTransferObjects.ShipPosition(shipsHuman(0), Vector(Coordinates(3, 4), Coordinates(3, 5))),
+      )
+
+      val shipPositionsAi = Vector.empty
+
+      val matrixHuman = Vector.tabulate(10, 10) { (_, _) => false }
+      val matrixAi = Vector.tabulate(10, 10) { (_, _) => false }
+
+      val testBoardHuman = Board(matrixHuman, shipPositionsHuman)
+      val testBoardAi = Board(matrixAi, shipPositionsAi)
 
       val testGame = Game(testBoardHuman, testBoardAi, 10)
 

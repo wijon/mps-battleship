@@ -25,6 +25,14 @@ class BoardSpec extends AnyWordSpec {
       }
     }
 
+    "there are no ships" should {
+      val board = Board(Vector.tabulate(10, 10) { (_, _) => false }, Vector.empty)
+
+      "say state, that all ships are destroyed" in {
+        assert(board.areAllShipsDestroyed())
+      }
+    }
+
     "shot at" should {
       val ships = Vector(
         Ship(2, "Test 1")

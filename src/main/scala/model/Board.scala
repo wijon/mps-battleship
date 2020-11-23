@@ -166,9 +166,7 @@ case class Board(matrix: Vector[Vector[Boolean]], shipPositions: Vector[ShipPosi
    * @return true if all are destroyed, otherwise false
    */
   def areAllShipsDestroyed(): Boolean = {
-    // ToDo: Check for empty ships
-
-    shipPositions.map(_.ship).map(isDestroyed).reduce((res, cur) => res && cur)
+    shipPositions.isEmpty || shipPositions.map(_.ship).map(isDestroyed).reduce((res, cur) => res && cur)
   }
 }
 
