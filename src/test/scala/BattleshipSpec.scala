@@ -91,6 +91,14 @@ class BattleshipSpec extends AnyWordSpec {
       }
     }
 
+    "create game with explicit ships but wrong input" should {
+      val txt = "Player: 1\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\ts\t14\t\tEast\nBattleship\t4\t23\t\tSouth\n\nPlayer: 2\nName\t\tLength\tStartingPos\tDirection\nCarrier\t\t5\t38\t\tWest\nBattleship\t4\t72\t\tNorth"
+
+      "fail" in {
+        assertThrows[Exception](Battleship.createGameWithExplicitShips(txt))
+      }
+    }
+
     "check input for correct coordinates" should {
       val matrix = Vector.tabulate(10, 10) { (_, _) => false }
       val matrixWithHit = matrix.updated(4, matrix(4).updated(2, true))
