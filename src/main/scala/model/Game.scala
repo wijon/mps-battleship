@@ -37,13 +37,6 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
 
     val board1 = Board(placement.shipPositionsPlayer1.toVector)
     val board2 = Board(placement.shipPositionsPlayer2.toVector)
-
-    // ToDo: Question for Marko
-    // Instead of returning copy, should we change 'humanPlayerBoard' and 'aiPlayerBoard' to 'var'
-    // and assign 'board1' and 'board2' to it? What's the correct "DSL" way to do it?
-    //    humanPlayerBoard = board1
-    //    aiPlayerBoard = board2
-    //    this
     copy(board1, board2, roundNum)
   }
 
