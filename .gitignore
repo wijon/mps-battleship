@@ -19,3 +19,11 @@ project/project/
 logs/
 project/.sbtserver
 .sbtserver/
+
+# VsCode
+.bloop/
+.vscode/
+.metals/
+.ammonite/
+metals.sbt
+.scalafmt.conf
