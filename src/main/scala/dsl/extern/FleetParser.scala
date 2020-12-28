@@ -1,7 +1,5 @@
 package dsl.extern
 
-import enums.BoardDirection.BoardDirection
-import enums.Player.Player
 import enums.{BoardDirection, Player}
 
 import scala.util.Try
@@ -14,7 +12,7 @@ class FleetParser extends RegexParsers {
 
   def intCoordinates: Parser[Int] = """\d\d""".r ^^ (_.toInt)
 
-  def boardDirection: Parser[BoardDirection] = """(North|East|South|West)""".r ^^ BoardDirection.withName
+  def boardDirection: Parser[BoardDirection] = """(North|East|South|West)""".r ^^ BoardDirection.valueOf
 
   def player: Parser[Player] = text ~ integer ^^ {
     case _ ~ i => i match {

@@ -5,7 +5,6 @@ import java.security.InvalidParameterException
 import dataTransferObjects.functionResults.BoardShotAtResult
 import dataTransferObjects.{Coordinates, Ship, ShipPosition}
 import enums.BoardDirection
-import enums.BoardDirection.BoardDirection
 
 import scala.annotation.tailrec
 import scala.util.{Failure, Success, Try}
@@ -223,7 +222,7 @@ object Board {
     } else {
       board.placeSingleShipForce(remainingShips(0), randomIntGenerator, randomIntGenerator,
         (maxValue: Int) => {
-          BoardDirection(randomIntGenerator(maxValue))
+          BoardDirection.fromOrdinal(randomIntGenerator(maxValue))
         }, 100) match {
         case Success(board) => placeAllShipsRandomlyOneByOne(board, remainingShips.drop(1), randomIntGenerator)
         case Failure(ex) => Failure(ex)

@@ -1,9 +1,7 @@
 package dsl.intern
 
 import dataTransferObjects.{Coordinates, Ship, ShipPosition}
-import enums.BoardDirection.BoardDirection
-import enums.Player
-import enums.Player.Player
+import enums.{BoardDirection, Player}
 import model.Board
 
 import scala.collection.mutable
