@@ -11,14 +11,14 @@ import scala.util.{Failure, Success, Try}
 object Battleship {
   def main(args: Array[String]): Unit = {
 
-    val game = if (args.isEmpty) {
+    val game = 
+    if args.isEmpty then
       // New game. Randomly place ships
       new Game(Settings.getShipsForOnePlayer, Settings.getShipsForOnePlayer,
         (maxValue: Int) => scala.util.Random.nextInt(maxValue))
-    } else {
+    else
       // New game get ship + positions from file
       createGameWithExplicitShips(args(0))
-    }
 
     // Play game. Round by Round
     play(printValue => println(printValue),
@@ -26,7 +26,7 @@ object Battleship {
       () => StdIn.readLine(),
       () => {
         val input = scala.util.Random.nextInt(100).toString
-        if (input.length == 1) "0" + input else input
+        if input.length == 1 then "0" + input else input
       },
       1000) match {
       case Failure(ex) => throw ex
@@ -108,7 +108,7 @@ object Battleship {
           }
           value
         case Failure(ex) =>
-          if (ex.getMessage == "row")
+          if ex.getMessage == "row" then
             generateInvalidRowInputInfoText().foreach(fktErrorMessageOutput(_))
           else
             generateInvalidColInputInfoText().foreach(fktErrorMessageOutput(_))
@@ -133,7 +133,7 @@ object Battleship {
            fktAiGetCoordinatesToShootAt: () => String,
            aiPlayerDelay: Int
           ): Try[Game] = {
-    if (!game.isRunning)
+    if !game.isRunning then
       return Success(game)
 
     generateRoundText(game).foreach(fktForInfoTextOutput(_))
@@ -147,9 +147,9 @@ object Battleship {
       case Success(gameAfterHumanRound) =>
 
         // AI or finished?
-        if (!gameAfterHumanRound.isRunning) {
+        if (!gameAfterHumanRound.isRunning) then
           gameAfterHumanRound
-        } else {
+        else
           (Vector("") ++ generateAiPlayerRoundInfoText()).foreach(fktForInfoTextOutput(_))
 
           playOneRoundOfOnePlayer(humanPlayerTurn = false, gameAfterHumanRound, fktAiGetCoordinatesToShootAt,
@@ -162,7 +162,6 @@ object Battleship {
               play(fktForInfoTextOutput, gameAfterAiRound.startNewRound(), fktHumanGetCoordinatesToShootAt,
                 fktAiGetCoordinatesToShootAt, aiPlayerDelay).get
           }
-        }
     })
   }
 
@@ -184,7 +183,7 @@ object Battleship {
     Thread.sleep(delay)
 
     Try(waitingForCorrectInput(currentIteration = 0, maxIterations = 100, fktGetInput = fktGetCoordinatesToShootAt,
-      board = if (humanPlayerTurn) game.aiPlayerBoard else game.humanPlayerBoard,
+      board = if humanPlayerTurn then game.aiPlayerBoard else game.humanPlayerBoard,
       fktErrorMessageOutput = fktForInfoTextOutput) match {
       case Failure(ex) => throw ex
       case Success(value) =>
@@ -192,8 +191,8 @@ object Battleship {
 
         game.shootAtBoard(!humanPlayerTurn, value.row, value.col) match {
           case Success(value) =>
-            if (value.shipPosition.isDefined) {
-              if (humanPlayerTurn)
+            if value.shipPosition.isDefined then
+              if (humanPlayerTurn) then
                 generateShipHitInfoText(value.shipPosition.get.ship,
                   value.game.aiPlayerBoard.isDestroyed(value.shipPosition.get.ship))
                   .foreach(fktForInfoTextOutput(_))
@@ -201,18 +200,17 @@ object Battleship {
                 generateShipHitInfoText(value.shipPosition.get.ship,
                   value.game.humanPlayerBoard.isDestroyed(value.shipPosition.get.ship))
                   .foreach(fktForInfoTextOutput(_))
-            } else {
+            else 
               generateNothingHitInfoText().foreach(fktForInfoTextOutput(_))
-            }
+            
 
-            if (value.shipPosition.isDefined && value.game.isRunning) {
+            if (value.shipPosition.isDefined && value.game.isRunning) then
               generateShootAgainInfoText().foreach(fktForInfoTextOutput(_))
 
               playOneRoundOfOnePlayer(humanPlayerTurn, value.game, fktGetCoordinatesToShootAt, fktForInfoTextOutput,
                 delay).get
-            } else {
+            else
               value.game
-            }
           // Failure impossible --> waitingForCorrectInput() checks, if cell was already hit
           //          case Failure(ex) => throw ex
         }
