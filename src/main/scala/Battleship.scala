@@ -20,6 +20,7 @@ import scala.util.{Failure, Success, Try}
   Unsuccessful:
   - Main-function as toplevel
     --> When using parameters in main-function, sbt run doesn't work anymore. Main-function without parameters works fine.
+    --> Solution: https://dotty.epfl.ch/docs/reference/changed-features/main-functions.html
 */
 
 object Battleship {
