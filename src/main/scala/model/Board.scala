@@ -189,13 +189,13 @@ object Board {
   Vector[Coordinates] = {
     val shipCoordinates = direction match {
       case BoardDirection.North =>
-        for (row <- coordinates.row until coordinates.row - shipLength by -1) yield Coordinates(row, coordinates.col)
+        for row <- coordinates.row until coordinates.row - shipLength by -1 yield Coordinates(row, coordinates.col)
       case BoardDirection.East =>
-        for (col <- coordinates.col until coordinates.col + shipLength) yield Coordinates(coordinates.row, col)
+        for col <- coordinates.col until coordinates.col + shipLength yield Coordinates(coordinates.row, col)
       case BoardDirection.South =>
-        for (row <- coordinates.row until coordinates.row + shipLength) yield Coordinates(row, coordinates.col)
+        for row <- coordinates.row until coordinates.row + shipLength yield Coordinates(row, coordinates.col)
       case BoardDirection.West =>
-        for (col <- coordinates.col until coordinates.col - shipLength by -1) yield Coordinates(coordinates.row, col)
+        for col <- coordinates.col until coordinates.col - shipLength by -1 yield Coordinates(coordinates.row, col)
     }
     shipCoordinates.toVector
   }

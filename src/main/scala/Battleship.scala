@@ -11,9 +11,10 @@ import scala.util.{Failure, Success, Try}
 /*
   Scala 3 Changes:
   - Enums
-  - If-Notation
+  - New if-Notation
   - Remove "new" keyword
     --> Couldn't be removed every time. We use multiple constructors. Using "new" / not using "new" defines, which constructor is used.
+  - New for-Notation
 */
 
 object Battleship {
