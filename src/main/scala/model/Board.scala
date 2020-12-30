@@ -24,14 +24,13 @@ case class Board(matrix: Vector[Vector[Boolean]], shipPositions: Vector[ShipPosi
                            startingCol: Int => Int,
                            direction: Int => BoardDirection,
                            remainingIterations: Int): Try[Board] = {
-    if (remainingIterations == 0) {
+    if remainingIterations == 0 then
       Failure(IndexOutOfBoundsException())
-    } else {
+    else
       placeSingleShip(ship, startingRow, startingCol, direction) match {
         case Success(value) => Success(value)
         case Failure(_) => placeSingleShipForce(ship, startingCol, startingRow, direction, remainingIterations - 1)
       }
-    }
   }
 
   /** Places a single ship on board
@@ -58,23 +57,21 @@ case class Board(matrix: Vector[Vector[Boolean]], shipPositions: Vector[ShipPosi
    */
   def placeSingleShip(ship: Ship, coordinates: Coordinates, direction: BoardDirection): Try[Board] = {
     val startRow = {
-      if (direction == BoardDirection.North && ship.length > coordinates.row) {
+      if direction == BoardDirection.North && ship.length > coordinates.row then
         ship.length - 1
-      } else if (direction == BoardDirection.South && ship.length > (10 - coordinates.row)) {
+      else if direction == BoardDirection.South && ship.length > (10 - coordinates.row) then
         10 - ship.length
-      } else {
-        coordinates.row
-      }
+       else 
+        coordinates.row      
     }
 
     val startCol = {
-      if (direction == BoardDirection.West && ship.length > coordinates.col) {
+      if direction == BoardDirection.West && ship.length > coordinates.col then
         ship.length - 1
-      } else if (direction == BoardDirection.East && ship.length > (10 - coordinates.col)) {
+      else if direction == BoardDirection.East && ship.length > (10 - coordinates.col) then
         10 - ship.length
-      } else {
-        coordinates.col
-      }
+      else
+        coordinates.col      
     }
 
     placeSingleShip(ship, Board.generateShipCoordinates(Coordinates(startRow, startCol), ship.length, direction))
@@ -87,12 +84,11 @@ case class Board(matrix: Vector[Vector[Boolean]], shipPositions: Vector[ShipPosi
    * @return updated board
    */
   def placeSingleShip(ship: Ship, shipCoordinates: Vector[Coordinates]): Try[Board] = {
-    if (shipIsPlacedOnBoard(ship) || !noShipIsPlacedAtCoordinates(shipCoordinates)
-      || !coordinatesAreCorrect(shipCoordinates)) {
+    if shipIsPlacedOnBoard(ship) || !noShipIsPlacedAtCoordinates(shipCoordinates)
+      || !coordinatesAreCorrect(shipCoordinates) then
       Failure(InvalidParameterException())
-    } else {
-      Success(copy(matrix, shipPositions :+ dataTransferObjects.ShipPosition(ship, shipCoordinates)))
-    }
+    else
+      Success(copy(matrix, shipPositions :+ dataTransferObjects.ShipPosition(ship, shipCoordinates)))    
   }
 
   /** Check if ship is already placed on board
@@ -129,13 +125,12 @@ case class Board(matrix: Vector[Vector[Boolean]], shipPositions: Vector[ShipPosi
    * @return a tuple containing the updated board together with an option reflecting if the shot hit a ship
    */
   def shoot(row: Int, col: Int): Try[BoardShotAtResult] = {
-    if (isHit(row, col)) {
+    if isHit(row, col) then
       Failure(UnsupportedOperationException())
-    } else {
+    else
       val newMatrix = matrix.updated(row, matrix(row).updated(col, true))
       val shipPos = shipPositions.find(_.positions.contains(Coordinates(row, col)))
-      Success(BoardShotAtResult(copy(newMatrix, shipPositions), shipPos))
-    }
+      Success(BoardShotAtResult(copy(newMatrix, shipPositions), shipPos))    
   }
 
   /** Are coordinates already hit?
@@ -217,16 +212,15 @@ object Board {
   def placeAllShipsRandomlyOneByOne(board: Board,
                                     remainingShips: Vector[Ship],
                                     randomIntGenerator: Int => Int): Try[Board] = {
-    if (remainingShips.isEmpty) {
+    if remainingShips.isEmpty then
       Success(board)
-    } else {
+    else
       board.placeSingleShipForce(remainingShips(0), randomIntGenerator, randomIntGenerator,
         (maxValue: Int) => {
           BoardDirection.fromOrdinal(randomIntGenerator(maxValue))
         }, 100) match {
         case Success(board) => placeAllShipsRandomlyOneByOne(board, remainingShips.drop(1), randomIntGenerator)
         case Failure(ex) => Failure(ex)
-      }
-    }
+      }    
   }
 }

@@ -14,7 +14,6 @@ import scala.util.{Failure, Success, Try}
   - If-Notation
   - Remove "new" keyword
     --> Couldn't be removed every time. We use multiple constructors. Using "new" / not using "new" defines, which constructor is used.
-  
 */
 
 object Battleship {
@@ -89,7 +88,7 @@ object Battleship {
     checkInputForCorrectCoordinates(input, board, fktErrorMessageOutput) match {
       case Success(value) => Success(value)
       case Failure(ex) =>
-        if (currentIteration == maxIterations)
+        if currentIteration == maxIterations then
           Failure(ex)
         else
           waitingForCorrectInput(currentIteration + 1, maxIterations, fktGetInput, board, fktErrorMessageOutput)
@@ -111,10 +110,10 @@ object Battleship {
 
       coordinates match {
         case Success(value) =>
-          if (board.isHit(value.row, value.col)) {
+          if board.isHit(value.row, value.col) then
             generateInvalidInputInfoText().foreach(fktErrorMessageOutput(_))
             throw IndexOutOfBoundsException(input)
-          }
+
           value
         case Failure(ex) =>
           if ex.getMessage == "row" then

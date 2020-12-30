@@ -14,8 +14,8 @@ object Coordinates {
       val row = input.slice(0, 1)
       val col = input.slice(1, 2)
 
-      if (!row.charAt(0).isDigit) throw IndexOutOfBoundsException("row")
-      if (!col.charAt(0).isDigit) throw IndexOutOfBoundsException("col")
+      if !row.charAt(0).isDigit then throw IndexOutOfBoundsException("row")
+      if !col.charAt(0).isDigit then throw IndexOutOfBoundsException("col")
 
       this (row.toInt, col.toInt)
     })

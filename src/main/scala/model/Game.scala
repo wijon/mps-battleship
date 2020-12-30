@@ -48,7 +48,7 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
    * @return Game and is ship hit?
    */
   def shootAtBoard(humanPlayerBoard: Boolean, row: Int, col: Int): Try[GameShotAtResult] = {
-    if (humanPlayerBoard) shootAtHumanBoard(row, col) else shootAtAiBoard(row, col)
+    if humanPlayerBoard then shootAtHumanBoard(row, col) else shootAtAiBoard(row, col)
   }
 
   /** Shoot at human player board

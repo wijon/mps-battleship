@@ -60,12 +60,12 @@ object OutputHelper {
         val cellIsHit = board.matrix(currentRow)(currentCol)
         val shipPos = board.shipPositions.find(_.positions.contains(Coordinates(currentRow, currentCol)))
 
-        val newOutput = if (cellIsHit) {
-          if (shipPos.isDefined) "@" else "X"
-        } else {
-          if (shipPos.isDefined && showShips) "O" else " "
-        }
-
+        val newOutput = 
+          if cellIsHit then
+            if shipPos.isDefined then "@" else "X"
+          else 
+            if shipPos.isDefined && showShips then "O" else " "
+        
         newOutput + generateBoardLineFieldByField(currentRow, currentCol + 1, board, showShips)
     }
   }
@@ -109,7 +109,7 @@ object OutputHelper {
     val singleShipData = generateSingleShipElement(shipPos.get.positions, board, 0)
     val shipAsVisual = "\\" + singleShipData._1 + "/" + (" " * (6 - ship.length))
     val hitInfoText = singleShipData._2 + " hit(s)"
-    val destroyedInfoText = if (singleShipData._2 == ship.length) ", destroyed" else ""
+    val destroyedInfoText = if singleShipData._2 == ship.length then ", destroyed" else ""
     shipAsVisual + hitInfoText + destroyedInfoText
   }
 
@@ -122,17 +122,16 @@ object OutputHelper {
   private def generateSingleShipElement(remainingShipPos: Vector[Coordinates],
                                         board: Board,
                                         currentNumberOfHits: Int): (String, Int) = {
-    if (remainingShipPos.isEmpty) {
+    if remainingShipPos.isEmpty then
       ("", currentNumberOfHits)
-    } else {
+    else
       val shipPositionToProcess = remainingShipPos(0)
       val boardCellHit = board.matrix(shipPositionToProcess.row)(shipPositionToProcess.col)
-      val newChar = if (boardCellHit) 'X' else '_'
-      val newNumberOfHits = if (boardCellHit) currentNumberOfHits + 1 else currentNumberOfHits
+      val newChar = if boardCellHit then 'X' else '_'
+      val newNumberOfHits = if boardCellHit then currentNumberOfHits + 1 else currentNumberOfHits
 
       val recurseValue = generateSingleShipElement(remainingShipPos.drop(1), board, newNumberOfHits)
-      (newChar + recurseValue._1, recurseValue._2)
-    }
+      (newChar + recurseValue._1, recurseValue._2)    
   }
 
   /** Render final game info for output
@@ -141,9 +140,10 @@ object OutputHelper {
    * @return Victory / Loss-Screen
    */
   def generateFinalText(game: Game): Try[Vector[String]] = {
-    Try(if (game.isRunning)
-      throw IllegalStateException()
-    else if (game.humanPlayerIsWinner()) generateVictory() else generateLoss()
+    Try(
+      if game.isRunning then
+        throw IllegalStateException()
+      else if game.humanPlayerIsWinner() then generateVictory() else generateLoss()
     )
   }
 
@@ -239,7 +239,7 @@ object OutputHelper {
   def generateShipHitInfoText(ship: Ship, isDestroyed: Boolean): Vector[String] = {
     val viewLine1 = "Das Schiff " + ship.name + " wurde getroffen."
 
-    if (isDestroyed)
+    if isDestroyed then
       Vector(viewLine1) ++ generateShipDestroyedInfoText(ship)
     else
       Vector(viewLine1)
