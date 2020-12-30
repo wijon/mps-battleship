@@ -32,7 +32,7 @@ case class Game(humanPlayerBoard: Board, aiPlayerBoard: Board, roundNum: Int) {
    * @return
    */
   def ships(init: ShipPlacement => Unit): Game = {
-    val placement = new ShipPlacement
+    val placement = ShipPlacement()
     init(placement)
 
     val board1 = Board(placement.shipPositionsPlayer1.toVector)

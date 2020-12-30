@@ -8,6 +8,15 @@ import scala.annotation.tailrec
 import scala.io.StdIn
 import scala.util.{Failure, Success, Try}
 
+/*
+  Scala 3 Changes:
+  - Enums
+  - If-Notation
+  - Remove "new" keyword
+    --> Couldn't be removed every time. We use multiple constructors. Using "new" / not using "new" defines, which constructor is used.
+  
+*/
+
 object Battleship {
   def main(args: Array[String]): Unit = {
 
@@ -104,7 +113,7 @@ object Battleship {
         case Success(value) =>
           if (board.isHit(value.row, value.col)) {
             generateInvalidInputInfoText().foreach(fktErrorMessageOutput(_))
-            throw new IndexOutOfBoundsException(input)
+            throw IndexOutOfBoundsException(input)
           }
           value
         case Failure(ex) =>

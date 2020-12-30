@@ -25,7 +25,7 @@ case class Board(matrix: Vector[Vector[Boolean]], shipPositions: Vector[ShipPosi
                            direction: Int => BoardDirection,
                            remainingIterations: Int): Try[Board] = {
     if (remainingIterations == 0) {
-      Failure(new IndexOutOfBoundsException)
+      Failure(IndexOutOfBoundsException())
     } else {
       placeSingleShip(ship, startingRow, startingCol, direction) match {
         case Success(value) => Success(value)
@@ -89,7 +89,7 @@ case class Board(matrix: Vector[Vector[Boolean]], shipPositions: Vector[ShipPosi
   def placeSingleShip(ship: Ship, shipCoordinates: Vector[Coordinates]): Try[Board] = {
     if (shipIsPlacedOnBoard(ship) || !noShipIsPlacedAtCoordinates(shipCoordinates)
       || !coordinatesAreCorrect(shipCoordinates)) {
-      Failure(new InvalidParameterException)
+      Failure(InvalidParameterException())
     } else {
       Success(copy(matrix, shipPositions :+ dataTransferObjects.ShipPosition(ship, shipCoordinates)))
     }
@@ -130,7 +130,7 @@ case class Board(matrix: Vector[Vector[Boolean]], shipPositions: Vector[ShipPosi
    */
   def shoot(row: Int, col: Int): Try[BoardShotAtResult] = {
     if (isHit(row, col)) {
-      Failure(new UnsupportedOperationException)
+      Failure(UnsupportedOperationException())
     } else {
       val newMatrix = matrix.updated(row, matrix(row).updated(col, true))
       val shipPos = shipPositions.find(_.positions.contains(Coordinates(row, col)))

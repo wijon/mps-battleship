@@ -39,7 +39,7 @@ class FleetParser extends RegexParsers {
   def parseFleetText(txt: String) : Try[Vector[FleetParserResult]] = {
     parse(multiFleetParser, txt) match {
       case Success(matched, _) => scala.util.Success(matched)
-      case Failure(msg, _) => scala.util.Failure(new Exception(s"FAILURE: $msg"))
+      case Failure(msg, _) => scala.util.Failure(Exception(s"FAILURE: $msg"))
     }
   }
 }

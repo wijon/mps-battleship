@@ -142,7 +142,7 @@ object OutputHelper {
    */
   def generateFinalText(game: Game): Try[Vector[String]] = {
     Try(if (game.isRunning)
-      throw new IllegalStateException
+      throw IllegalStateException()
     else if (game.humanPlayerIsWinner()) generateVictory() else generateLoss()
     )
   }
