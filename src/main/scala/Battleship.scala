@@ -15,6 +15,7 @@ import scala.util.{Failure, Success, Try}
   - Remove "new" keyword
     --> Couldn't be removed every time. We use multiple constructors. Using "new" / not using "new" defines, which constructor is used.
   - New for-Notation
+  - Top-level settings-function
 
   Unsuccessful:
   - Main-function as toplevel
@@ -26,7 +27,7 @@ object Battleship {
     val game = 
     if args.isEmpty then
       // New game. Randomly place ships
-      new Game(Settings.getShipsForOnePlayer, Settings.getShipsForOnePlayer,
+      new Game(getShipsForOnePlayer, getShipsForOnePlayer,
         (maxValue: Int) => scala.util.Random.nextInt(maxValue))
     else
       // New game get ship + positions from file

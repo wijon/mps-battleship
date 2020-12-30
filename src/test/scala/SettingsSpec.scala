@@ -3,7 +3,7 @@ import org.scalatest.wordspec.AnyWordSpec
 class SettingsSpec extends AnyWordSpec {
   "Ships of one player" when {
     "read from global settings" should {
-      val ships = Settings.getShipsForOnePlayer
+      val ships = getShipsForOnePlayer
 
       "give a total of 5 ships" in {
         assert(ships.length == 5)
