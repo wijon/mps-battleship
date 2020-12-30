@@ -15,11 +15,14 @@ import scala.util.{Failure, Success, Try}
   - Remove "new" keyword
     --> Couldn't be removed every time. We use multiple constructors. Using "new" / not using "new" defines, which constructor is used.
   - New for-Notation
+
+  Unsuccessful:
+  - Main-function as toplevel
+    --> When using parameters in main-function, sbt run doesn't work anymore. Main-function without parameters works fine.
 */
 
 object Battleship {
   def main(args: Array[String]): Unit = {
-
     val game = 
     if args.isEmpty then
       // New game. Randomly place ships
